@@ -3675,7 +3675,7 @@ Kind regards,
   };
 
   window.getStaffById = function getStaffById(id) { return staffMembers.find(s => s.id === id); }
-  window.getStaffName = function getStaffName(id) { const s = getStaffById(id); return s ? s.name : 'Unassigned'; }
+  window.getStaffName = function getStaffName(id) { if (!id) return staffMembers.length > 0 ? staffMembers[0].name : 'Unassigned'; const s = getStaffById(id); return s ? s.name : (staffMembers.length > 0 ? staffMembers[0].name : 'Unassigned'); }
   window.getStaffEmail = function getStaffEmail(id){ const s = getStaffById(id); return s ? s.email : ''; }
 
   const docExplanations = {
@@ -3748,7 +3748,7 @@ Kind regards,
           <div class="req-doc-name">${doc.name}</div>
           <div class="req-doc-desc">${doc.desc}</div>
           <div class="req-doc-meta">
-            <div class="req-doc-assignee"><div class="req-doc-assignee-dot"></div>${getStaffName(doc.assignee)}</div>
+            <div class="req-doc-assignee"><div class="req-doc-assignee-dot"></div>${getStaffName(staffAssignments[doc.id] || doc.assignee) || getStaffName(staffMembers[0]?.id) || 'Unassigned'}</div>
           </div>
         </div>
         <div class="req-doc-right">
@@ -4800,6 +4800,10 @@ Kind regards,
       var ss = localStorage.getItem(IC_STAFF_KEY);
       if (ss) { var ps = JSON.parse(ss); if (Array.isArray(ps) && ps.length > 0) staffMembers = ps; }
     } catch(e) {}
+    // Sync docLibrary assignees from staffAssignments
+    docLibrary.forEach(function(doc) {
+      if (staffAssignments[doc.id]) doc.assignee = staffAssignments[doc.id];
+    });
   };
 
   // Per-client uploaded docs (saved separately so they persist across sessions)
@@ -4864,7 +4868,7 @@ Kind regards,
             <div class="staff-doc-saved-name">${doc.uploaded ? doc.name + ' - ' + client.name + '.pdf' : 'Not yet uploaded'}</div>
           </div>
           <div class="staff-doc-date" style="font-size:10px;color:var(--white-dim);flex-shrink:0;">${doc.uploaded ? 'Uploaded' : '—'}</div>
-          <div class="staff-assignee-pill">${getStaffName(doc.assignee)}</div>
+          <div class="staff-assignee-pill">${getStaffName(staffAssignments[doc.id] || doc.assignee) || getStaffName(staffMembers[0]?.id) || 'Unassigned'}</div>
           ${doc.uploaded
             ? `<button class="review-btn" onclick="window.markReviewed(this,'badge-${client.id}')">Mark Reviewed</button>
                <button class="reject-btn" onclick="window.openRejectModal(this,'badge-${client.id}','${doc.name}','${client.name}')">Return</button>`
