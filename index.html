@@ -2695,7 +2695,7 @@
       <div id="driveConnectWrap" style="display:flex;align-items:center;gap:8px;margin-left:auto;">
         <div id="driveStatusDot" style="width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,0.2);flex-shrink:0;"></div>
         <span id="driveStatusLabel" style="font-size:10px;color:var(--white-dim);">Google Drive not connected</span>
-        <button class="staff-settings-btn" id="driveConnectBtn" onclick="window.initiateDriveAuth()" style="background:rgba(66,133,244,0.12);border-color:rgba(66,133,244,0.35);color:#6ba3f5;">
+        <button class="staff-settings-btn" id="driveConnectBtn" style="background:rgba(66,133,244,0.12);border-color:rgba(66,133,244,0.35);color:#6ba3f5;">
           🔗 Connect Google Drive
         </button>
       </div>
@@ -4134,6 +4134,15 @@ Kind regards,
     setDriveStatus(false);
     loadReminderSettings();
 
+    // Wire Drive connect button
+    var driveBtn = document.getElementById('driveConnectBtn');
+    if (driveBtn) {
+      driveBtn.addEventListener('click', function() {
+        if (window.initiateDriveAuth) window.initiateDriveAuth();
+        else showToast('Drive auth not ready — please refresh.', '⚠️');
+      });
+    }
+
     // pw overlay click-outside to close
     const pwOv = document.getElementById('pwOverlay');
     if (pwOv) pwOv.addEventListener('click', e => { if (e.target === pwOv) closePwModal(); });
@@ -4265,22 +4274,33 @@ Kind regards,
   }
 
   window.saveStaffMembers = function saveStaffMembers() {
-    // Read all inputs back into staffMembers
-    document.querySelectorAll('#staffMemberList input').forEach(inp => {
-      const idx = parseInt(inp.dataset.idx);
-      const field = inp.dataset.field;
-      if (!isNaN(idx) && field && staffMembers[idx]) {
-        staffMembers[idx][field] = inp.value.trim();
+    // Read current values from inputs directly
+    var rows = document.querySelectorAll('#staffMemberList input[data-field="name"]');
+    var newStaff = [];
+    rows.forEach(function(nameInp) {
+      var idx   = parseInt(nameInp.dataset.idx);
+      var name  = nameInp.value.trim();
+      var emailInp = document.querySelector('#staffMemberList input[data-idx="' + idx + '"][data-field="email"]');
+      var email = emailInp ? emailInp.value.trim() : '';
+      var existing = staffMembers[idx];
+      if (name) {
+        newStaff.push({
+          id:    existing ? existing.id : ('staff_' + Date.now() + '_' + idx),
+          name:  name,
+          email: email
+        });
       }
     });
-    // Remove any blanks
-    staffMembers = staffMembers.filter(s => s.name.trim() !== '');
+    if (newStaff.length === 0) {
+      showToast('Please add at least one staff member.', '⚠️');
+      return;
+    }
+    staffMembers = newStaff;
     window.persistAll();
-    closeModal('manageStaffModal');
-    renderIndividualDocs();
-    renderStepFolders();
-    renderClientGroups();
-    showToast('✅ Staff members saved. ' + staffMembers.length + ' member' + (staffMembers.length !== 1 ? 's' : '') + ' in the system.');
+    window.closeModal('manageStaffModal');
+    window.renderIndividualDocs();
+    window.renderClientGroups();
+    showToast('✅ Staff saved — ' + staffMembers.length + ' member' + (staffMembers.length !== 1 ? 's' : '') + '.');
   }
 
   // ─── VIEW TOGGLE ───
@@ -5455,7 +5475,10 @@ Kind regards,
 
   // Override DRIVE_CLIENT_ID and DRIVE_ROOT_FOLDER to read from portalSettings
   // (The Drive functions already use the const variables; we patch them here)
-  window.getDriveClientId = function getDriveClientId()  { return portalSettings.driveClientId  || DRIVE_CLIENT_ID;  }
+  window.getDriveClientId = function getDriveClientId()  { 
+    var id = (portalSettings && portalSettings.driveClientId) ? portalSettings.driveClientId.trim() : '';
+    return id || DRIVE_CLIENT_ID; 
+  }
   window.getDriveFolderId = function getDriveFolderId()  { return portalSettings.driveFolderId  || DRIVE_ROOT_FOLDER; }
 
   // Also generate client IDs using settings prefix/format
