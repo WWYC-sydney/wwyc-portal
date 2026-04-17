@@ -4896,64 +4896,112 @@ Kind regards,
 
   // ─── Render dynamic client groups in staff view ───
   window.renderClientGroups = function renderClientGroups() {
-    const container = document.getElementById('dynamicClientsList');
+    var container = document.getElementById('dynamicClientsList');
     if (!container) return;
     container.innerHTML = '';
-    clients.forEach(client => {
-      const initials = client.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
-      // Load this client's uploaded docs from localStorage
-      const clientUploads = window.loadClientUploads(client.id);
-      const uploadedKeys  = clientUploads.map(u => u.matchKey).filter(Boolean);
-      const requiredDocs  = client.docs.map(id => {
-        const doc = docLibrary.find(d => d.id === id);
-        if (!doc) return null;
-        // Check if this doc was uploaded by this client (from their localStorage)
-        return Object.assign({}, doc, { uploaded: uploadedKeys.indexOf(doc.id) !== -1 });
-      }).filter(Boolean);
-      const pendingCount = requiredDocs.filter(d => !d.uploaded).length;
-      const allDone = pendingCount === 0;
 
-      const group = document.createElement('div');
+    clients.forEach(function(client) {
+      var initials      = client.name.split(' ').map(function(w){ return w[0]||''; }).join('').slice(0,2).toUpperCase();
+      var clientUploads = window.loadClientUploads(client.id);
+      var uploadedKeys  = clientUploads.map(function(u){ return u.matchKey; }).filter(Boolean);
+
+      var requiredDocs = client.docs.map(function(id) {
+        var doc = docLibrary.find(function(d){ return d.id === id; });
+        if (!doc) return null;
+        return { id:doc.id, icon:doc.icon, name:doc.name, desc:doc.desc,
+                 assignee:doc.assignee, note:doc.note,
+                 uploaded: uploadedKeys.indexOf(doc.id) !== -1 };
+      }).filter(Boolean);
+
+      var pendingCount = requiredDocs.filter(function(d){ return !d.uploaded; }).length;
+      var allDone = pendingCount === 0;
+
+      var group = document.createElement('div');
       group.className = 'client-files-group';
       group.id = 'clientgroup-' + client.id;
-      group.innerHTML = `
-        <div class="client-files-header">
-          <div style="display:flex;align-items:center;gap:10px;">
-            <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--gold-dim),var(--gold));display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:14px;font-weight:700;color:var(--navy);flex-shrink:0;">${initials}</div>
-            <div>
-              <div class="client-files-name">${client.name}</div>
-              <div class="client-files-id">${client.id} · ${client.step}</div>
-            </div>
-          </div>
-          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
-            <button onclick="window.copyClientPortalLink('${client.id}')" style="padding:4px 10px;background:rgba(76,175,130,0.1);border:1px solid rgba(76,175,130,0.25);border-radius:6px;color:var(--success);font-size:9px;letter-spacing:1px;text-transform:uppercase;cursor:pointer;font-family:'Montserrat',sans-serif;">🔗 Portal Link</button>
-            <a class="client-folder-link" href="#" onclick="window.openStaffClientFolder('${client.id}','${client.name}');return false;">📁 Open Folder</a>
-            <button onclick="window.openEditClientModal('${client.id}')" style="padding:4px 10px;background:rgba(28,68,117,0.08);border:1px solid rgba(28,68,117,0.2);border-radius:6px;color:var(--navy);font-size:9px;letter-spacing:1px;text-transform:uppercase;cursor:pointer;font-family:'Nunito',sans-serif;">✏ Edit</button>
-            <button onclick="window.deleteClient('${client.id}','${client.name}')" style="padding:4px 10px;background:rgba(140,4,4,0.07);border:1px solid rgba(140,4,4,0.2);border-radius:6px;color:var(--crimson);font-size:9px;letter-spacing:1px;text-transform:uppercase;cursor:pointer;font-family:'Nunito',sans-serif;">🗑 Delete</button>
-            <span class="doc-status-pill ${allDone?'pill-reviewed':'pill-pending'}" id="badge-${client.id}">${allDone ? 'All Reviewed' : pendingCount + ' Pending'}</span>
-          </div>
-        </div>
-        ${requiredDocs.map(doc => `
-        <div class="staff-doc-row" id="staffrow-${client.id}-${doc.id}" style="cursor:pointer;"
-          onclick="window.openDocPreview('${doc.name}','${doc.name} - ${client.name}.pdf','${doc.icon}',${client.driveFolderId ? "'https://drive.google.com/drive/folders/'+client.driveFolderId" : 'null'},'${client.name}')">
-          <div class="staff-doc-icon">${doc.icon}</div>
-          <div class="staff-doc-name">
-            <div>${doc.name}</div>
-            <div class="staff-doc-saved-name">${doc.uploaded ? doc.name + ' - ' + client.name + '.pdf' : 'Not yet uploaded'}</div>
-          </div>
-          <div class="staff-doc-date" style="font-size:10px;color:var(--white-dim);flex-shrink:0;">${doc.uploaded ? 'Uploaded' : '—'}</div>
-          <div class="staff-assignee-pill">${getStaffName(staffAssignments[doc.id] || doc.assignee) || getStaffName(staffMembers[0]?.id) || 'Unassigned'}</div>
-          ${doc.uploaded
-            ? `<button class="review-btn" onclick="window.markReviewed(this,'badge-${client.id}')">Mark Reviewed</button>
-               <button class="reject-btn" onclick="window.openRejectModal(this,'badge-${client.id}','${doc.name}','${client.name}')">Return</button>`
-            : `<span style="font-size:10px;color:rgba(255,255,255,0.25);font-style:italic;">Awaiting upload</span>`
-          }
-        </div>`).join('')}`;
+
+      // Header
+      var hdr = document.createElement('div');
+      hdr.className = 'client-files-header';
+
+      var left = document.createElement('div');
+      left.style.cssText = 'display:flex;align-items:center;gap:10px;';
+      var avatar = document.createElement('div');
+      avatar.style.cssText = 'width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--gold-dim),var(--gold));display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:var(--navy);flex-shrink:0;';
+      avatar.textContent = initials;
+      var nameBlock = document.createElement('div');
+      var nameDiv = document.createElement('div'); nameDiv.className = 'client-files-name'; nameDiv.textContent = client.name;
+      var idDiv   = document.createElement('div'); idDiv.className   = 'client-files-id';   idDiv.textContent   = client.id + ' - ' + (client.step||'');
+      nameBlock.appendChild(nameDiv); nameBlock.appendChild(idDiv);
+      left.appendChild(avatar); left.appendChild(nameBlock);
+
+      var right = document.createElement('div');
+      right.style.cssText = 'display:flex;align-items:center;gap:8px;flex-wrap:wrap;';
+
+      function mkBtn(label, bg, bc, col, fn) {
+        var b = document.createElement('button');
+        b.textContent = label;
+        b.style.cssText = 'padding:4px 10px;border-radius:6px;font-size:9px;letter-spacing:1px;text-transform:uppercase;cursor:pointer;font-family:Nunito,sans-serif;background:' + bg + ';border:1px solid ' + bc + ';color:' + col + ';';
+        b.addEventListener('click', fn);
+        return b;
+      }
+
+      right.appendChild(mkBtn('Portal Link','rgba(76,175,130,0.1)','rgba(76,175,130,0.25)','var(--success)', function(){ window.copyClientPortalLink(client.id); }));
+
+      var fl = document.createElement('a');
+      fl.className = 'client-folder-link'; fl.href = '#'; fl.textContent = 'Open Folder';
+      fl.addEventListener('click', function(e){ e.preventDefault(); window.openStaffClientFolder(client.id, client.name); });
+      right.appendChild(fl);
+
+      right.appendChild(mkBtn('Edit',  'rgba(28,68,117,0.08)','rgba(28,68,117,0.2)', 'var(--navy)',    function(){ window.openEditClientModal(client.id); }));
+      right.appendChild(mkBtn('Delete','rgba(140,4,4,0.07)',  'rgba(140,4,4,0.2)',  'var(--crimson)', function(){ window.deleteClient(client.id, client.name); }));
+
+      var badge = document.createElement('span');
+      badge.className = 'doc-status-pill ' + (allDone ? 'pill-reviewed' : 'pill-pending');
+      badge.id = 'badge-' + client.id;
+      badge.textContent = allDone ? 'All Reviewed' : pendingCount + ' Pending';
+      right.appendChild(badge);
+
+      hdr.appendChild(left); hdr.appendChild(right);
+      group.appendChild(hdr);
+
+      // Doc rows
+      requiredDocs.forEach(function(doc) {
+        var aName = window.getStaffName(staffAssignments[doc.id] || doc.assignee) || (staffMembers.length > 0 ? staffMembers[0].name : 'Unassigned');
+        var sName = doc.uploaded ? doc.name + ' - ' + client.name + '.pdf' : 'Not yet uploaded';
+
+        var row = document.createElement('div');
+        row.className = 'staff-doc-row';
+        row.id = 'staffrow-' + client.id + '-' + doc.id;
+        row.style.cursor = 'pointer';
+        row.addEventListener('click', function(){ window.openDocPreview(doc.name, sName, doc.icon, null, client.name); });
+
+        var iEl = document.createElement('div'); iEl.className = 'staff-doc-icon'; iEl.textContent = doc.icon;
+        var nEl = document.createElement('div'); nEl.className = 'staff-doc-name';
+        var n1  = document.createElement('div'); n1.textContent = doc.name;
+        var n2  = document.createElement('div'); n2.className = 'staff-doc-saved-name'; n2.textContent = sName;
+        nEl.appendChild(n1); nEl.appendChild(n2);
+        var dEl = document.createElement('div'); dEl.className = 'staff-doc-date'; dEl.style.cssText = 'font-size:10px;color:var(--white-dim);flex-shrink:0;'; dEl.textContent = doc.uploaded ? 'Uploaded' : '-';
+        var pEl = document.createElement('div'); pEl.className = 'staff-assignee-pill'; pEl.textContent = aName;
+        row.appendChild(iEl); row.appendChild(nEl); row.appendChild(dEl); row.appendChild(pEl);
+
+        if (doc.uploaded) {
+          var rb = document.createElement('button'); rb.className = 'review-btn'; rb.textContent = 'Mark Reviewed';
+          rb.addEventListener('click', function(e){ e.stopPropagation(); window.markReviewed(rb, 'badge-' + client.id); });
+          var rtb = document.createElement('button'); rtb.className = 'reject-btn'; rtb.textContent = 'Return';
+          rtb.addEventListener('click', function(e){ e.stopPropagation(); window.openRejectModal(rtb, 'badge-' + client.id, doc.name, client.name); });
+          row.appendChild(rb); row.appendChild(rtb);
+        } else {
+          var aw = document.createElement('span'); aw.style.cssText = 'font-size:10px;color:rgba(255,255,255,0.25);font-style:italic;'; aw.textContent = 'Awaiting upload';
+          row.appendChild(aw);
+        }
+        group.appendChild(row);
+      });
       container.appendChild(group);
     });
   }
 
-  // ─── Open New Client Modal ────────────────────────
+
   window.openNewClientModal = function openNewClientModal() {
     // Populate adviser dropdown
     const advSel = document.getElementById('newClientAdviser');
