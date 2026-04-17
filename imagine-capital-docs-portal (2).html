@@ -1,0 +1,3957 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Walk With You Capital | Document Upload</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    /* ── TEAL (accent / CTA) ── */
+    --gold: #20ABA4;
+    --gold-light: #5ECEC8;
+    --gold-dim: #167A75;
+    --gold-pale: #E8FAF9;
+
+    /* ── NAVY BLUE (primary dark) ── */
+    --navy: #1C4475;
+    --navy-light: #235190;
+    --navy-mid: #2D6AAD;
+    --dark: #0E2744;
+
+    /* ── NEUTRALS ── */
+    --white: #FFFFFF;
+    --off-white: #F5F8FF;
+    --text-main: #0E2744;
+    --text-sub: #4A6080;
+    --white-dim: rgba(74,96,128,0.8);
+
+    /* ── SEMANTIC ── */
+    --success: #10B981;
+    --success-light: #D1FAE5;
+    --warning: #D97706;
+    --warning-light: #FEF3C7;
+    --red: #8C0404;
+    --purple: #8C0404;
+    --purple-light: #FDEAEA;
+    --rejected: #8C0404;
+    --rejected-light: #FDEAEA;
+
+    /* ── CRIMSON (secondary accent) ── */
+    --crimson: #8C0404;
+    --crimson-light: #FDEAEA;
+    --crimson-pale: #FFF5F5;
+
+    /* ── SURFACES ── */
+    --surface: #FFFFFF;
+    --surface-2: #F0F6FF;
+    --border: rgba(28,68,117,0.12);
+    --shadow-sm: 0 1px 3px rgba(28,68,117,0.08), 0 1px 2px rgba(28,68,117,0.05);
+    --shadow-md: 0 4px 16px rgba(28,68,117,0.10), 0 2px 6px rgba(28,68,117,0.06);
+    --shadow-lg: 0 10px 32px rgba(28,68,117,0.12), 0 4px 12px rgba(28,68,117,0.08);
+    --radius-sm: 10px;
+    --radius-md: 16px;
+    --radius-lg: 24px;
+    --radius-xl: 32px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: linear-gradient(145deg, #F0F8FF 0%, #E8FAF9 50%, #FFF8F8 100%);
+    background-attachment: fixed;
+    color: var(--text-main);
+    min-height: 100vh;
+  }
+
+  /* ─── HEADER ─── */
+  .header {
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+    padding: 16px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .logo-wrap { display: flex; flex-direction: column; }
+
+  .logo-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 15px;
+    font-weight: 800;
+    color: var(--navy);
+    letter-spacing: 0.3px;
+  }
+
+  .logo-sub {
+    font-size: 9px;
+    letter-spacing: 2px;
+    color: var(--gold-dim);
+    text-transform: uppercase;
+    margin-top: 1px;
+    font-weight: 700;
+  }
+
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .client-pill {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--gold-pale);
+    border: 1.5px solid var(--gold-light);
+    border-radius: 40px;
+    padding: 6px 16px 6px 8px;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .client-avatar {
+    width: 30px; height: 30px;
+    background: linear-gradient(135deg, var(--gold-dim), var(--gold));
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Nunito', sans-serif;
+    font-size: 12px;
+    font-weight: 800;
+    color: white;
+    box-shadow: 0 2px 6px rgba(201,168,76,0.4);
+  }
+
+  .client-info { display: flex; flex-direction: column; }
+  .client-name-sm { font-size: 12px; font-weight: 700; color: var(--text-main); }
+  .client-id-sm { font-size: 10px; color: var(--gold-dim); font-weight: 600; }
+
+  /* ─── MAIN ─── */
+  .main {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 48px 24px 80px;
+  }
+
+  .page-hero {
+    text-align: center;
+    margin-bottom: 48px;
+  }
+
+  .page-eyebrow {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--gold-dim);
+    background: var(--gold-pale);
+    border: 1.5px solid var(--gold-light);
+    border-radius: 40px;
+    padding: 5px 16px;
+    margin-bottom: 16px;
+  }
+
+  .page-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 42px;
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 12px;
+    line-height: 1.15;
+  }
+
+  .page-title span { color: var(--gold); }
+
+  .page-sub {
+    font-size: 14px;
+    color: var(--text-sub);
+    max-width: 480px;
+    margin: 0 auto;
+    line-height: 1.8;
+    font-weight: 500;
+  }
+
+  /* ─── REQUIRED DOCS LIST ─── */
+  .required-section { margin-bottom: 32px; }
+
+  .section-label {
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--navy);
+    font-weight: 800;
+    margin-bottom: 16px;
+  }
+
+  .required-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 8px;
+  }
+
+  .required-item {
+    background: var(--white);
+    border: 2px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: all 0.2s;
+    cursor: pointer;
+    position: relative;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .required-item:hover { border-color: var(--gold-light); box-shadow: var(--shadow-md); transform: translateY(-1px); }
+
+  .required-item.uploaded {
+    border-color: #6EE7B7;
+    background: linear-gradient(135deg, #fff, var(--success-light));
+  }
+
+  .req-icon { font-size: 22px; flex-shrink: 0; }
+
+  .req-info { flex: 1; min-width: 0; }
+
+  .req-name {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-main);
+    margin-bottom: 2px;
+  }
+
+  .req-desc { font-size: 11px; color: var(--text-sub); font-weight: 500; }
+
+  .req-check {
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    border: 2px solid #D1D5DB;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px;
+    flex-shrink: 0;
+    transition: all 0.2s;
+  }
+
+  .required-item.uploaded .req-check {
+    background: var(--success);
+    border-color: var(--success);
+    color: white;
+  }
+
+  /* ─── INFO TOOLTIP (i button) ─── */
+  .info-btn {
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    background: var(--gold-pale);
+    border: 2px solid var(--gold-light);
+    color: var(--gold-dim);
+    font-size: 11px;
+    font-weight: 800;
+    font-style: italic;
+    font-family: Georgia, serif;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    position: relative;
+    transition: all 0.2s;
+    z-index: 10;
+  }
+
+  .info-btn:hover {
+    background: var(--gold-light);
+    border-color: var(--gold);
+    transform: scale(1.1);
+  }
+
+  .info-tooltip {
+    display: none;
+    position: absolute;
+    bottom: calc(100% + 10px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--navy);
+    border: 2px solid var(--gold-light);
+    border-radius: var(--radius-md);
+    padding: 14px 16px;
+    width: 240px;
+    font-size: 12px;
+    font-style: normal;
+    font-family: 'Nunito', sans-serif;
+    color: #E2E8F0;
+    line-height: 1.6;
+    font-weight: 500;
+    box-shadow: var(--shadow-lg);
+    z-index: 999;
+    pointer-events: none;
+  }
+
+  .info-tooltip::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 7px solid transparent;
+    border-top-color: var(--gold-light);
+  }
+
+  .info-tooltip-inner::before {
+    content: '';
+    position: absolute;
+    top: calc(100% + 1px);
+    left: 50%;
+    transform: translateX(-50%);
+    border: 6px solid transparent;
+    border-top-color: var(--navy-mid);
+  }
+
+  .info-btn:hover .info-tooltip { display: block; }
+
+  .info-tooltip-header {
+    font-size: 9px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 6px;
+    font-weight: 600;
+  }
+
+  /* Staff edit mode for explanations */
+  .info-edit-wrap {
+    display: none;
+    position: absolute;
+    bottom: calc(100% + 10px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--navy-mid);
+    border: 1px solid rgba(201,168,76,0.5);
+    border-radius: 10px;
+    padding: 12px;
+    width: 240px;
+    z-index: 999;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+  }
+
+  .info-edit-wrap.open { display: block; }
+
+  .info-edit-label {
+    font-size: 9px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 6px;
+    font-weight: 600;
+  }
+
+  .info-edit-textarea {
+    width: 100%;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(201,168,76,0.2);
+    border-radius: 6px;
+    color: var(--white);
+    font-family: 'Nunito', sans-serif;
+    font-size: 10px;
+    padding: 8px;
+    resize: none;
+    height: 70px;
+    line-height: 1.5;
+  }
+
+  .info-edit-textarea:focus { outline: none; border-color: rgba(201,168,76,0.5); }
+
+  .info-edit-actions { display: flex; gap: 6px; margin-top: 8px; justify-content: flex-end; }
+
+  .info-edit-save, .info-edit-cancel {
+    padding: 5px 12px;
+    border-radius: 6px;
+    font-size: 9px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    cursor: pointer;
+    font-family: 'Nunito', sans-serif;
+    border: none;
+  }
+
+  .info-edit-save { background: var(--gold); color: var(--navy); font-weight: 700; }
+  .info-edit-cancel { background: rgba(255,255,255,0.07); color: var(--white-dim); }
+
+  /* ─── ASSIGNED STAFF BADGE ─── */
+  .req-assignee {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 9px;
+    color: rgba(107,79,160,0.9);
+    background: rgba(107,79,160,0.12);
+    border: 1px solid rgba(107,79,160,0.25);
+    border-radius: 12px;
+    padding: 2px 8px;
+    white-space: nowrap;
+    margin-top: 4px;
+  }
+
+  .req-assignee-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--purple);
+    flex-shrink: 0;
+  }
+
+  /* Progress bar */
+  .progress-bar-wrap {
+    background: var(--white);
+    border: 2px solid var(--gold-light);
+    border-radius: var(--radius-lg);
+    padding: 18px 24px;
+    margin-bottom: 32px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    box-shadow: var(--shadow-md);
+  }
+
+  .progress-label { font-size: 13px; color: var(--text-sub); white-space: nowrap; font-weight: 600; }
+  .progress-label strong { color: var(--navy); font-weight: 800; }
+
+  .progress-track {
+    flex: 1;
+    height: 10px;
+    background: #F3F4F6;
+    border-radius: 99px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--gold), var(--gold-light));
+    border-radius: 99px;
+    transition: width 0.5s ease;
+    box-shadow: 0 0 8px rgba(201,168,76,0.4);
+  }
+
+  /* ─── UPLOAD ZONE ─── */
+  .upload-zone {
+    background: var(--white);
+    border: 3px dashed var(--gold-light);
+    border-radius: var(--radius-lg);
+    padding: 52px 32px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s;
+    margin-bottom: 32px;
+    position: relative;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .upload-zone:hover, .upload-zone.drag-over {
+    border-color: var(--gold);
+    background: var(--gold-pale);
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+  }
+
+  .upload-icon-big { font-size: 56px; margin-bottom: 16px; filter: drop-shadow(0 4px 8px rgba(201,168,76,0.3)); }
+
+  .upload-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 8px;
+  }
+
+  .upload-sub {
+    font-size: 13px;
+    color: var(--text-sub);
+    line-height: 1.8;
+    margin-bottom: 24px;
+    font-weight: 500;
+  }
+
+  .upload-btn {
+    display: inline-block;
+    padding: 13px 36px;
+    background: linear-gradient(135deg, var(--gold-dim), var(--gold));
+    color: white;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    border-radius: 99px;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: none;
+    font-family: 'Nunito', sans-serif;
+    box-shadow: 0 4px 16px rgba(201,168,76,0.4);
+  }
+
+  .upload-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(201,168,76,0.5); }
+
+  input[type="file"] { display: none; }
+
+  .or-divider {
+    font-size: 11px;
+    color: #D1D5DB;
+    margin: 14px 0;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-weight: 700;
+  }
+
+  .drag-hint {
+    font-size: 11px;
+    color: #9CA3AF;
+    font-weight: 600;
+  }
+
+  /* ─── UPLOADED FILES ─── */
+  .uploaded-section { margin-bottom: 32px; }
+
+  .docs-list { display: flex; flex-direction: column; gap: 10px; }
+
+  .doc-card {
+    background: var(--white);
+    border: 2px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    transition: all 0.2s;
+    animation: fadeIn 0.3s ease;
+    box-shadow: var(--shadow-sm);
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .doc-card:hover { border-color: var(--gold-light); box-shadow: var(--shadow-md); transform: translateY(-1px); }
+  .doc-card.rejected-card { border-color: #FCA5A5; background: var(--rejected-light); }
+
+  .doc-icon-wrap {
+    width: 46px; height: 46px;
+    border-radius: var(--radius-sm);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+    flex-shrink: 0;
+  }
+
+  .doc-icon-wrap.pdf { background: #FEE2E2; }
+  .doc-icon-wrap.img { background: var(--purple-light); }
+  .doc-icon-wrap.doc { background: var(--gold-pale); }
+
+  .doc-info { flex: 1; min-width: 0; }
+
+  .doc-name {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-main);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-bottom: 3px;
+  }
+
+  .doc-meta { font-size: 11px; color: var(--text-sub); font-weight: 500; }
+
+  .doc-right { display: flex; align-items: center; gap: 12px; }
+
+  .doc-status-pill {
+    padding: 5px 14px;
+    border-radius: 99px;
+    font-size: 10px;
+    font-weight: 800;
+    white-space: nowrap;
+    letter-spacing: 0.5px;
+  }
+
+  .pill-reviewed { background: var(--success-light); color: #065F46; }
+  .pill-pending  { background: var(--warning-light);  color: #92400E; }
+  .pill-rejected { background: var(--rejected-light); color: #991B1B; }
+
+  .doc-delete {
+    background: none;
+    border: none;
+    color: #D1D5DB;
+    cursor: pointer;
+    font-size: 18px;
+    transition: color 0.2s;
+    padding: 4px;
+    line-height: 1;
+    border-radius: 50%;
+  }
+
+  .doc-delete:hover { color: var(--red); background: var(--rejected-light); }
+
+  .rejection-note {
+    margin-top: 10px;
+    background: var(--rejected-light);
+    border: 2px solid #FCA5A5;
+    border-radius: var(--radius-sm);
+    padding: 10px 14px;
+    font-size: 12px;
+    font-weight: 500;
+    color: #991B1B;
+    line-height: 1.6;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .rejection-note-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+
+  /* ─── CLIENT FOLDER LINK ─── */
+  .folder-banner {
+    background: var(--gold-pale);
+    border: 2px solid var(--gold-light);
+    border-radius: var(--radius-md);
+    padding: 16px 20px;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    font-size: 13px;
+    color: var(--text-sub);
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .folder-banner:hover { border-color: var(--gold); background: #FEF3C7; box-shadow: var(--shadow-md); transform: translateY(-1px); }
+
+  .folder-icon { font-size: 26px; }
+
+  .folder-info { flex: 1; }
+  .folder-title { font-size: 13px; font-weight: 800; color: var(--navy); margin-bottom: 2px; }
+  .folder-path { font-size: 11px; color: var(--text-sub); font-family: monospace; font-weight: 500; }
+
+  .folder-arrow { color: var(--gold-dim); font-size: 20px; font-weight: 700; }
+
+  /* ─── STAFF VIEW ─── */
+  .view-toggle {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    margin-bottom: 40px;
+  }
+
+  .toggle-btn {
+    padding: 10px 24px;
+    border-radius: 99px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: 2px solid var(--border);
+    background: var(--white);
+    color: var(--text-sub);
+    font-family: 'Nunito', sans-serif;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .toggle-btn.active {
+    background: var(--navy);
+    border-color: var(--navy);
+    color: white;
+    box-shadow: var(--shadow-md);
+  }
+
+  .toggle-btn:hover:not(.active) { border-color: var(--gold-light); color: var(--navy); }
+
+  /* Staff docs table */
+  .staff-section { display: none; }
+  .staff-section.active { display: block; }
+  .client-section { display: block; }
+  .client-section.hidden { display: none; }
+
+  .staff-banner {
+    background: var(--purple-light);
+    border: 2px solid var(--gold-light);
+    border-radius: var(--radius-md);
+    padding: 16px 20px;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 13px;
+    color: var(--dark);
+    font-weight: 600;
+    box-shadow: var(--shadow-sm);
+  }
+
+  /* Staff settings row */
+  .staff-settings-row {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+  }
+
+  .staff-settings-btn {
+    padding: 9px 16px;
+    border-radius: 99px;
+    border: 2px solid var(--gold-light);
+    background: var(--gold-pale);
+    color: var(--gold-dim);
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: 'Nunito', sans-serif;
+    transition: all 0.2s;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .staff-settings-btn:hover { background: var(--gold-light); border-color: var(--gold); color: var(--navy); box-shadow: var(--shadow-md); transform: translateY(-1px); }
+
+  .client-files-group {
+    background: var(--white);
+    border: 2px solid var(--border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    margin-bottom: 16px;
+    box-shadow: var(--shadow-md);
+  }
+
+  .client-files-header {
+    padding: 18px 22px;
+    border-bottom: 2px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--surface-2);
+  }
+
+  .client-files-name { font-size: 14px; font-weight: 800; color: var(--text-main); }
+  .client-files-id { font-size: 11px; color: var(--gold-dim); font-weight: 700; margin-top: 2px; }
+
+  .client-folder-link {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--gold-dim);
+    background: var(--gold-pale);
+    border: 2px solid var(--gold-light);
+    border-radius: 99px;
+    padding: 5px 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-decoration: none;
+  }
+
+  .client-folder-link:hover { background: var(--gold-light); color: var(--navy); }
+
+  .staff-doc-row {
+    padding: 14px 22px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    border-bottom: 1px solid var(--border);
+    transition: all 0.15s;
+    position: relative;
+  }
+
+  .staff-doc-row:last-child { border-bottom: none; }
+  .staff-doc-row:hover { background: var(--gold-pale); }
+
+  .staff-doc-icon { font-size: 20px; width: 28px; flex-shrink: 0; }
+  .staff-doc-name { flex: 1; font-size: 13px; color: var(--text-main); font-weight: 600; }
+  .staff-doc-saved-name { font-size: 10px; color: var(--text-sub); margin-top: 2px; font-family: monospace; }
+  .staff-doc-date { font-size: 11px; color: var(--text-sub); width: 110px; flex-shrink: 0; font-weight: 500; }
+
+  .staff-assignee-pill {
+    font-size: 10px;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 99px;
+    background: var(--gold-pale);
+    color: var(--gold-dim);
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .review-btn {
+    padding: 6px 14px;
+    background: var(--gold-pale);
+    border: 2px solid var(--gold-light);
+    color: var(--gold-dim);
+    border-radius: 99px;
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: 'Nunito', sans-serif;
+    white-space: nowrap;
+  }
+
+  .review-btn:hover:not(.done) { background: var(--gold-light); border-color: var(--gold); color: var(--navy); }
+  .review-btn.done { background: var(--success-light); border-color: #6EE7B7; color: #065F46; cursor: default; }
+
+  .reject-btn {
+    padding: 6px 14px;
+    background: var(--rejected-light);
+    border: 2px solid #FCA5A5;
+    color: #991B1B;
+    border-radius: 99px;
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: 'Nunito', sans-serif;
+    white-space: nowrap;
+  }
+
+  .reject-btn:hover { background: #FCA5A5; color: #7F1D1D; }
+
+  /* ─── MODAL ─── */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(4px);
+    z-index: 200;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .modal-overlay.open { display: flex; }
+
+  .modal {
+    background: var(--white);
+    border: 2px solid var(--border);
+    border-radius: var(--radius-xl);
+    padding: 36px;
+    width: 90%;
+    max-width: 500px;
+    animation: slideUp 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: var(--shadow-lg);
+  }
+
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(30px) scale(0.96); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  .modal-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 6px;
+  }
+
+  .modal-sub { font-size: 13px; color: var(--text-sub); margin-bottom: 20px; line-height: 1.6; font-weight: 500; }
+  .modal-close { float: right; background: var(--surface-2); border: 2px solid var(--border); color: var(--text-sub); font-size: 16px; cursor: pointer; width: 32px; height: 32px; border-radius: 50%; display:flex; align-items:center; justify-content:center; transition: all 0.2s; }
+  .modal-close:hover { background: var(--rejected-light); border-color: #FCA5A5; color: var(--red); }
+
+  .modal-file-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; max-height: 200px; overflow-y: auto; }
+
+  .modal-file-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 8px;
+    padding: 10px 14px;
+  }
+
+  .modal-file-left { display: flex; align-items: center; gap: 10px; font-size: 12px; color: var(--white); }
+  .modal-file-size { font-size: 10px; color: var(--white-dim); }
+
+  .modal-file-saved {
+    font-size: 9px;
+    color: var(--gold-dim);
+    font-family: monospace;
+    margin-top: 2px;
+  }
+
+  .modal-label {
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    color: var(--text-main);
+    margin-bottom: 6px;
+    margin-top: 14px;
+  }
+
+  .modal-select {
+    width: 100%;
+    background: var(--surface-2);
+    border: 2px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--text-main);
+    font-family: 'Nunito', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 10px 14px;
+    appearance: none;
+    cursor: pointer;
+  }
+
+  .modal-select:focus { outline: none; border-color: var(--gold); box-shadow: 0 0 0 3px rgba(201,168,76,0.15); }
+
+  .modal-select option { background: white; color: var(--text-main); }
+
+  .modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; }
+
+  .btn-secondary {
+    padding: 11px 22px;
+    background: var(--surface-2);
+    border: 2px solid var(--border);
+    color: var(--text-sub);
+    border-radius: 99px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: 'Nunito', sans-serif;
+  }
+
+  .btn-secondary:hover { border-color: #D1D5DB; color: var(--text-main); background: #F9FAFB; }
+
+  .btn-primary {
+    padding: 11px 26px;
+    background: linear-gradient(135deg, var(--gold-dim), var(--gold));
+    color: white;
+    border: none;
+    border-radius: 99px;
+    font-size: 12px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: 'Nunito', sans-serif;
+    box-shadow: 0 4px 14px rgba(201,168,76,0.35);
+  }
+
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(201,168,76,0.45); }
+
+  .btn-danger {
+    padding: 11px 26px;
+    background: var(--rejected-light);
+    border: 2px solid #FCA5A5;
+    color: #991B1B;
+    border-radius: 99px;
+    font-size: 12px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: 'Nunito', sans-serif;
+  }
+
+  .btn-danger:hover { background: #FCA5A5; }
+
+  .modal-textarea {
+    width: 100%;
+    background: var(--surface-2);
+    border: 2px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--text-main);
+    font-family: 'Nunito', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    padding: 12px;
+    resize: none;
+    height: 100px;
+    line-height: 1.6;
+    margin-top: 4px;
+  }
+
+  .modal-textarea:focus { outline: none; border-color: var(--gold); box-shadow: 0 0 0 3px rgba(201,168,76,0.15); }
+
+  /* ─── ASSIGN DOC MODAL ─── */
+  .assign-modal { max-width: 420px; }
+
+  /* ─── REJECT MODAL ─── */
+  .reject-modal { max-width: 460px; }
+
+  /* ─── EMAIL NOTIFICATION BADGE ─── */
+  .email-sent-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 9px;
+    color: var(--success);
+    background: rgba(76,175,130,0.1);
+    border: 1px solid rgba(76,175,130,0.25);
+    border-radius: 10px;
+    padding: 2px 8px;
+    margin-left: 8px;
+    vertical-align: middle;
+  }
+
+  /* ─── TOAST ─── */
+  .toast {
+    position: fixed;
+    bottom: 30px; right: 30px;
+    background: var(--navy);
+    border: 2px solid var(--gold-light);
+    border-radius: var(--radius-lg);
+    padding: 16px 22px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 13px;
+    font-weight: 600;
+    color: white;
+    z-index: 300;
+    transform: translateY(100px) scale(0.9);
+    opacity: 0;
+    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    box-shadow: var(--shadow-lg);
+    max-width: 380px;
+  }
+
+  .toast.show { transform: translateY(0) scale(1); opacity: 1; }
+
+  /* ─── EMPTY STATE ─── */
+  .empty-state {
+    text-align: center;
+    padding: 48px 20px;
+    color: #9CA3AF;
+    font-size: 14px;
+    font-weight: 600;
+    display: none;
+  }
+
+  .empty-state.show { display: block; }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--surface-2); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb { background: var(--gold-light); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--gold); }
+
+  .modal-doctype-select,
+  input.modal-doctype-select {
+    width: 100%;
+    background: var(--surface-2);
+    border: 2px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--text-main);
+    font-family: 'Nunito', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 10px 14px;
+    appearance: none;
+    cursor: pointer;
+    margin-bottom: 4px;
+  }
+
+  input.modal-doctype-select::placeholder { color: #9CA3AF; }
+  input.modal-doctype-select::-webkit-calendar-picker-indicator { cursor: pointer; opacity: 0.5; }
+
+  .modal-doctype-select:focus,
+  input.modal-doctype-select:focus { outline: none; border-color: var(--gold); box-shadow: 0 0 0 3px rgba(201,168,76,0.15); }
+  .modal-doctype-select option { background: white; color: var(--text-main); }
+
+  /* Saved name preview */
+  .saved-name-preview {
+    font-size: 11px;
+    color: var(--text-sub);
+    font-family: monospace;
+    background: var(--gold-pale);
+    border: 2px solid var(--gold-light);
+    border-radius: var(--radius-sm);
+    padding: 10px 14px;
+    margin-top: 8px;
+    font-weight: 600;
+  }
+
+  .saved-name-preview span { color: var(--gold-dim); font-weight: 800; }
+
+
+  /* ─── REQ TABS ─── */
+  .req-tabs {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 16px;
+  }
+
+  .req-tab {
+    padding: 10px 20px;
+    border-radius: 99px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: 2px solid var(--border);
+    background: var(--white);
+    color: var(--text-sub);
+    font-family: 'Nunito', sans-serif;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .req-tab.active {
+    background: var(--navy);
+    border-color: var(--navy);
+    color: white;
+    box-shadow: var(--shadow-md);
+  }
+
+  .req-tab:hover:not(.active) { border-color: var(--gold-light); color: var(--navy); }
+
+  /* ─── INDIVIDUAL DOC LIST ─── */
+  .req-individual-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .req-doc-item {
+    background: var(--white);
+    border: 2px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 14px 16px;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    transition: all 0.2s;
+    position: relative;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .req-doc-item.uploaded { border-color: #6EE7B7; background: linear-gradient(135deg, white, var(--success-light)); }
+  .req-doc-item:hover:not(.uploaded) { border-color: var(--gold-light); box-shadow: var(--shadow-md); transform: translateY(-1px); }
+
+  .req-doc-icon { font-size: 20px; flex-shrink: 0; margin-top: 1px; }
+
+  .req-doc-body { flex: 1; min-width: 0; }
+
+  .req-doc-name {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-main);
+    margin-bottom: 2px;
+  }
+
+  .req-doc-desc { font-size: 11px; color: var(--text-sub); line-height: 1.4; margin-bottom: 4px; font-weight: 500; }
+
+  .req-doc-meta {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  .req-doc-assignee {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 9px;
+    color: rgba(107,79,160,0.9);
+    background: rgba(107,79,160,0.12);
+    border: 1px solid rgba(107,79,160,0.2);
+    border-radius: 10px;
+    padding: 2px 7px;
+  }
+
+  .req-doc-assignee-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--purple); }
+
+  .req-doc-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 6px;
+    flex-shrink: 0;
+  }
+
+  .req-doc-check {
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    border: 1.5px solid rgba(255,255,255,0.15);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px;
+    flex-shrink: 0;
+    transition: all 0.2s;
+  }
+
+  .req-doc-item.uploaded .req-doc-check {
+    background: var(--success);
+    border-color: var(--success);
+    color: white;
+  }
+
+  /* info-btn already exists, reuse it */
+
+  /* ─── STEP FOLDERS ─── */
+  .step-folder {
+    background: var(--white);
+    border: 2px solid var(--border);
+    border-radius: var(--radius-lg);
+    margin-bottom: 12px;
+    overflow: hidden;
+    transition: all 0.2s;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .step-folder:hover { border-color: var(--gold-light); box-shadow: var(--shadow-md); }
+
+  .step-folder-header {
+    padding: 18px 22px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    cursor: pointer;
+    transition: background 0.2s;
+    user-select: none;
+  }
+
+  .step-folder-header:hover { background: var(--gold-pale); }
+
+  .step-folder-icon {
+    width: 44px; height: 44px;
+    border-radius: var(--radius-sm);
+    background: var(--gold-pale);
+    border: 2px solid var(--gold-light);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+    flex-shrink: 0;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .step-folder-info { flex: 1; }
+
+  .step-folder-name {
+    font-size: 14px;
+    font-weight: 800;
+    color: var(--text-main);
+    margin-bottom: 2px;
+  }
+
+  .step-folder-desc { font-size: 11px; color: var(--text-sub); font-weight: 500; }
+
+  .step-folder-meta {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+  }
+
+  .step-folder-count {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--gold-dim);
+    background: var(--gold-pale);
+    border: 2px solid var(--gold-light);
+    border-radius: 99px;
+    padding: 4px 12px;
+    white-space: nowrap;
+  }
+
+  .step-folder-count.all-done { background: var(--success-light); border-color: #6EE7B7; color: #065F46; }
+
+  .step-folder-chevron {
+    color: var(--text-sub);
+    font-size: 18px;
+    font-weight: 700;
+    transition: transform 0.2s;
+  }
+
+  .step-folder.open .step-folder-chevron { transform: rotate(90deg); }
+
+  .step-folder-body {
+    display: none;
+    border-top: 2px solid var(--border);
+  }
+
+  .step-folder.open .step-folder-body { display: block; }
+
+  .step-folder-actions {
+    padding: 12px 22px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--surface-2);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .select-all-btn {
+    padding: 7px 16px;
+    background: var(--white);
+    border: 2px solid var(--gold-light);
+    color: var(--gold-dim);
+    border-radius: 99px;
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: 'Nunito', sans-serif;
+    transition: all 0.2s;
+  }
+
+  .select-all-btn:hover { background: var(--gold-pale); border-color: var(--gold); color: var(--navy); }
+
+  .folder-sel-count {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-sub);
+    flex: 1;
+  }
+
+  .folder-upload-btn {
+    padding: 7px 16px;
+    background: linear-gradient(135deg, var(--gold-dim), var(--gold));
+    border: none;
+    color: white;
+    border-radius: 99px;
+    font-size: 11px;
+    font-weight: 800;
+    cursor: pointer;
+    font-family: 'Nunito', sans-serif;
+    transition: all 0.2s;
+    opacity: 0.4;
+    pointer-events: none;
+    box-shadow: 0 2px 8px rgba(201,168,76,0.3);
+  }
+
+  .folder-upload-btn.ready { opacity: 1; pointer-events: auto; }
+  .folder-upload-btn.ready:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(201,168,76,0.45); }
+
+  .step-doc-row {
+    padding: 13px 22px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-bottom: 1px solid var(--border);
+    transition: background 0.15s;
+    cursor: pointer;
+  }
+
+  .step-doc-row:last-child { border-bottom: none; }
+  .step-doc-row:hover { background: var(--gold-pale); }
+  .step-doc-row.doc-checked { background: var(--gold-pale); }
+  .step-doc-row.doc-done { opacity: 0.6; cursor: default; }
+
+  .step-doc-checkbox {
+    width: 20px; height: 20px;
+    border-radius: 6px;
+    border: 2px solid #D1D5DB;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px;
+    flex-shrink: 0;
+    transition: all 0.15s;
+    background: white;
+  }
+
+  .step-doc-row.doc-checked .step-doc-checkbox {
+    background: var(--gold);
+    border-color: var(--gold);
+    color: white;
+    font-weight: 800;
+  }
+
+  .step-doc-row.doc-done .step-doc-checkbox {
+    background: var(--success);
+    border-color: var(--success);
+    color: white;
+  }
+
+  .step-doc-icon { font-size: 18px; flex-shrink: 0; }
+  .step-doc-name { flex: 1; font-size: 13px; color: var(--text-main); font-weight: 700; }
+  .step-doc-desc { font-size: 11px; color: var(--text-sub); font-weight: 500; }
+
+  .step-doc-done-badge {
+    font-size: 10px;
+    font-weight: 700;
+    color: #065F46;
+    background: var(--success-light);
+    border-radius: 99px;
+    padding: 3px 10px;
+    flex-shrink: 0;
+  }
+
+  @media (max-width: 600px) {
+    .req-individual-list { grid-template-columns: 1fr; }
+  }
+
+
+  /* ─── NEW CLIENT BUTTON ─── */
+  .new-client-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 13px 28px;
+    background: linear-gradient(135deg, var(--gold-dim), var(--gold));
+    border: none;
+    border-radius: 99px;
+    color: white;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+    font-family: 'Nunito', sans-serif;
+    transition: all 0.2s;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 16px rgba(201,168,76,0.4);
+  }
+  .new-client-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 22px rgba(201,168,76,0.5); }
+
+  /* ─── CLIENT CARD (staff view) ─── */
+  .client-files-group.new-client { border-color: rgba(201,168,76,0.3); animation: fadeIn 0.4s ease; }
+
+  /* ─── UPLOAD CHECKLIST SELECTOR ─── */
+  .checklist-pick-section { margin-bottom: 14px; }
+  .checklist-pick-label { font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--gold-dim); margin-bottom: 8px; }
+  .checklist-pick-grid { display: flex; flex-direction: column; gap: 6px; max-height: 200px; overflow-y: auto; }
+  .checklist-pick-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 8px 12px;
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.15s;
+    background: rgba(255,255,255,0.02);
+  }
+  .checklist-pick-item:hover { border-color: rgba(201,168,76,0.3); background: rgba(201,168,76,0.05); }
+  .checklist-pick-item.selected { border-color: rgba(201,168,76,0.5); background: rgba(201,168,76,0.1); }
+  .checklist-pick-item.already-done { opacity: 0.4; cursor: not-allowed; }
+  .checklist-pick-radio {
+    width: 16px; height: 16px; border-radius: 50%;
+    border: 1.5px solid rgba(255,255,255,0.2);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; transition: all 0.15s;
+  }
+  .checklist-pick-item.selected .checklist-pick-radio {
+    background: var(--gold); border-color: var(--gold);
+  }
+  .checklist-pick-item.selected .checklist-pick-radio::after {
+    content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--navy);
+  }
+  .checklist-pick-icon { font-size: 15px; flex-shrink: 0; }
+  .checklist-pick-name { font-size: 12px; color: var(--white); flex: 1; }
+  .checklist-pick-done { font-size: 9px; color: var(--success); background: rgba(76,175,130,0.1); border: 1px solid rgba(76,175,130,0.25); border-radius: 8px; padding: 2px 8px; }
+
+  /* ─── CLIENT PORTAL LINK ─── */
+  .portal-link-box {
+    background: rgba(76,175,130,0.08);
+    border: 1px solid rgba(76,175,130,0.25);
+    border-radius: 10px;
+    padding: 14px 16px;
+    margin-top: 16px;
+  }
+  .portal-link-label { font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--success); margin-bottom: 6px; }
+  .portal-link-url { font-size: 11px; color: var(--white); font-family: monospace; word-break: break-all; margin-bottom: 8px; }
+  .portal-link-copy { padding: 5px 12px; background: rgba(76,175,130,0.15); border: 1px solid rgba(76,175,130,0.3); border-radius: 6px; color: var(--success); font-size: 10px; letter-spacing: 1px; text-transform: uppercase; cursor: pointer; font-family: 'Nunito', sans-serif; }
+
+  /* ─── FORM INPUT (shared) ─── */
+  .modal-input {
+    width: 100%;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(201,168,76,0.2);
+    border-radius: 8px;
+    color: var(--white);
+    font-family: 'Nunito', sans-serif;
+    font-size: 12px;
+    padding: 10px 14px;
+    margin-bottom: 4px;
+  }
+  .modal-input::placeholder { color: rgba(248,244,236,0.3); }
+  .modal-input:focus { outline: none; border-color: rgba(201,168,76,0.5); }
+
+
+  /* ═══ MAINTENANCE VIEW ═══ */
+  .maint-section { display: none; }
+  .maint-section.active { display: block; }
+
+  .maint-banner {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: linear-gradient(135deg, var(--purple-light), #FFF7ED);
+    border: 2px solid var(--navy-mid);
+    border-radius: var(--radius-md);
+    padding: 16px 22px;
+    margin-bottom: 28px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--dark);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .maint-card {
+    background: var(--white);
+    border: 2px solid var(--border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    margin-bottom: 20px;
+    box-shadow: var(--shadow-md);
+    transition: box-shadow 0.2s;
+  }
+
+  .maint-card:hover { box-shadow: var(--shadow-lg); }
+
+  .maint-card-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 18px 24px;
+    background: var(--surface-2);
+    border-bottom: 2px solid var(--border);
+  }
+
+  .maint-card-icon {
+    width: 42px; height: 42px;
+    border-radius: var(--radius-sm);
+    background: linear-gradient(135deg, var(--gold-pale), #FFF7ED);
+    border: 2px solid var(--gold-light);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+
+  .maint-card-title {
+    font-size: 15px;
+    font-weight: 800;
+    color: var(--text-main);
+    margin-bottom: 2px;
+  }
+
+  .maint-card-sub {
+    font-size: 12px;
+    color: var(--text-sub);
+    font-weight: 500;
+  }
+
+  .maint-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    padding: 22px 24px;
+  }
+
+  .maint-field { display: flex; flex-direction: column; gap: 6px; }
+  .maint-field--full { grid-column: 1 / -1; }
+
+  .maint-label {
+    font-size: 12px;
+    font-weight: 800;
+    color: var(--text-main);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .maint-hint {
+    font-size: 10px;
+    font-weight: 500;
+    color: var(--text-sub);
+  }
+
+  .maint-input {
+    border: 2px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 10px 14px;
+    font-size: 13px;
+    font-weight: 600;
+    font-family: 'Nunito', sans-serif;
+    color: var(--text-main);
+    background: var(--surface-2);
+    transition: all 0.2s;
+    width: 100%;
+  }
+
+  .maint-input:focus {
+    outline: none;
+    border-color: var(--navy);
+    background: var(--white);
+    box-shadow: 0 0 0 4px rgba(109,40,217,0.08);
+  }
+
+  .maint-input::placeholder { color: #C4B5D4; font-weight: 500; }
+
+  .maint-select {
+    border: 2px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 10px 14px;
+    font-size: 13px;
+    font-weight: 600;
+    font-family: 'Nunito', sans-serif;
+    color: var(--text-main);
+    background: var(--surface-2);
+    cursor: pointer;
+    appearance: none;
+    width: 100%;
+  }
+
+  .maint-select:focus { outline: none; border-color: var(--navy); box-shadow: 0 0 0 4px rgba(109,40,217,0.08); }
+
+  .maint-textarea {
+    border: 2px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 10px 14px;
+    font-size: 13px;
+    font-weight: 500;
+    font-family: 'Nunito', sans-serif;
+    color: var(--text-main);
+    background: var(--surface-2);
+    resize: vertical;
+    min-height: 70px;
+    line-height: 1.6;
+    width: 100%;
+    transition: all 0.2s;
+  }
+
+  .maint-textarea:focus { outline: none; border-color: var(--navy); background: var(--white); box-shadow: 0 0 0 4px rgba(109,40,217,0.08); }
+
+  .maint-mono { font-family: monospace !important; font-size: 12px !important; }
+
+  /* Drive status row */
+  .maint-drive-status {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 24px;
+    border-top: 1px solid var(--border);
+    background: var(--surface-2);
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-sub);
+  }
+
+  .maint-drive-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: #D1D5DB;
+    flex-shrink: 0;
+    transition: background 0.3s;
+  }
+
+  .maint-drive-dot.connected { background: var(--success); box-shadow: 0 0 6px rgba(16,185,129,0.5); }
+
+  .maint-drive-btn {
+    margin-left: auto;
+    padding: 7px 18px;
+    background: linear-gradient(135deg, #4285F4, #34A853);
+    color: white;
+    border: none;
+    border-radius: 99px;
+    font-size: 12px;
+    font-weight: 700;
+    font-family: 'Nunito', sans-serif;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 2px 8px rgba(66,133,244,0.3);
+  }
+
+  .maint-drive-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 14px rgba(66,133,244,0.4); }
+
+  /* Save bar */
+  .maint-save-bar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 20px 0 40px;
+  }
+
+  .maint-save-status {
+    flex: 1;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--success);
+  }
+
+  .maint-reset-btn {
+    padding: 11px 22px;
+    background: var(--surface-2);
+    border: 2px solid var(--border);
+    border-radius: 99px;
+    font-size: 12px;
+    font-weight: 700;
+    font-family: 'Nunito', sans-serif;
+    color: var(--text-sub);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .maint-reset-btn:hover { border-color: var(--rejected); color: var(--rejected); background: var(--rejected-light); }
+
+  .maint-save-btn {
+    padding: 12px 30px;
+    background: linear-gradient(135deg, var(--navy), var(--navy-mid));
+    color: white;
+    border: none;
+    border-radius: 99px;
+    font-size: 13px;
+    font-weight: 800;
+    font-family: 'Nunito', sans-serif;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 4px 16px rgba(109,40,217,0.35);
+  }
+
+  .maint-save-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 22px rgba(109,40,217,0.45); }
+
+  .maint-saved-tick {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--success);
+    font-weight: 700;
+    animation: fadeIn 0.3s ease;
+  }
+
+  @media (max-width: 600px) {
+    .maint-grid { grid-template-columns: 1fr; }
+    .maint-field--full { grid-column: 1; }
+  }
+
+  @media (max-width: 600px) {
+    .header { padding: 16px 20px; }
+    .main { padding: 32px 16px 60px; }
+    .required-grid { grid-template-columns: 1fr; }
+    .page-title { font-size: 28px; }
+    .staff-doc-date { display: none; }
+  }
+</style>
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <script src="https://apis.google.com/js/api.js" async defer></script>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="logo-wrap" style="flex-direction:row;align-items:center;gap:12px;">
+    <img src="data:image/png;base64,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" alt="Walk With You Capital logo" style="height:44px;width:auto;object-fit:contain;border-radius:6px;">
+    <div style="display:flex;flex-direction:column;">
+      <div class="logo-text">Walk With You Capital</div>
+      <div class="logo-sub">Document Portal</div>
+    </div>
+  </div>
+  <div class="header-right">
+    <div class="client-pill">
+      <div class="client-avatar">SJ</div>
+      <div class="client-info">
+        <div class="client-name-sm">Sarah Johnson</div>
+        <div class="client-id-sm">IC-2024-0082</div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main class="main">
+
+  <!-- VIEW TOGGLE -->
+  <div class="view-toggle">
+    <button class="toggle-btn active" onclick="setView('client')">📁 Client View</button>
+    <button class="toggle-btn" onclick="setView('staff')">👥 Staff View</button>
+    <button class="toggle-btn" onclick="setView('maintenance')">⚙️ Maintenance</button>
+  </div>
+
+  <!-- ═══ CLIENT VIEW ═══ -->
+  <div class="client-section" id="clientView">
+
+    <div class="page-hero">
+      <div class="page-eyebrow">Secure Document Submission</div>
+      <div class="page-title">Upload Your <span>Documents</span></div>
+      <div class="page-sub">Please upload all required documents below. Our team will review and confirm each one. You'll be notified once your documents have been checked.</div>
+    </div>
+
+    <!-- Progress -->
+    <div class="progress-bar-wrap">
+      <div class="progress-label"><strong id="progressCount">2</strong> of <strong>6</strong> required documents submitted</div>
+      <div class="progress-track">
+        <div class="progress-fill" id="progressFill" style="width: 33%;"></div>
+      </div>
+      <div class="progress-label" id="progressPct" style="color:var(--gold);">33%</div>
+    </div>
+
+    <!-- Client Folder Link -->
+    <div class="folder-banner" onclick="openClientFolder()" id="clientFolderBanner">
+      <div class="folder-icon">📁</div>
+      <div class="folder-info">
+        <div class="folder-title">Your Secure Document Folder</div>
+        <div class="folder-path" id="clientFolderPath">Sarah Johnson (IC-2024-0082) / All Documents</div>
+      </div>
+      <div class="folder-arrow">→</div>
+    </div>
+
+    <!-- Required Documents Picker -->
+    <div class="required-section">
+      <div class="section-label" style="margin-bottom:12px;">Required Documents</div>
+      <div class="req-tabs">
+        <button class="req-tab active" onclick="switchReqTab('individual',this)">📄 Individual Documents</button>
+        <button class="req-tab" onclick="switchReqTab('folders',this)">📂 Step Folders</button>
+      </div>
+      <div id="tabIndividual" class="req-tab-panel">
+        <div class="req-individual-list" id="reqIndividualList"></div>
+      </div>
+      <div id="tabFolders" class="req-tab-panel" style="display:none;">
+        <div id="stepFoldersList"></div>
+      </div>
+    </div>
+
+    <!-- Upload Zone -->
+    <div class="upload-zone" id="uploadZone" onclick="document.getElementById('fileInput').click()">
+      <div class="upload-icon-big">📤</div>
+      <div class="upload-title">Drop Files Here</div>
+      <div class="upload-sub">
+        Accepted formats: PDF, JPG, PNG · Max 20MB per file<br>
+        You can upload multiple files at once
+      </div>
+      <button class="upload-btn" onclick="event.stopPropagation(); document.getElementById('fileInput').click()">Choose Files</button>
+      <div class="or-divider">— or drag & drop —</div>
+      <div class="drag-hint">Files are encrypted and securely stored</div>
+      <input type="file" id="fileInput" multiple accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" onchange="handleFileSelect(event)">
+      <input type="file" id="folderFileInput" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" onchange="handleFolderFileSelect(event)" style="display:none;">
+    </div>
+
+    <!-- Uploaded Documents -->
+    <div class="uploaded-section">
+      <div class="section-label">Your Uploaded Documents</div>
+      <div class="docs-list" id="docsList">
+
+        <div class="doc-card" data-id="1">
+          <div class="doc-icon-wrap pdf">📄</div>
+          <div class="doc-info">
+            <div class="doc-name">Payslip - Sarah Johnson - 5 Jan 2024.pdf</div>
+            <div class="doc-meta">Uploaded 5 Jan 2024 · 1.2MB · PDF</div>
+          </div>
+          <div class="doc-right">
+            <span class="doc-status-pill pill-reviewed">✓ Reviewed</span>
+            <button class="doc-delete" title="Remove" onclick="removeDoc(this, '1')">✕</button>
+          </div>
+        </div>
+
+        <div class="doc-card" data-id="2">
+          <div class="doc-icon-wrap img">🪪</div>
+          <div class="doc-info">
+            <div class="doc-name">Photo ID - Sarah Johnson - 5 Jan 2024.jpg</div>
+            <div class="doc-meta">Uploaded 5 Jan 2024 · 850KB · Image</div>
+          </div>
+          <div class="doc-right">
+            <span class="doc-status-pill pill-reviewed">✓ Reviewed</span>
+            <button class="doc-delete" title="Remove" onclick="removeDoc(this, '2')">✕</button>
+          </div>
+        </div>
+
+        <div class="doc-card rejected-card" data-id="3">
+          <div style="flex:1;">
+            <div style="display:flex;align-items:center;gap:16px;">
+              <div class="doc-icon-wrap pdf">📄</div>
+              <div class="doc-info">
+                <div class="doc-name">Bank Statement - NAB - Sarah Johnson - 8 Jan 2024.pdf</div>
+                <div class="doc-meta">Uploaded 8 Jan 2024 · 2.1MB · PDF</div>
+              </div>
+              <div class="doc-right">
+                <span class="doc-status-pill pill-rejected">⚠ Returned</span>
+                <button class="doc-delete" title="Remove" onclick="removeDoc(this, '3')">✕</button>
+              </div>
+            </div>
+            <div class="rejection-note">
+              <div class="rejection-note-icon">↩</div>
+              <div><strong style="color:var(--rejected);">Returned by Emily Chen:</strong> The statement provided only covers one month. We need the last 3 months of statements in a single PDF. Please re-download from your bank's internet banking portal covering Oct–Dec 2023.</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <div class="empty-state" id="emptyState">No documents uploaded yet. Use the area above to get started.</div>
+    </div>
+
+  </div>
+
+  <!-- ═══ STAFF VIEW ═══ -->
+  <div class="staff-section" id="staffView">
+
+    <div class="staff-banner">
+      <span>👥</span>
+      <span><strong>Staff Dashboard</strong> — Review and approve client document submissions. Mark each file as reviewed once checked, or return it with an explanation if it's incorrect.</span>
+    </div>
+
+    <div class="staff-settings-row">
+      <button class="staff-settings-btn" onclick="openAssignModal()">⚙ Manage Assignments</button>
+      <button class="staff-settings-btn" onclick="openExplanationManager()">✏ Edit Explanations</button>
+      <button class="staff-settings-btn" onclick="openDocLibraryModal()">📋 Manage Doc Library</button>
+      <button class="staff-settings-btn" onclick="openStepFoldersModal()">📂 Manage Step Folders</button>
+      <button class="staff-settings-btn" onclick="openManageStaffModal()" style="background:rgba(107,79,160,0.1);border-color:rgba(107,79,160,0.3);color:#a88fd4;">👤 Manage Staff</button>
+      <div id="driveConnectWrap" style="display:flex;align-items:center;gap:8px;margin-left:auto;">
+        <div id="driveStatusDot" style="width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,0.2);flex-shrink:0;"></div>
+        <span id="driveStatusLabel" style="font-size:10px;color:var(--white-dim);">Google Drive not connected</span>
+        <button class="staff-settings-btn" id="driveConnectBtn" onclick="initiateDriveAuth()" style="background:rgba(66,133,244,0.12);border-color:rgba(66,133,244,0.35);color:#6ba3f5;">
+          🔗 Connect Google Drive
+        </button>
+      </div>
+    </div>
+
+    <!-- New Client Button -->
+    <button class="new-client-btn" onclick="openNewClientModal()">＋ New Client</button>
+
+    <!-- Dynamic clients rendered here -->
+    <div id="dynamicClientsList"></div>
+
+    <!-- Static demo clients (hidden - now rendered dynamically) -->
+    <div style="display:none;">
+    <div class="client-files-group">
+      <div class="client-files-header">
+        <div>
+          <div class="client-files-name">Sarah Johnson</div>
+          <div class="client-files-id">IC-2024-0082 · Step 5 — Financial Adviser</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <a class="client-folder-link" href="#" onclick="openStaffClientFolder('IC-2024-0082','Sarah Johnson');return false;">📁 Open Folder</a>
+          <span class="doc-status-pill pill-pending" id="badge-1">2 Pending Review</span>
+        </div>
+      </div>
+      <div class="staff-doc-row">
+        <div class="staff-doc-icon">📄</div>
+        <div class="staff-doc-name">
+          <div>Payslip_Nov2023.pdf</div>
+          <div class="staff-doc-saved-name">Payslip - Sarah Johnson - 5 Jan 2024.pdf</div>
+        </div>
+        <div class="staff-doc-date">5 Jan 2024 · 1.2MB</div>
+        <div class="staff-assignee-pill">Emily Chen</div>
+        <button class="review-btn done">✓ Reviewed</button>
+      </div>
+      <div class="staff-doc-row">
+        <div class="staff-doc-icon">🪪</div>
+        <div class="staff-doc-name">
+          <div>Drivers_Licence_Front.jpg</div>
+          <div class="staff-doc-saved-name">Photo ID - Sarah Johnson - 5 Jan 2024.jpg</div>
+        </div>
+        <div class="staff-doc-date">5 Jan 2024 · 850KB</div>
+        <div class="staff-assignee-pill">Marcus Webb</div>
+        <button class="review-btn done">✓ Reviewed</button>
+      </div>
+      <div class="staff-doc-row">
+        <div class="staff-doc-icon">📊</div>
+        <div class="staff-doc-name">
+          <div>Super_Statement_AustralianSuper.pdf</div>
+          <div class="staff-doc-saved-name">Super Statement - Australian Super - Sarah Johnson - 9 Jan 2024.pdf</div>
+        </div>
+        <div class="staff-doc-date">9 Jan 2024 · 990KB</div>
+        <div class="staff-assignee-pill">James Holloway</div>
+        <button class="review-btn" onclick="markReviewed(this, 'badge-1')">Mark Reviewed</button>
+        <button class="reject-btn" onclick="openRejectModal(this, 'badge-1', 'Super_Statement_AustralianSuper.pdf', 'Sarah Johnson')">Return</button>
+      </div>
+      <div class="staff-doc-row">
+        <div class="staff-doc-icon">🏦</div>
+        <div class="staff-doc-name">
+          <div>Bank_Statement_NAB_Jan.pdf</div>
+          <div class="staff-doc-saved-name">Bank Statement - NAB - Sarah Johnson - 8 Jan 2024.pdf</div>
+        </div>
+        <div class="staff-doc-date">8 Jan 2024 · 2.1MB</div>
+        <div class="staff-assignee-pill">Emily Chen</div>
+        <button class="review-btn" onclick="markReviewed(this, 'badge-1')">Mark Reviewed</button>
+        <button class="reject-btn" onclick="openRejectModal(this, 'badge-1', 'Bank_Statement_NAB_Jan.pdf', 'Sarah Johnson')">Return</button>
+      </div>
+    </div>
+
+    <!-- Client 2 -->
+    <div class="client-files-group">
+      <div class="client-files-header">
+        <div>
+          <div class="client-files-name">Daniel Tran</div>
+          <div class="client-files-id">IC-2024-0091 · Step 2 — Wealth Consultation</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <a class="client-folder-link" href="#" onclick="openStaffClientFolder('IC-2024-0091','Daniel Tran');return false;">📁 Open Folder</a>
+          <span class="doc-status-pill pill-pending" id="badge-2">3 Pending Review</span>
+        </div>
+      </div>
+      <div class="staff-doc-row">
+        <div class="staff-doc-icon">📄</div>
+        <div class="staff-doc-name">
+          <div>Payslip_Dec2023.pdf</div>
+          <div class="staff-doc-saved-name">Payslip - Daniel Tran - 6 Feb 2024.pdf</div>
+        </div>
+        <div class="staff-doc-date">6 Feb 2024 · 980KB</div>
+        <div class="staff-assignee-pill">Emily Chen</div>
+        <button class="review-btn" onclick="markReviewed(this, 'badge-2')">Mark Reviewed</button>
+        <button class="reject-btn" onclick="openRejectModal(this, 'badge-2', 'Payslip_Dec2023.pdf', 'Daniel Tran')">Return</button>
+      </div>
+      <div class="staff-doc-row">
+        <div class="staff-doc-icon">🪪</div>
+        <div class="staff-doc-name">
+          <div>Passport_Scan.jpg</div>
+          <div class="staff-doc-saved-name">Photo ID - Daniel Tran - 6 Feb 2024.jpg</div>
+        </div>
+        <div class="staff-doc-date">6 Feb 2024 · 1.4MB</div>
+        <div class="staff-assignee-pill">Marcus Webb</div>
+        <button class="review-btn" onclick="markReviewed(this, 'badge-2')">Mark Reviewed</button>
+        <button class="reject-btn" onclick="openRejectModal(this, 'badge-2', 'Passport_Scan.jpg', 'Daniel Tran')">Return</button>
+      </div>
+      <div class="staff-doc-row">
+        <div class="staff-doc-icon">🏦</div>
+        <div class="staff-doc-name">
+          <div>Bank_Statement_NAB_Q4.pdf</div>
+          <div class="staff-doc-saved-name">Bank Statement - NAB - Daniel Tran - 7 Feb 2024.pdf</div>
+        </div>
+        <div class="staff-doc-date">7 Feb 2024 · 2.1MB</div>
+        <div class="staff-assignee-pill">Emily Chen</div>
+        <button class="review-btn" onclick="markReviewed(this, 'badge-2')">Mark Reviewed</button>
+        <button class="reject-btn" onclick="openRejectModal(this, 'badge-2', 'Bank_Statement_NAB_Q4.pdf', 'Daniel Tran')">Return</button>
+      </div>
+    </div>
+
+    <!-- Client 3 -->
+    <div class="client-files-group">
+      <div class="client-files-header">
+        <div>
+          <div class="client-files-name">Priya Nair</div>
+          <div class="client-files-id">IC-2024-0075 · Step 9 — Choosing Home</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <a class="client-folder-link" href="#" onclick="openStaffClientFolder('IC-2024-0075','Priya Nair');return false;">📁 Open Folder</a>
+          <span class="doc-status-pill pill-reviewed" id="badge-3">All Reviewed</span>
+        </div>
+      </div>
+      <div class="staff-doc-row">
+        <div class="staff-doc-icon">📄</div>
+        <div class="staff-doc-name">
+          <div>Employment_Letter_Telstra.pdf</div>
+          <div class="staff-doc-saved-name">Employment Letter - Telstra - Priya Nair - 3 Jan 2024.pdf</div>
+        </div>
+        <div class="staff-doc-date">3 Jan 2024 · 760KB</div>
+        <div class="staff-assignee-pill">Marcus Webb</div>
+        <button class="review-btn done">✓ Reviewed</button>
+      </div>
+      <div class="staff-doc-row">
+        <div class="staff-doc-icon">📋</div>
+        <div class="staff-doc-name">
+          <div>Tax_Return_FY2023.pdf</div>
+          <div class="staff-doc-saved-name">Tax Return - Priya Nair - 2023 to 2024.pdf</div>
+        </div>
+        <div class="staff-doc-date">3 Jan 2024 · 1.8MB</div>
+        <div class="staff-assignee-pill">James Holloway</div>
+        <button class="review-btn done">✓ Reviewed</button>
+      </div>
+    </div>
+
+    </div><!-- end hidden static clients -->
+  </div>
+
+
+  <!-- ═══ MAINTENANCE VIEW ═══ -->
+  <div class="maint-section" id="maintenanceView">
+
+    <div class="maint-banner">
+      <span style="font-size:20px;">⚙️</span>
+      <span><strong>Maintenance &amp; Settings</strong> — Configure all portal defaults. Changes are saved to this browser and applied immediately.</span>
+    </div>
+
+    <!-- ── BRANDING ── -->
+    <div class="maint-card">
+      <div class="maint-card-header">
+        <div class="maint-card-icon">🏢</div>
+        <div>
+          <div class="maint-card-title">Branding</div>
+          <div class="maint-card-sub">Company name, portal title and client ID format</div>
+        </div>
+      </div>
+      <div class="maint-grid">
+        <div class="maint-field">
+          <label class="maint-label">Company Name</label>
+          <input class="maint-input" id="cfg-companyName" placeholder="Walk With You Capital">
+        </div>
+        <div class="maint-field">
+          <label class="maint-label">Portal Subtitle</label>
+          <input class="maint-input" id="cfg-portalSubtitle" placeholder="Document Portal">
+        </div>
+        <div class="maint-field">
+          <label class="maint-label">Client ID Prefix</label>
+          <input class="maint-input" id="cfg-clientIdPrefix" placeholder="IC">
+        </div>
+        <div class="maint-field">
+          <label class="maint-label">ID Format</label>
+          <select class="maint-select" id="cfg-clientIdFormat">
+            <option value="PREFIX-YYYY-NNNN">IC-2024-0082</option>
+            <option value="PREFIX-NNNN">IC-0082</option>
+            <option value="PREFIX-YYYYNNNN">IC-20240082</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── UPLOAD SETTINGS ── -->
+    <div class="maint-card">
+      <div class="maint-card-header">
+        <div class="maint-card-icon">📤</div>
+        <div>
+          <div class="maint-card-title">Upload Settings</div>
+          <div class="maint-card-sub">File size limits and accepted formats</div>
+        </div>
+      </div>
+      <div class="maint-grid">
+        <div class="maint-field">
+          <label class="maint-label">Max File Size (MB)</label>
+          <input class="maint-input" id="cfg-maxFileMb" type="number" min="1" max="500" placeholder="20">
+        </div>
+        <div class="maint-field">
+          <label class="maint-label">Accepted File Types</label>
+          <input class="maint-input" id="cfg-acceptedTypes" placeholder=".pdf,.jpg,.jpeg,.png,.doc,.docx">
+        </div>
+        <div class="maint-field maint-field--full">
+          <label class="maint-label">Upload Zone Hint Text</label>
+          <input class="maint-input" id="cfg-uploadHint" placeholder="Files are encrypted and securely stored">
+        </div>
+      </div>
+    </div>
+
+    <!-- ── CLIENT-FACING COPY ── -->
+    <div class="maint-card">
+      <div class="maint-card-header">
+        <div class="maint-card-icon">✏️</div>
+        <div>
+          <div class="maint-card-title">Client-Facing Copy</div>
+          <div class="maint-card-sub">Text shown to clients on their upload page</div>
+        </div>
+      </div>
+      <div class="maint-grid">
+        <div class="maint-field">
+          <label class="maint-label">Page Eyebrow</label>
+          <input class="maint-input" id="cfg-eyebrow" placeholder="Secure Document Submission">
+        </div>
+        <div class="maint-field">
+          <label class="maint-label">Page Title</label>
+          <input class="maint-input" id="cfg-pageTitle" placeholder="Upload Your Documents">
+        </div>
+        <div class="maint-field maint-field--full">
+          <label class="maint-label">Page Subtitle</label>
+          <textarea class="maint-textarea" id="cfg-pageSub" rows="2" placeholder="Please upload all required documents below..."></textarea>
+        </div>
+        <div class="maint-field maint-field--full">
+          <label class="maint-label">Upload Modal Subtitle</label>
+          <textarea class="maint-textarea" id="cfg-uploadModalSub" rows="2" placeholder="Fill in the details below so this document is filed correctly..."></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── GOOGLE DRIVE ── -->
+    <div class="maint-card">
+      <div class="maint-card-header">
+        <div class="maint-card-icon" style="background:linear-gradient(135deg,#4285F4,#34A853);color:white;">📁</div>
+        <div>
+          <div class="maint-card-title">Google Drive</div>
+          <div class="maint-card-sub">OAuth credentials and root folder for client document storage</div>
+        </div>
+      </div>
+      <div class="maint-grid">
+        <div class="maint-field maint-field--full">
+          <label class="maint-label">Client ID</label>
+          <input class="maint-input maint-mono" id="cfg-driveClientId" placeholder="574128239955-xxxx.apps.googleusercontent.com">
+        </div>
+        <div class="maint-field maint-field--full">
+          <label class="maint-label">Root Folder ID <span class="maint-hint">(from the Drive URL after /folders/)</span></label>
+          <input class="maint-input maint-mono" id="cfg-driveFolderId" placeholder="15puRUXEiAg7naBS9W3RLtX5cxBGa6APf">
+        </div>
+      </div>
+      <div class="maint-drive-status" id="maintDriveStatus">
+        <div class="maint-drive-dot" id="maintDriveDot"></div>
+        <span id="maintDriveLabel">Not connected</span>
+        <button class="maint-drive-btn" onclick="initiateDriveAuth()">Connect Now</button>
+      </div>
+    </div>
+
+    <!-- ── NOTIFICATIONS ── -->
+    <div class="maint-card">
+      <div class="maint-card-header">
+        <div class="maint-card-icon">📧</div>
+        <div>
+          <div class="maint-card-title">Notifications</div>
+          <div class="maint-card-sub">Email settings for upload and review alerts</div>
+        </div>
+      </div>
+      <div class="maint-grid">
+        <div class="maint-field">
+          <label class="maint-label">Sender Name</label>
+          <input class="maint-input" id="cfg-senderName" placeholder="Walk With You Capital Portal">
+        </div>
+        <div class="maint-field">
+          <label class="maint-label">Reply-To Email</label>
+          <input class="maint-input" id="cfg-replyTo" type="email" placeholder="portal@walkwithyoucapital.com.au">
+        </div>
+        <div class="maint-field maint-field--full">
+          <label class="maint-label">Upload Notification Message</label>
+          <textarea class="maint-textarea" id="cfg-uploadNotifMsg" rows="2" placeholder="A new document has been uploaded and is ready for your review."></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── SAVE BAR ── -->
+    <div class="maint-save-bar">
+      <div class="maint-save-status" id="maintSaveStatus"></div>
+      <button class="maint-reset-btn" onclick="resetSettings()">↺ Reset to Defaults</button>
+      <button class="maint-save-btn" onclick="saveSettings()">💾 Save All Settings</button>
+    </div>
+
+  </div>
+
+</main>
+
+<!-- ══ UPLOAD MODAL ══ -->
+<div class="modal-overlay" id="uploadModal">
+  <div class="modal" style="max-width:520px;">
+    <button class="modal-close" onclick="closeModal('uploadModal')">✕</button>
+    <div class="modal-title">Confirm Upload</div>
+    <div class="modal-sub">Fill in the details below so this document is filed correctly. The file will be renamed automatically.</div>
+
+    <div class="modal-label">Document Type</div>
+    <select class="modal-doctype-select" id="docTypeSelect" onchange="updateSavedNamePreview(); if(pendingFiles.length) { selectedChecklistDocId=null; currentSuggestedDocId=null; const s=document.getElementById('smartDetectSection'); if(s) s.style.display='none'; setTimeout(runSmartDetection,80); }">
+      <option value="Payslip">Payslip</option>
+      <option value="Bank Statement">Bank Statement</option>
+      <option value="Income Statement">Income Statement</option>
+      <option value="Tax Return">Tax Return</option>
+      <option value="Payout Letter">Payout Letter</option>
+      <option value="Employment Letter">Employment Letter</option>
+      <option value="Super Statement">Super Statement</option>
+      <option value="Photo ID">Photo ID</option>
+      <option value="Other">Other</option>
+    </select>
+
+    <div class="modal-label" style="margin-top:14px;">Institution / Employer <span style="color:var(--white-dim);font-size:9px;text-transform:none;letter-spacing:0;">(optional — e.g. Westpac, Sweet Treats Pty Ltd)</span></div>
+    <input type="text" class="modal-doctype-select" id="institutionInput" placeholder="Leave blank if not applicable" oninput="updateSavedNamePreview()" style="margin-bottom:0;">
+
+    <div class="modal-label" style="margin-top:14px;">Date Type</div>
+    <select class="modal-doctype-select" id="dateTypeSelect" onchange="toggleDateFields(); updateSavedNamePreview()">
+      <option value="single">Single date (e.g. 23 Mar 2023)</option>
+      <option value="range">Date range (e.g. 23 Mar 2023 to 30 Mar 2023)</option>
+      <option value="year_range">Financial / tax year (e.g. 2025 to 2026)</option>
+    </select>
+
+    <div id="dateFieldsSingle" style="margin-top:10px;">
+      <div class="modal-label">Date</div>
+      <input type="date" class="modal-doctype-select" id="singleDate" oninput="updateSavedNamePreview()">
+    </div>
+
+    <div id="dateFieldsRange" style="display:none;margin-top:10px;display:none;">
+      <div style="display:flex;gap:10px;align-items:center;">
+        <div style="flex:1;">
+          <div class="modal-label">From</div>
+          <input type="date" class="modal-doctype-select" id="rangeFrom" oninput="updateSavedNamePreview()">
+        </div>
+        <div style="color:var(--white-dim);margin-top:18px;">to</div>
+        <div style="flex:1;">
+          <div class="modal-label">To</div>
+          <input type="date" class="modal-doctype-select" id="rangeTo" oninput="updateSavedNamePreview()">
+        </div>
+      </div>
+    </div>
+
+    <div id="dateFieldsYearRange" style="display:none;margin-top:10px;">
+      <div style="display:flex;gap:10px;align-items:center;">
+        <div style="flex:1;">
+          <div class="modal-label">Year From</div>
+          <input type="number" class="modal-doctype-select" id="yearFrom" placeholder="e.g. 2025" min="2000" max="2099" oninput="updateSavedNamePreview()">
+        </div>
+        <div style="color:var(--white-dim);margin-top:18px;">to</div>
+        <div style="flex:1;">
+          <div class="modal-label">Year To</div>
+          <input type="number" class="modal-doctype-select" id="yearTo" placeholder="e.g. 2026" min="2000" max="2099" oninput="updateSavedNamePreview()">
+        </div>
+      </div>
+    </div>
+
+    <div class="saved-name-preview" id="savedNamePreview" style="margin-top:14px;">File will be saved as: <span id="savedNameSpan">—</span></div>
+
+    <div class="modal-file-list" id="modalFileList" style="margin-top:14px;"></div>
+
+    <!-- Smart doc detection -->
+    <div id="smartDetectSection" style="margin-top:14px;display:none;">
+
+      <!-- Smart suggestion banner -->
+      <div id="smartSuggestionBanner" style="display:none;">
+        <div style="background:rgba(201,168,76,0.08);border:1px solid rgba(201,168,76,0.25);border-radius:10px;padding:14px 16px;margin-bottom:10px;">
+          <div style="font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold-dim);margin-bottom:8px;">📎 We think this might be...</div>
+          <div style="display:flex;align-items:center;gap:12px;">
+            <div id="smartSuggestIcon" style="font-size:24px;"></div>
+            <div style="flex:1;">
+              <div id="smartSuggestName" style="font-size:14px;font-weight:600;color:var(--white);margin-bottom:2px;"></div>
+              <div id="smartSuggestReason" style="font-size:10px;color:var(--white-dim);"></div>
+            </div>
+          </div>
+          <div style="display:flex;gap:8px;margin-top:12px;">
+            <button onclick="confirmSuggestion()" style="flex:1;padding:9px;background:linear-gradient(135deg,var(--gold-dim),var(--gold));border:none;border-radius:8px;color:var(--navy);font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;cursor:pointer;font-family:'Montserrat',sans-serif;">
+              ✓ Yes, that's right
+            </button>
+            <button onclick="declineSuggestion()" style="flex:1;padding:9px;background:transparent;border:1px solid rgba(255,255,255,0.15);border-radius:8px;color:var(--white-dim);font-size:11px;letter-spacing:1px;text-transform:uppercase;cursor:pointer;font-family:'Montserrat',sans-serif;">
+              No, let me choose
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Full picker (shown after declining suggestion, or if no suggestion) -->
+      <div id="fullPickerSection" style="display:none;">
+        <div style="font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold-dim);margin-bottom:8px;">Which required document does this satisfy?</div>
+        <div class="checklist-pick-grid" id="checklistPickGrid"></div>
+        <div style="font-size:10px;color:var(--white-dim);margin-top:8px;font-style:italic;">Leave unselected if this is an additional document not on the list.</div>
+      </div>
+
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeModal('uploadModal')">Cancel</button>
+      <button class="btn-primary" onclick="submitUpload()">Upload Files</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ REJECT MODAL ══ -->
+<div class="modal-overlay" id="rejectModal">
+  <div class="modal reject-modal">
+    <button class="modal-close" onclick="closeModal('rejectModal')">✕</button>
+    <div class="modal-title">Return Document</div>
+    <div class="modal-sub" id="rejectModalSub">Provide an explanation so the client knows exactly what to fix and resubmit.</div>
+    <div class="modal-label">Rejection Reason</div>
+    <textarea class="modal-textarea" id="rejectReason" placeholder="e.g. The statement only covers one month. Please provide the last 3 months in a single PDF covering Oct–Dec 2023."></textarea>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeModal('rejectModal')">Cancel</button>
+      <button class="btn-danger" onclick="submitReject()">Return to Client</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ ASSIGN MODAL ══ -->
+<div class="modal-overlay" id="assignModal">
+  <div class="modal assign-modal">
+    <button class="modal-close" onclick="closeModal('assignModal')">✕</button>
+    <div class="modal-title">Document Assignments</div>
+    <div class="modal-sub">Assign each document type to a staff member. They will receive an email notification when a client uploads that document type.</div>
+
+    <div id="assignList"><!-- rendered by renderAssignModal() --></div>
+
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeModal('assignModal')">Cancel</button>
+      <button class="btn-primary" onclick="saveAssignments()">Save Assignments</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ EXPLANATION MANAGER MODAL ══ -->
+<div class="modal-overlay" id="explanationModal">
+  <div class="modal" style="max-width:540px;">
+    <button class="modal-close" onclick="closeModal('explanationModal')">✕</button>
+    <div class="modal-title">Edit Explanations</div>
+    <div class="modal-sub">These notes appear when clients hover over the ℹ button on each document requirement. Keep them clear and specific.</div>
+
+    <div id="explanationList">
+      <div style="margin-bottom:14px;">
+        <div class="modal-label">💼 Recent Payslips</div>
+        <textarea class="modal-textarea" data-doc="payslip" style="height:80px;">Please provide your two most recent payslips showing your employer name, gross and net salary, and pay date. Must be within the last 60 days.</textarea>
+      </div>
+      <div style="margin-bottom:14px;">
+        <div class="modal-label">🪪 Photo ID</div>
+        <textarea class="modal-textarea" data-doc="id" style="height:80px;">We accept Australian Driver's Licence (front & back) or a current passport. Ensure the document is not expired and all details are clearly visible.</textarea>
+      </div>
+      <div style="margin-bottom:14px;">
+        <div class="modal-label">🏦 Bank Statements</div>
+        <textarea class="modal-textarea" data-doc="bank" style="height:80px;">Download statements directly from your bank's internet banking (PDF format preferred). Must show your full name, BSB, account number, and all transactions for the period.</textarea>
+      </div>
+      <div style="margin-bottom:14px;">
+        <div class="modal-label">📊 Super Statement</div>
+        <textarea class="modal-textarea" data-doc="super" style="height:80px;">Your most recent superannuation annual statement. You can find this in your super fund's online portal under "Statements". Shows your member number and balance.</textarea>
+      </div>
+      <div style="margin-bottom:14px;">
+        <div class="modal-label">📋 Tax Return</div>
+        <textarea class="modal-textarea" data-doc="tax" style="height:80px;">Your most recent Notice of Assessment from the ATO, or the full tax return lodged with your accountant. Log in to myGov to download this.</textarea>
+      </div>
+      <div style="margin-bottom:14px;">
+        <div class="modal-label">📝 Employment Letter</div>
+        <textarea class="modal-textarea" data-doc="employment" style="height:80px;">A letter on company letterhead from your employer confirming your position, start date, employment type (full-time/part-time/casual), and annual salary.</textarea>
+      </div>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeModal('explanationModal')">Cancel</button>
+      <button class="btn-primary" onclick="saveExplanations()">Save Explanations</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══ DOC LIBRARY MODAL ══ -->
+<div class="modal-overlay" id="docLibraryModal">
+  <div class="modal" style="max-width:580px;">
+    <button class="modal-close" onclick="closeModal('docLibraryModal')">✕</button>
+    <div class="modal-title">Document Library</div>
+    <div class="modal-sub">Add, edit or remove document types from the library. These appear as individual documents clients can select.</div>
+    <div id="docLibraryList" style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px;max-height:340px;overflow-y:auto;"></div>
+    <button class="staff-settings-btn" onclick="addDocToLibrary()" style="margin-bottom:16px;">+ Add New Document Type</button>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeModal('docLibraryModal')">Cancel</button>
+      <button class="btn-primary" onclick="saveDocLibrary()">Save Library</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ STEP FOLDERS MODAL ══ -->
+<div class="modal-overlay" id="stepFoldersModal">
+  <div class="modal" style="max-width:640px;">
+    <button class="modal-close" onclick="closeModal('stepFoldersModal')">✕</button>
+    <div class="modal-title">Step Folders</div>
+    <div class="modal-sub">Create folders for each step of the process. Each folder holds a set of required documents. Clients can select all or pick individually.</div>
+    <div id="stepFoldersEditorList" style="display:flex;flex-direction:column;gap:12px;margin-bottom:16px;max-height:400px;overflow-y:auto;"></div>
+    <button class="staff-settings-btn" onclick="addStepFolder()" style="margin-bottom:16px;">+ Add New Step Folder</button>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeModal('stepFoldersModal')">Cancel</button>
+      <button class="btn-primary" onclick="saveStepFolders()">Save Folders</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══ MANAGE STAFF MODAL ══ -->
+<div class="modal-overlay" id="manageStaffModal">
+  <div class="modal" style="max-width:560px;">
+    <button class="modal-close" onclick="closeModal('manageStaffModal')">✕</button>
+    <div class="modal-title">Manage Staff</div>
+    <div class="modal-sub">Add or edit staff members. Their names and email addresses appear in all document assignment dropdowns throughout the portal.</div>
+    <div id="staffMemberList" style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px;max-height:380px;overflow-y:auto;"></div>
+    <button class="staff-settings-btn" onclick="addStaffMember()" style="margin-bottom:16px;">+ Add Staff Member</button>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeModal('manageStaffModal')">Cancel</button>
+      <button class="btn-primary" onclick="saveStaffMembers()">Save Staff</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══ NEW CLIENT MODAL ══ -->
+<div class="modal-overlay" id="newClientModal">
+  <div class="modal" style="max-width:520px;">
+    <button class="modal-close" onclick="closeModal('newClientModal')">✕</button>
+    <div class="modal-title">Add New Client</div>
+    <div class="modal-sub">Create a new client profile. A unique portal link will be generated and their Google Drive folder created automatically.</div>
+
+    <div class="modal-label">Full Name *</div>
+    <input class="modal-input" id="newClientName" placeholder="e.g. Julie Jones" type="text">
+
+    <div class="modal-label" style="margin-top:12px;">Client ID *</div>
+    <input class="modal-input" id="newClientId" placeholder="e.g. IC-2024-0105" type="text">
+
+    <div class="modal-label" style="margin-top:12px;">Email Address *</div>
+    <input class="modal-input" id="newClientEmail" placeholder="e.g. julie.jones@email.com" type="email">
+
+    <div class="modal-label" style="margin-top:12px;">Phone (optional)</div>
+    <input class="modal-input" id="newClientPhone" placeholder="e.g. 0412 345 678" type="text">
+
+    <div class="modal-label" style="margin-top:12px;">Current Step</div>
+    <input class="modal-input" id="newClientStep" placeholder="e.g. Step 1 — Initial Consultation" type="text">
+
+    <div class="modal-label" style="margin-top:12px;">Assigned Adviser</div>
+    <select class="modal-input" id="newClientAdviser" style="appearance:none;cursor:pointer;"></select>
+
+    <div class="modal-label" style="margin-top:12px;">Required Documents</div>
+    <div id="newClientDocPicker" style="display:flex;flex-direction:column;gap:6px;max-height:180px;overflow-y:auto;"></div>
+
+    <div id="newClientPortalLink" class="portal-link-box" style="display:none;">
+      <div class="portal-link-label">✓ Client Portal Link</div>
+      <div class="portal-link-url" id="newClientPortalUrl"></div>
+      <button class="portal-link-copy" onclick="copyPortalLink()">Copy Link</button>
+    </div>
+
+    <div class="modal-actions" style="margin-top:20px;">
+      <button class="btn-secondary" onclick="closeModal('newClientModal')">Cancel</button>
+      <button class="btn-primary" id="newClientSaveBtn" onclick="saveNewClient()">Create Client</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast">
+  <span style="font-size:18px;" id="toastIcon">✅</span>
+  <span id="toastMsg">Files uploaded successfully!</span>
+</div>
+
+<script>
+  let pendingFiles = [];
+  let docCounter = 10;
+  let uploadedCount = 2;
+  const totalRequired = 6;
+
+  // Current reject context
+  let rejectContext = { btn: null, badgeId: null, filename: null, clientName: null };
+
+  // ─── STAFF MEMBERS (name + email, editable) ───
+  let staffMembers = [
+    { id:'s1', name:'Emily Chen',     email:'emily.chen@walkwithyoucapital.com.au'     },
+    { id:'s2', name:'Marcus Webb',    email:'marcus.webb@walkwithyoucapital.com.au'    },
+    { id:'s3', name:'James Holloway', email:'james.holloway@walkwithyoucapital.com.au' },
+    { id:'s4', name:'Priya Sharma',   email:'priya.sharma@walkwithyoucapital.com.au'   },
+  ];
+
+  // assignments: docKey -> staff id
+  const staffAssignments = {
+    payslip: 's1',
+    id:      's2',
+    bank:    's1',
+    super:   's3',
+    tax:     's3',
+    employment: 's2'
+  };
+
+  function getStaffById(id) { return staffMembers.find(s => s.id === id); }
+  function getStaffName(id) { const s = getStaffById(id); return s ? s.name : 'Unassigned'; }
+  function getStaffEmail(id){ const s = getStaffById(id); return s ? s.email : ''; }
+
+  const docExplanations = {
+    payslip: 'Please provide your two most recent payslips showing your employer name, gross and net salary, and pay date. Must be within the last 60 days.',
+    id: 'We accept Australian Driver\'s Licence (front & back) or a current passport. Ensure the document is not expired and all details are clearly visible.',
+    bank: 'Download statements directly from your bank\'s internet banking (PDF format preferred). Must show your full name, BSB, account number, and all transactions for the period.',
+    super: 'Your most recent superannuation annual statement. You can find this in your super fund\'s online portal under "Statements". Shows your member number and balance.',
+    tax: 'Your most recent Notice of Assessment from the ATO, or the full tax return lodged with your accountant. Log in to myGov to download this.',
+    employment: 'A letter on company letterhead from your employer confirming your position, start date, employment type (full-time/part-time/casual), and annual salary.'
+  };
+
+
+  // ═══════════════════════════════════════════════════
+  // DOC LIBRARY & STEP FOLDERS DATA
+  // ═══════════════════════════════════════════════════
+
+  let docLibrary = [
+    { id:'payslip',    icon:'💼', name:'Recent Payslips',    desc:'Last 2 payslips (PDF or image)',         assignee:'s1', note:"Please provide your two most recent payslips showing employer name, gross/net salary, and pay date. Must be within the last 60 days.", uploaded:true  },
+    { id:'id',         icon:'🪪', name:'Photo ID',           desc:"Driver's licence or passport",           assignee:'s2', note:"We accept Australian Driver's Licence (front & back) or a current passport. Ensure the document is not expired.",                   uploaded:true  },
+    { id:'bank',       icon:'🏦', name:'Bank Statements',    desc:'Last 3 months of statements',            assignee:'s1', note:"Download statements from your bank's internet banking (PDF preferred). Must show full name, BSB, account number and all transactions.", uploaded:false },
+    { id:'super',      icon:'📊', name:'Super Statement',    desc:'Most recent annual statement',           assignee:'s3', note:"Your most recent super annual statement. Find it in your super fund's online portal under 'Statements'.",                             uploaded:false },
+    { id:'tax',        icon:'📋', name:'Tax Return',         desc:'Most recent ATO tax return',             assignee:'s3', note:"Your most recent Notice of Assessment from the ATO, or the full tax return lodged with your accountant. Log in to myGov to download.", uploaded:false },
+    { id:'employment', icon:'📝', name:'Employment Letter',  desc:'Letter confirming your employment',      assignee:'s2', note:"A letter on company letterhead confirming your position, start date, employment type and annual salary.",                              uploaded:false },
+    { id:'rates',      icon:'🏠', name:'Council Rates',      desc:'Most recent council rates notice',       assignee:'s1', note:"Your most recent council rates notice showing the property address and current owner.",                                                uploaded:false },
+    { id:'insurance',  icon:'🛡', name:'Insurance Documents',desc:'Current home or landlord insurance',     assignee:'s2', note:"Current policy documents showing coverage details, policy number and expiry date.",                                                    uploaded:false },
+  ];
+
+  let stepFolders = [
+    {
+      id:'step1', icon:'📋', name:'Step 1 — Initial Consultation', desc:'Documents needed before your first meeting',
+      docs: ['payslip','id','bank']
+    },
+    {
+      id:'step2', icon:'💰', name:'Step 2 — Financial Assessment', desc:'Income, tax and super documentation',
+      docs: ['payslip','tax','super','employment']
+    },
+    {
+      id:'step3', icon:'🏡', name:'Step 3 — Property Purchase', desc:'All documents for property application',
+      docs: ['payslip','id','bank','super','tax','employment']
+    },
+    {
+      id:'step4', icon:'🔑', name:'Step 4 — Settlement Preparation', desc:'Final documents before settlement',
+      docs: ['rates','insurance','bank']
+    },
+  ];
+
+  // Track which folder docs are checked by the client
+  let folderSelections = {}; // folderId -> Set of doc ids
+
+  // ─── TAB SWITCHING ───
+  function switchReqTab(tab, btn) {
+    document.querySelectorAll('.req-tab').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tabIndividual').style.display = tab === 'individual' ? 'block' : 'none';
+    document.getElementById('tabFolders').style.display    = tab === 'folders'    ? 'block' : 'none';
+  }
+
+  // ─── RENDER INDIVIDUAL DOC LIST ───
+  function renderIndividualDocs() {
+    const container = document.getElementById('reqIndividualList');
+    if (!container) return;
+    container.innerHTML = '';
+    docLibrary.forEach(doc => {
+      const div = document.createElement('div');
+      div.className = 'req-doc-item' + (doc.uploaded ? ' uploaded' : '');
+      div.dataset.id = doc.id;
+      div.innerHTML = `
+        <div class="req-doc-icon">${doc.icon}</div>
+        <div class="req-doc-body">
+          <div class="req-doc-name">${doc.name}</div>
+          <div class="req-doc-desc">${doc.desc}</div>
+          <div class="req-doc-meta">
+            <div class="req-doc-assignee"><div class="req-doc-assignee-dot"></div>${getStaffName(doc.assignee)}</div>
+          </div>
+        </div>
+        <div class="req-doc-right">
+          <div class="info-btn" onclick="event.stopPropagation()" title="Staff note">i
+            <div class="info-tooltip">
+              <div class="info-tooltip-header">Staff Note</div>
+              ${doc.note}
+            </div>
+          </div>
+          <div class="req-doc-check">${doc.uploaded ? '✓' : ''}</div>
+        </div>`;
+      container.appendChild(div);
+    });
+  }
+
+  // ─── RENDER STEP FOLDERS ───
+  function renderStepFolders() {
+    const container = document.getElementById('stepFoldersList');
+    if (!container) return;
+    container.innerHTML = '';
+
+    stepFolders.forEach(folder => {
+      const folderDocs = folder.docs.map(id => docLibrary.find(d => d.id === id)).filter(Boolean);
+      const doneCount  = folderDocs.filter(d => d.uploaded).length;
+      const totalCount = folderDocs.length;
+      const allDone    = doneCount === totalCount;
+
+      if (!folderSelections[folder.id]) folderSelections[folder.id] = new Set();
+
+      const div = document.createElement('div');
+      div.className = 'step-folder';
+      div.id = 'folder-' + folder.id;
+
+      div.innerHTML = `
+        <div class="step-folder-header" onclick="toggleFolder('${folder.id}')">
+          <div class="step-folder-icon">${folder.icon}</div>
+          <div class="step-folder-info">
+            <div class="step-folder-name">${folder.name}</div>
+            <div class="step-folder-desc">${folder.desc}</div>
+          </div>
+          <div class="step-folder-meta">
+            <div class="step-folder-count ${allDone ? 'all-done' : ''}">${allDone ? '✓ Complete' : doneCount + ' / ' + totalCount + ' uploaded'}</div>
+            <div class="step-folder-chevron">›</div>
+          </div>
+        </div>
+        <div class="step-folder-body">
+          <div class="step-folder-actions">
+            <button class="select-all-btn" onclick="selectAllFolder('${folder.id}')">Select All</button>
+            <span class="folder-sel-count" id="selcount-${folder.id}">0 selected</span>
+            <button class="folder-upload-btn" id="folderupload-${folder.id}" onclick="uploadFolderDocs('${folder.id}')">Upload Selected ↑</button>
+          </div>
+          <div id="folderdocs-${folder.id}">
+            ${folderDocs.map(doc => `
+              <div class="step-doc-row ${doc.uploaded ? 'doc-done' : ''}" id="steprow-${folder.id}-${doc.id}" onclick="${doc.uploaded ? '' : "toggleFolderDoc('" + folder.id + "','" + doc.id + "')"}">
+                <div class="step-doc-checkbox">${doc.uploaded ? '✓' : ''}</div>
+                <div class="step-doc-icon">${doc.icon}</div>
+                <div style="flex:1;">
+                  <div class="step-doc-name">${doc.name}</div>
+                  <div class="step-doc-desc">${doc.desc}</div>
+                </div>
+                ${doc.uploaded ? '<div class="step-doc-done-badge">✓ Uploaded</div>' : ''}
+                <div class="info-btn" onclick="event.stopPropagation()" style="flex-shrink:0;" title="Staff note">i
+                  <div class="info-tooltip"><div class="info-tooltip-header">Staff Note</div>${doc.note}</div>
+                </div>
+              </div>`).join('')}
+          </div>
+        </div>`;
+
+      container.appendChild(div);
+    });
+  }
+
+  function toggleFolder(folderId) {
+    const el = document.getElementById('folder-' + folderId);
+    el.classList.toggle('open');
+  }
+
+  function toggleFolderDoc(folderId, docId) {
+    const sel = folderSelections[folderId];
+    const row = document.getElementById('steprow-' + folderId + '-' + docId);
+    if (!sel || !row) return;
+    if (sel.has(docId)) { sel.delete(docId); row.classList.remove('doc-checked'); row.querySelector('.step-doc-checkbox').textContent = ''; }
+    else                { sel.add(docId);    row.classList.add('doc-checked');    row.querySelector('.step-doc-checkbox').textContent = '✓'; }
+    updateFolderActionBar(folderId);
+  }
+
+  function selectAllFolder(folderId) {
+    const folder = stepFolders.find(f => f.id === folderId);
+    if (!folder) return;
+    const sel = folderSelections[folderId];
+    const folderDocs = folder.docs.map(id => docLibrary.find(d => d.id === id)).filter(d => d && !d.uploaded);
+    const allSelected = folderDocs.every(d => sel.has(d.id));
+    folderDocs.forEach(doc => {
+      if (allSelected) {
+        sel.delete(doc.id);
+        const row = document.getElementById('steprow-' + folderId + '-' + doc.id);
+        if (row) { row.classList.remove('doc-checked'); row.querySelector('.step-doc-checkbox').textContent = ''; }
+      } else {
+        sel.add(doc.id);
+        const row = document.getElementById('steprow-' + folderId + '-' + doc.id);
+        if (row) { row.classList.add('doc-checked'); row.querySelector('.step-doc-checkbox').textContent = '✓'; }
+      }
+    });
+    updateFolderActionBar(folderId);
+  }
+
+  function updateFolderActionBar(folderId) {
+    const sel = folderSelections[folderId];
+    const count = sel ? sel.size : 0;
+    const countEl = document.getElementById('selcount-' + folderId);
+    const uploadBtn = document.getElementById('folderupload-' + folderId);
+    if (countEl) countEl.textContent = count + ' selected';
+    if (uploadBtn) {
+      uploadBtn.classList.toggle('ready', count > 0);
+      uploadBtn.textContent = count > 0 ? 'Upload ' + count + ' Doc' + (count > 1 ? 's' : '') + ' ↑' : 'Upload Selected ↑';
+    }
+  }
+
+  // ═══════════════════════════════════
+  // FOLDER UPLOAD — sequential queue
+  // ═══════════════════════════════════
+  let folderUploadQueue  = []; // remaining doc IDs to process
+  let folderUploadId     = null; // which folder triggered this
+  let folderUploadTotal  = 0;
+  let folderUploadDone   = 0;
+
+  function uploadFolderDocs(folderId) {
+    const sel = folderSelections[folderId];
+    if (!sel || sel.size === 0) return;
+    const uploadable = [...sel].filter(docId => {
+      const d = docLibrary.find(x => x.id === docId);
+      return d && !d.uploaded;
+    });
+    if (!uploadable.length) return;
+    folderUploadQueue  = uploadable;
+    folderUploadId     = folderId;
+    folderUploadTotal  = uploadable.length;
+    folderUploadDone   = 0;
+    openNextFolderUpload();
+  }
+
+  function openNextFolderUpload() {
+    if (!folderUploadQueue.length) {
+      // All done — finalise
+      if (folderSelections[folderUploadId]) folderSelections[folderUploadId].clear();
+      updateProgress();
+      renderIndividualDocs();
+      renderStepFolders();
+      setTimeout(() => {
+        const el = document.getElementById('folder-' + folderUploadId);
+        if (el && !el.classList.contains('open')) el.classList.add('open');
+      }, 150);
+      showToast(`📧 ${folderUploadDone} document${folderUploadDone !== 1 ? 's' : ''} uploaded — your team has been notified.`);
+      folderUploadId = null;
+      return;
+    }
+
+    const docId = folderUploadQueue[0]; // peek — remove after confirm
+    const doc   = docLibrary.find(d => d.id === docId);
+    if (!doc) { folderUploadQueue.shift(); openNextFolderUpload(); return; }
+
+    // Pre-fill modal docType to match doc name if possible
+    const sel = document.getElementById('docTypeSelect');
+    if (sel) {
+      const opts = Array.from(sel.options).map(o => o.value.toLowerCase());
+      const matchIdx = opts.findIndex(o => doc.name.toLowerCase().includes(o) || o.includes(doc.name.toLowerCase().split(' ')[0]));
+      sel.selectedIndex = matchIdx >= 0 ? matchIdx : 0;
+    }
+    document.getElementById('institutionInput').value = '';
+    const today = new Date().toISOString().slice(0,10);
+    document.getElementById('singleDate').value = today;
+
+    // Set progress label
+    const remaining = folderUploadQueue.length;
+    document.querySelector('#uploadModal .modal-title').textContent = `Upload ${folderUploadDone + 1} of ${folderUploadTotal}: ${doc.name}`;
+    document.querySelector('#uploadModal .modal-sub').textContent   = `Select the file for "${doc.name}" and confirm details. ${remaining > 1 ? (remaining - 1) + ' more after this.' : 'This is the last one.'}`;
+
+    // Placeholder so preview renders
+    pendingFiles = [{ name: doc.name.replace(/\s/g,'_') + '.pdf', size: 0, _placeholder: true }];
+    toggleDateFields();
+    updateSavedNamePreview();
+
+    // Show file list as placeholder
+    document.getElementById('modalFileList').innerHTML = `
+      <div class="modal-file-item" style="border-color:rgba(201,168,76,0.2);">
+        <div class="modal-file-left" style="color:var(--gold-dim);">📎 <span>Choose file for: ${doc.name}</span></div>
+        <button onclick="triggerFolderFilePick()" style="background:rgba(201,168,76,0.1);border:1px solid rgba(201,168,76,0.3);color:var(--gold);border-radius:5px;font-size:10px;padding:4px 10px;cursor:pointer;font-family:Montserrat,sans-serif;letter-spacing:0.5px;">Browse…</button>
+      </div>`;
+
+    document.getElementById('uploadModal').classList.add('open');
+  }
+
+  function triggerFolderFilePick() {
+    document.getElementById('folderFileInput').click();
+  }
+
+  function handleFolderFileSelect(e) {
+    const files = Array.from(e.target.files);
+    if (!files.length) return;
+    pendingFiles = files;
+    // Update the modal file list
+    const list = document.getElementById('modalFileList');
+    list.innerHTML = '';
+    files.forEach(file => {
+      const ext = file.name.split('.').pop().toUpperCase();
+      const icon = ext === 'PDF' ? '📄' : ['JPG','JPEG','PNG'].includes(ext) ? '🖼️' : '📝';
+      list.innerHTML += `<div class="modal-file-item"><div class="modal-file-left">${icon} <span>${file.name}</span></div><div class="modal-file-size">${formatSize(file.size)}</div></div>`;
+    });
+    updateSavedNamePreview();
+    e.target.value = '';
+  }
+
+  function confirmFolderDoc() {
+    // Called by the modal's "Upload Files" button when in folder mode
+    const docId = folderUploadQueue.shift();
+    const doc   = docLibrary.find(d => d.id === docId);
+    if (doc) doc.uploaded = true;
+    folderUploadDone++;
+
+    // Create the uploaded card
+    const displayDate = new Date().toLocaleDateString('en-AU', { day:'numeric', month:'short', year:'numeric' });
+    const ext = pendingFiles.length && !pendingFiles[0]._placeholder ? pendingFiles[0].name.split('.').pop().toLowerCase() : 'pdf';
+    const savedName = buildSavedName(ext);
+    const size = pendingFiles[0] && !pendingFiles[0]._placeholder ? formatSize(pendingFiles[0].size) : '—';
+    addUploadedCard(savedName, doc ? doc.icon : '📄', displayDate, size, ext.toUpperCase());
+    uploadedCount++;
+
+    // Notify the assigned staff member
+    const assignee = doc ? doc.assignee : 'the assigned team member';
+    showToast(`📧 ${doc ? doc.name : 'Document'} uploaded — email sent to ${assignee}.`);
+
+    // Close modal then move to next
+    document.getElementById('uploadModal').classList.remove('open');
+    pendingFiles = [];
+    setTimeout(openNextFolderUpload, 400);
+  }
+
+  function addUploadedCard(savedName, icon, date, size, typeLabel) {
+    const list = document.getElementById('docsList');
+    docCounter++;
+    const iconClass = typeLabel === 'PDF' ? 'pdf' : ['JPG','JPEG','PNG'].includes(typeLabel) ? 'img' : 'doc';
+    const card = document.createElement('div');
+    card.className = 'doc-card';
+    card.dataset.id = docCounter;
+    card.innerHTML = `
+      <div class="doc-icon-wrap ${iconClass}">${icon}</div>
+      <div class="doc-info">
+        <div class="doc-name">${savedName}</div>
+        <div class="doc-meta">Uploaded ${date}${size !== '—' ? ' · ' + size : ''} · ${typeLabel}</div>
+      </div>
+      <div class="doc-right">
+        <span class="doc-status-pill pill-pending">Pending Review</span>
+        <button class="doc-delete" title="Remove" onclick="removeDoc(this, '${docCounter}')">✕</button>
+      </div>`;
+    list.appendChild(card);
+    const empty = document.getElementById('emptyState');
+    if (empty) empty.classList.remove('show');
+  }
+
+  // ─── DOC LIBRARY MODAL ───
+  function openDocLibraryModal() {
+    renderDocLibraryEditor();
+    document.getElementById('docLibraryModal').classList.add('open');
+  }
+
+  function renderDocLibraryEditor() {
+    const list = document.getElementById('docLibraryList');
+    list.innerHTML = '';
+    docLibrary.forEach((doc, idx) => {
+      const row = document.createElement('div');
+      row.style.cssText = 'display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:8px;padding:10px 12px;';
+      row.innerHTML = `
+        <input type="text" value="${doc.icon}" data-field="icon" data-idx="${idx}"
+          style="width:36px;text-align:center;background:rgba(255,255,255,0.05);border:1px solid rgba(201,168,76,0.2);border-radius:6px;color:var(--white);font-size:16px;padding:5px;flex-shrink:0;">
+        <input type="text" value="${doc.name}" data-field="name" data-idx="${idx}"
+          style="flex:1;background:rgba(255,255,255,0.05);border:1px solid rgba(201,168,76,0.2);border-radius:6px;color:var(--white);font-family:Montserrat,sans-serif;font-size:11px;padding:6px 10px;"
+          placeholder="Document name">
+        <input type="text" value="${doc.desc}" data-field="desc" data-idx="${idx}"
+          style="flex:1.2;background:rgba(255,255,255,0.05);border:1px solid rgba(201,168,76,0.2);border-radius:6px;color:var(--white);font-family:Montserrat,sans-serif;font-size:11px;padding:6px 10px;"
+          placeholder="Short description">
+        <select data-field="assignee" data-idx="${idx}"
+          style="background:rgba(255,255,255,0.05);border:1px solid rgba(201,168,76,0.2);border-radius:6px;color:var(--white);font-family:Montserrat,sans-serif;font-size:11px;padding:6px 8px;flex-shrink:0;">
+          ${staffMembers.map(s => `<option value="${s.id}" ${s.id===doc.assignee?'selected':''}>${s.name} — ${s.email}</option>`).join('')}
+        </select>
+        <button onclick="removeDocFromLibrary(${idx})"
+          style="background:none;border:none;color:rgba(232,93,74,0.6);font-size:18px;cursor:pointer;padding:2px 4px;flex-shrink:0;" title="Remove">✕</button>`;
+      list.appendChild(row);
+    });
+  }
+
+  function addDocToLibrary() {
+    docLibrary.push({ id:'doc_'+Date.now(), icon:'📄', name:'New Document', desc:'Description', assignee:'Emily Chen', note:'Please upload the required document.', uploaded:false });
+    renderDocLibraryEditor();
+  }
+
+  function removeDocFromLibrary(idx) {
+    docLibrary.splice(idx, 1);
+    renderDocLibraryEditor();
+  }
+
+  function saveDocLibrary() {
+    document.querySelectorAll('#docLibraryList input[data-field], #docLibraryList select[data-field]').forEach(el => {
+      const idx = parseInt(el.dataset.idx);
+      const field = el.dataset.field;
+      if (!isNaN(idx) && field && docLibrary[idx]) docLibrary[idx][field] = el.value;
+    });
+    closeModal('docLibraryModal');
+    renderIndividualDocs();
+    renderStepFolders();
+    showToast('✅ Document library updated.');
+  }
+
+  // ─── STEP FOLDERS MODAL ───
+  function openStepFoldersModal() {
+    renderStepFoldersEditor();
+    document.getElementById('stepFoldersModal').classList.add('open');
+  }
+
+  function renderStepFoldersEditor() {
+    const list = document.getElementById('stepFoldersEditorList');
+    list.innerHTML = '';
+    stepFolders.forEach((folder, fi) => {
+      const div = document.createElement('div');
+      div.style.cssText = 'background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:10px;padding:14px;';
+      div.innerHTML = `
+        <div style="display:flex;gap:8px;align-items:center;margin-bottom:10px;">
+          <input type="text" value="${folder.icon}" data-fi="${fi}" data-ff="icon"
+            style="width:40px;text-align:center;background:rgba(255,255,255,0.05);border:1px solid rgba(201,168,76,0.2);border-radius:6px;color:var(--white);font-size:16px;padding:5px;">
+          <input type="text" value="${folder.name}" data-fi="${fi}" data-ff="name"
+            style="flex:1;background:rgba(255,255,255,0.05);border:1px solid rgba(201,168,76,0.2);border-radius:6px;color:var(--white);font-family:Montserrat,sans-serif;font-size:12px;padding:7px 10px;" placeholder="Folder name">
+          <input type="text" value="${folder.desc}" data-fi="${fi}" data-ff="desc"
+            style="flex:1.3;background:rgba(255,255,255,0.05);border:1px solid rgba(201,168,76,0.2);border-radius:6px;color:var(--white);font-family:Montserrat,sans-serif;font-size:11px;padding:7px 10px;" placeholder="Description">
+          <button onclick="removeStepFolder(${fi})" style="background:none;border:none;color:rgba(232,93,74,0.6);font-size:18px;cursor:pointer;padding:2px 4px;" title="Delete folder">✕</button>
+        </div>
+        <div style="font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold-dim);margin-bottom:8px;">Documents in this folder</div>
+        <div style="display:flex;flex-wrap:wrap;gap:6px;">
+          ${docLibrary.map(doc => `
+            <label style="display:flex;align-items:center;gap:5px;font-size:10px;color:var(--white-dim);background:rgba(255,255,255,0.04);border:1px solid ${folder.docs.includes(doc.id) ? 'rgba(201,168,76,0.35)' : 'rgba(255,255,255,0.07)'};border-radius:6px;padding:5px 9px;cursor:pointer;transition:border-color 0.15s;">
+              <input type="checkbox" data-fi="${fi}" data-docid="${doc.id}" ${folder.docs.includes(doc.id) ? 'checked' : ''}
+                style="accent-color:var(--gold);width:12px;height:12px;cursor:pointer;">
+              ${doc.icon} ${doc.name}
+            </label>`).join('')}
+        </div>`;
+      list.appendChild(div);
+    });
+  }
+
+  function removeStepFolder(fi) { stepFolders.splice(fi, 1); renderStepFoldersEditor(); }
+
+  function addStepFolder() {
+    stepFolders.push({ id:'folder_'+Date.now(), icon:'📁', name:'New Step Folder', desc:'Add a description', docs:[] });
+    renderStepFoldersEditor();
+  }
+
+  function saveStepFolders() {
+    document.querySelectorAll('#stepFoldersEditorList input[data-ff]').forEach(el => {
+      const fi = parseInt(el.dataset.fi); const ff = el.dataset.ff;
+      if (!isNaN(fi) && ff && stepFolders[fi]) stepFolders[fi][ff] = el.value;
+    });
+    document.querySelectorAll('#stepFoldersEditorList input[type=checkbox][data-fi]').forEach(cb => {
+      const fi = parseInt(cb.dataset.fi); const docId = cb.dataset.docid;
+      if (isNaN(fi) || !docId || !stepFolders[fi]) return;
+      const docs = stepFolders[fi].docs;
+      if (cb.checked && !docs.includes(docId)) docs.push(docId);
+      if (!cb.checked) stepFolders[fi].docs = docs.filter(d => d !== docId);
+    });
+    folderSelections = {};
+    closeModal('stepFoldersModal');
+    renderStepFolders();
+    showToast('✅ Step folders updated.');
+  }
+
+  // ─── INIT ───
+  document.addEventListener('DOMContentLoaded', () => {
+    loadSettings();
+    renderIndividualDocs();
+    renderStepFolders();
+    renderClientGroups();
+    setDriveStatus(false);
+    // Pre-cache demo client folders once Drive is connected (triggered on auth callback)
+  });
+
+
+  // ─── MANAGE STAFF ───
+  function openManageStaffModal() {
+    renderStaffMemberList();
+    document.getElementById('manageStaffModal').classList.add('open');
+  }
+
+  function renderStaffMemberList() {
+    const list = document.getElementById('staffMemberList');
+    list.innerHTML = '';
+    staffMembers.forEach((staff, idx) => {
+      const row = document.createElement('div');
+      row.style.cssText = 'display:flex;align-items:center;gap:8px;background:rgba(107,79,160,0.06);border:1px solid rgba(107,79,160,0.18);border-radius:10px;padding:12px 14px;';
+      row.innerHTML = `
+        <div style="width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,rgba(107,79,160,0.5),rgba(107,79,160,0.2));display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:14px;font-weight:700;color:#c4a8e8;flex-shrink:0;">${staff.name.split(' ').map(w=>w[0]).join('')}</div>
+        <input type="text" value="${staff.name}" data-idx="${idx}" data-field="name"
+          placeholder="Full name"
+          style="flex:1;background:rgba(255,255,255,0.05);border:1px solid rgba(107,79,160,0.25);border-radius:6px;color:var(--white);font-family:Montserrat,sans-serif;font-size:12px;padding:7px 10px;">
+        <input type="email" value="${staff.email}" data-idx="${idx}" data-field="email"
+          placeholder="email@company.com.au"
+          style="flex:1.6;background:rgba(255,255,255,0.05);border:1px solid rgba(107,79,160,0.25);border-radius:6px;color:var(--white);font-family:Montserrat,sans-serif;font-size:12px;padding:7px 10px;">
+        <button onclick="removeStaffMember(${idx})" title="Remove staff member"
+          style="background:none;border:none;color:rgba(232,93,74,0.5);font-size:18px;cursor:pointer;padding:2px 6px;flex-shrink:0;transition:color 0.2s;"
+          onmouseover="this.style.color='var(--rejected)'" onmouseout="this.style.color='rgba(232,93,74,0.5)'">✕</button>`;
+      list.appendChild(row);
+    });
+    if (staffMembers.length === 0) {
+      list.innerHTML = '<div style="text-align:center;padding:24px;color:var(--white-dim);font-size:12px;">No staff members yet. Add one below.</div>';
+    }
+  }
+
+  function addStaffMember() {
+    staffMembers.push({ id: 'staff_' + Date.now(), name: '', email: '' });
+    renderStaffMemberList();
+    // Focus the new name input
+    setTimeout(() => {
+      const inputs = document.querySelectorAll('#staffMemberList input[data-field="name"]');
+      if (inputs.length) inputs[inputs.length - 1].focus();
+    }, 50);
+  }
+
+  function removeStaffMember(idx) {
+    const removed = staffMembers[idx];
+    staffMembers.splice(idx, 1);
+    // Clear any assignments that pointed to this staff member
+    Object.keys(staffAssignments).forEach(key => {
+      if (staffAssignments[key] === removed.id) staffAssignments[key] = staffMembers[0]?.id || '';
+    });
+    // Clear doc library assignments
+    docLibrary.forEach(doc => {
+      if (doc.assignee === removed.id) doc.assignee = staffMembers[0]?.id || '';
+    });
+    renderStaffMemberList();
+  }
+
+  function saveStaffMembers() {
+    // Read all inputs back into staffMembers
+    document.querySelectorAll('#staffMemberList input').forEach(inp => {
+      const idx = parseInt(inp.dataset.idx);
+      const field = inp.dataset.field;
+      if (!isNaN(idx) && field && staffMembers[idx]) {
+        staffMembers[idx][field] = inp.value.trim();
+      }
+    });
+    // Remove any blanks
+    staffMembers = staffMembers.filter(s => s.name.trim() !== '');
+    closeModal('manageStaffModal');
+    renderIndividualDocs();
+    renderStepFolders();
+    showToast('✅ Staff members saved. ' + staffMembers.length + ' member' + (staffMembers.length !== 1 ? 's' : '') + ' in the system.');
+  }
+
+  // ─── VIEW TOGGLE ───
+  function setView(view) {
+    document.querySelectorAll('.toggle-btn').forEach((b, i) => {
+      b.classList.toggle('active',
+        (view === 'client'      && i === 0) ||
+        (view === 'staff'       && i === 1) ||
+        (view === 'maintenance' && i === 2)
+      );
+    });
+    document.getElementById('clientView').classList.toggle('hidden', view !== 'client');
+    document.getElementById('staffView').classList.toggle('active', view === 'staff');
+    const mv = document.getElementById('maintenanceView');
+    if (mv) mv.classList.toggle('active', view === 'maintenance');
+    if (view === 'maintenance') populateMaintenanceForm();
+  }
+
+  // ─── NORMAL FILE SELECT (drag/drop zone or Choose Files) ───
+  function handleFileSelect(e) {
+    pendingFiles = Array.from(e.target.files);
+    if (!pendingFiles.length) return;
+    // Reset modal to normal mode
+    document.querySelector('#uploadModal .modal-title').textContent = 'Confirm Upload';
+    document.querySelector('#uploadModal .modal-sub').textContent   = 'Fill in the details below so this document is filed correctly. The file will be renamed automatically.';
+    showUploadModal();
+  }
+
+  function showUploadModal() {
+    const list = document.getElementById('modalFileList');
+    list.innerHTML = '';
+    pendingFiles.forEach(file => {
+      if (file._placeholder) return;
+      const ext = file.name.split('.').pop().toUpperCase();
+      const icon = ext === 'PDF' ? '📄' : ['JPG','JPEG','PNG'].includes(ext) ? '🖼️' : '📝';
+      list.innerHTML += `
+        <div class="modal-file-item">
+          <div class="modal-file-left">${icon} <span>${file.name}</span></div>
+          <div class="modal-file-size">${formatSize(file.size)}</div>
+        </div>`;
+    });
+    const today = new Date().toISOString().slice(0,10);
+    document.getElementById('singleDate').value = today;
+    toggleDateFields();
+    updateSavedNamePreview();
+    // Reset smart detection state
+    selectedChecklistDocId = null;
+    currentSuggestedDocId  = null;
+    const smartSec = document.getElementById('smartDetectSection');
+    if (smartSec) {
+      smartSec.style.display = 'none';
+      const banner = document.getElementById('smartSuggestionBanner');
+      if (banner) { banner.style.display = 'none'; banner.style.background = ''; }
+      const fullPicker = document.getElementById('fullPickerSection');
+      if (fullPicker) fullPicker.style.display = 'none';
+    }
+    // Run smart detection after a brief tick so DOM is ready
+    setTimeout(runSmartDetection, 80);
+    document.getElementById('uploadModal').classList.add('open');
+  }
+
+  function toggleDateFields() {
+    const type = document.getElementById('dateTypeSelect').value;
+    document.getElementById('dateFieldsSingle').style.display    = type === 'single'     ? 'block' : 'none';
+    document.getElementById('dateFieldsRange').style.display     = type === 'range'      ? 'block' : 'none';
+    document.getElementById('dateFieldsYearRange').style.display = type === 'year_range' ? 'block' : 'none';
+  }
+
+  function buildDateString() {
+    const type = document.getElementById('dateTypeSelect').value;
+    function fmtDate(val) {
+      if (!val) return '';
+      const d = new Date(val + 'T00:00:00');
+      return d.toLocaleDateString('en-AU', { day: 'numeric', month: 'short', year: 'numeric' });
+    }
+    if (type === 'single') {
+      return fmtDate(document.getElementById('singleDate').value) || 'Date';
+    } else if (type === 'range') {
+      const from = fmtDate(document.getElementById('rangeFrom').value);
+      const to   = fmtDate(document.getElementById('rangeTo').value);
+      return (from && to) ? `${from} to ${to}` : (from || to || 'Date range');
+    } else {
+      const y1 = document.getElementById('yearFrom').value;
+      const y2 = document.getElementById('yearTo').value;
+      return (y1 && y2) ? `${y1} to ${y2}` : (y1 || y2 || 'Year range');
+    }
+  }
+
+  function buildSavedName(ext) {
+    const docType     = document.getElementById('docTypeSelect').value;
+    const institution = document.getElementById('institutionInput').value.trim();
+    const clientName  = 'Sarah Johnson';
+    const dateStr     = buildDateString();
+    const parts = [docType];
+    if (institution) parts.push(institution);
+    parts.push(clientName);
+    parts.push(dateStr);
+    return parts.join(' - ') + '.' + ext;
+  }
+
+  function updateSavedNamePreview() {
+    const realFile = pendingFiles.find(f => !f._placeholder);
+    const ext = realFile ? realFile.name.split('.').pop() : 'pdf';
+    document.getElementById('savedNameSpan').textContent = buildSavedName(ext);
+  }
+
+  function closeModal(id) {
+    document.getElementById(id).classList.remove('open');
+    if (id === 'uploadModal') {
+      // Only wipe pendingFiles if we're NOT in a folder queue
+      if (!folderUploadId) {
+        document.getElementById('fileInput').value = '';
+        pendingFiles = [];
+      }
+    }
+  }
+
+  // ─── SUBMIT: handles both normal and folder-queue uploads ───
+  const docTypeToAssignKey = {
+    'Payslip':'payslip','Bank Statement':'bank','Income Statement':'bank',
+    'Tax Return':'tax','Payout Letter':'employment','Employment Letter':'employment',
+    'Super Statement':'super','Photo ID':'id','Other':'payslip'
+  };
+
+  function submitUpload() {
+    // If we're mid-folder-queue, route to folder confirm
+    if (folderUploadId !== null) {
+      confirmFolderDoc();
+      return;
+    }
+
+    // Normal upload flow
+    const docType     = document.getElementById('docTypeSelect').value;
+    const displayDate = new Date().toLocaleDateString('en-AU', { day:'numeric', month:'short', year:'numeric' });
+    const assignKey   = docTypeToAssignKey[docType] || 'payslip';
+    const staffName   = staffAssignments[assignKey] || 'the assigned team member';
+
+    const filesToProcess = [...pendingFiles];
+    const savedNames = filesToProcess.map(f => buildSavedName(f.name.split('.').pop().toLowerCase()));
+
+    closeModal('uploadModal');
+
+    filesToProcess.forEach((file, i) => {
+      docCounter++;
+      const ext = file.name.split('.').pop().toLowerCase();
+      const isImg = ['jpg','jpeg','png'].includes(ext);
+      const iconClass = ext === 'pdf' ? 'pdf' : isImg ? 'img' : 'doc';
+      const icon = ext === 'pdf' ? '📄' : isImg ? '🖼️' : '📝';
+      const savedName = savedNames[i];
+      const card = document.createElement('div');
+      card.className = 'doc-card';
+      card.dataset.id = docCounter;
+      card.innerHTML = `
+        <div class="doc-icon-wrap ${iconClass}">${icon}</div>
+        <div class="doc-info">
+          <div class="doc-name">${savedName}</div>
+          <div class="doc-meta">Uploaded ${displayDate} · ${formatSize(file.size)} · ${ext.toUpperCase()}</div>
+        </div>
+        <div class="doc-right">
+          <span class="doc-status-pill pill-pending">Pending Review</span>
+          <button class="doc-delete" title="Remove" onclick="removeDoc(this, '${docCounter}')">✕</button>
+        </div>`;
+      document.getElementById('docsList').appendChild(card);
+      uploadedCount++;
+    });
+
+    updateProgress();
+    showToast(`📧 ${savedNames.length} file${savedNames.length !== 1 ? 's' : ''} uploaded — email sent to ${staffName} for review.`);
+    pendingFiles = [];
+  }
+
+  function removeDoc(btn, id) {
+    const card = document.querySelector(`[data-id="${id}"]`);
+    if (card) {
+      card.style.opacity = '0'; card.style.transform = 'translateX(20px)'; card.style.transition = 'all 0.2s';
+      setTimeout(() => { card.remove(); uploadedCount = Math.max(0, uploadedCount - 1); updateProgress(); }, 200);
+    }
+  }
+
+  function updateProgress() {
+    const pct = Math.min(100, Math.round((uploadedCount / totalRequired) * 100));
+    document.getElementById('progressCount').textContent = Math.min(uploadedCount, totalRequired);
+    document.getElementById('progressFill').style.width = pct + '%';
+    document.getElementById('progressPct').textContent = pct + '%';
+    const empty = document.getElementById('emptyState');
+    const list = document.getElementById('docsList');
+    if (empty) empty.classList.toggle('show', list.children.length === 0);
+  }
+
+  // ─── STAFF: MARK REVIEWED ───
+  function markReviewed(btn, badgeId) {
+    btn.textContent = '✓ Reviewed'; btn.classList.add('done');
+    const row = btn.closest('.staff-doc-row');
+    const rejectBtn = row.querySelector('.reject-btn');
+    if (rejectBtn) rejectBtn.remove();
+    updateGroupBadge(badgeId);
+    showToast('✅ Document marked as reviewed.');
+  }
+
+  function updateGroupBadge(badgeId) {
+    const badge = document.getElementById(badgeId);
+    if (!badge) return;
+    const group = badge.closest('.client-files-group');
+    const pendingBtns = group.querySelectorAll('.review-btn:not(.done)');
+    if (pendingBtns.length === 0) { badge.className = 'doc-status-pill pill-reviewed'; badge.textContent = 'All Reviewed'; }
+    else { badge.className = 'doc-status-pill pill-pending'; badge.textContent = `${pendingBtns.length} Pending Review`; }
+  }
+
+  // ─── STAFF: REJECT / RETURN ───
+  function openRejectModal(btn, badgeId, filename, clientName) {
+    rejectContext = { btn, badgeId, filename, clientName };
+    document.getElementById('rejectModalSub').textContent = `Returning "${filename}" to ${clientName}. Provide a clear explanation of what needs to be fixed.`;
+    document.getElementById('rejectReason').value = '';
+    document.getElementById('rejectModal').classList.add('open');
+  }
+
+  function submitReject() {
+    const reason = document.getElementById('rejectReason').value.trim();
+    if (!reason) { document.getElementById('rejectReason').style.borderColor = 'rgba(232,93,74,0.5)'; return; }
+    document.getElementById('rejectReason').style.borderColor = '';
+    const { btn, badgeId } = rejectContext;
+    const row = btn.closest('.staff-doc-row');
+    btn.textContent = '↩ Returned'; btn.style.background = 'rgba(232,93,74,0.1)'; btn.style.borderColor = 'rgba(232,93,74,0.3)'; btn.style.color = 'var(--rejected)'; btn.classList.add('done');
+    const reviewBtn = row.querySelector('.review-btn');
+    if (reviewBtn) { reviewBtn.textContent = '✓ Reviewed'; reviewBtn.classList.add('done'); }
+    updateGroupBadge(badgeId);
+    closeModal('rejectModal');
+    showToast(`↩ Document returned to ${rejectContext.clientName} with explanation. Email sent.`, '⚠️');
+  }
+
+  // ─── ASSIGN MODAL ───
+  function openAssignModal() { document.getElementById('assignModal').classList.add('open'); }
+  function saveAssignments() {
+    document.querySelectorAll('#assignList select').forEach(sel => {
+      const doc = sel.dataset.doc; staffAssignments[doc] = sel.value;
+      document.querySelectorAll(`[data-doc="${doc}"] .req-assignee`).forEach(el => {
+        el.innerHTML = `<div class="req-assignee-dot"></div>Assigned: ${sel.value}`;
+      });
+    });
+    closeModal('assignModal');
+    showToast('✅ Staff assignments saved.');
+  }
+
+  // ─── EXPLANATION MANAGER ───
+  function openExplanationManager() { document.getElementById('explanationModal').classList.add('open'); }
+  function saveExplanations() {
+    document.querySelectorAll('#explanationList textarea').forEach(ta => {
+      const doc = ta.dataset.doc; const newText = ta.value.trim();
+      docExplanations[doc] = newText;
+      const item = document.querySelector(`[data-doc="${doc}"]`);
+      if (item) { const t = item.querySelector('.info-tooltip'); if (t) t.innerHTML = `<div class="info-tooltip-header">Staff Note</div>${newText}`; }
+    });
+    closeModal('explanationModal');
+    showToast('✅ Explanations updated.');
+  }
+
+  // ─── DRAG & DROP ───
+  const zone = document.getElementById('uploadZone');
+  zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag-over'); });
+  zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
+  zone.addEventListener('drop', e => {
+    e.preventDefault(); zone.classList.remove('drag-over');
+    if (e.dataTransfer.files.length) { pendingFiles = Array.from(e.dataTransfer.files); showUploadModal(); }
+  });
+
+  // ─── CLOSE ON OVERLAY CLICK ───
+  document.querySelectorAll('.modal-overlay').forEach(overlay => {
+    overlay.addEventListener('click', e => { if (e.target === overlay) overlay.classList.remove('open'); });
+  });
+
+  // ─── UTILS ───
+
+  // ═══════════════════════════════════════════════════
+  // GOOGLE DRIVE INTEGRATION
+  // ═══════════════════════════════════════════════════
+
+  const DRIVE_CLIENT_ID  = '574128239955-9llb4c5ei838th0055jkh63ng94hmpjs.apps.googleusercontent.com';
+  const DRIVE_ROOT_FOLDER = '15puRUXEiAg7naBS9W3RLtX5cxBGa6APf';
+  const DRIVE_SCOPES     = 'https://www.googleapis.com/auth/drive.file';
+
+  let driveAccessToken  = null;
+  let driveConnected    = false;
+  let clientFolderCache = {}; // clientId -> Drive folder id
+
+  // ── Auth ──────────────────────────────────────────
+  function initiateDriveAuth() {
+    if (typeof google === 'undefined') {
+      showToast('Google Sign-In script not yet loaded — please wait a moment and try again.', '⚠️');
+      return;
+    }
+    const client = google.accounts.oauth2.initTokenClient({
+      client_id: getDriveClientId(),
+      scope: DRIVE_SCOPES,
+      callback: (resp) => {
+        if (resp.error) { showToast('Google Drive sign-in failed: ' + resp.error, '⚠️'); return; }
+        driveAccessToken = resp.access_token;
+        driveConnected   = true;
+        setDriveStatus(true);
+        showToast('✅ Google Drive connected! Client folders will be created automatically.');
+        ensureClientFolder('IC-2024-0082', 'Sarah Johnson');
+      }
+    });
+    client.requestAccessToken();
+  }
+
+  function setDriveStatus(connected) {
+    const dot   = document.getElementById('driveStatusDot');
+    const label = document.getElementById('driveStatusLabel');
+    const btn   = document.getElementById('driveConnectBtn');
+    if (!dot) return;
+    if (connected) {
+      dot.style.background   = 'var(--success)';
+      label.textContent      = 'Google Drive connected';
+      label.style.color      = 'var(--success)';
+      btn.textContent        = '✓ Connected';
+      btn.style.background   = 'rgba(76,175,130,0.12)';
+      btn.style.borderColor  = 'rgba(76,175,130,0.35)';
+      btn.style.color        = 'var(--success)';
+      btn.onclick            = null;
+      btn.style.cursor       = 'default';
+      // Update maintenance tab dot too
+      const md = document.getElementById('maintDriveDot');
+      const ml = document.getElementById('maintDriveLabel');
+      if (md) { md.classList.add('connected'); }
+      if (ml) { ml.textContent = '✓ Google Drive connected'; ml.style.color = 'var(--success)'; }
+    } else {
+      dot.style.background   = 'rgba(255,255,255,0.2)';
+      label.textContent      = 'Google Drive not connected';
+      label.style.color      = 'var(--white-dim)';
+    }
+  }
+
+  // ── Drive API helpers ──────────────────────────────
+  async function driveRequest(url, options = {}) {
+    const resp = await fetch(url, {
+      ...options,
+      headers: {
+        'Authorization': 'Bearer ' + driveAccessToken,
+        'Content-Type': 'application/json',
+        ...(options.headers || {})
+      }
+    });
+    if (!resp.ok) {
+      const err = await resp.json().catch(() => ({}));
+      throw new Error(err.error?.message || 'Drive API error ' + resp.status);
+    }
+    return resp.json();
+  }
+
+  async function findFolder(name, parentId) {
+    const q = encodeURIComponent(
+      `name='${name}' and mimeType='application/vnd.google-apps.folder' and '${parentId}' in parents and trashed=false`
+    );
+    const data = await driveRequest(
+      `https://www.googleapis.com/drive/v3/files?q=${q}&fields=files(id,name,webViewLink)`
+    );
+    return data.files && data.files.length > 0 ? data.files[0] : null;
+  }
+
+  async function createFolder(name, parentId) {
+    return driveRequest('https://www.googleapis.com/drive/v3/files', {
+      method: 'POST',
+      body: JSON.stringify({
+        name,
+        mimeType: 'application/vnd.google-apps.folder',
+        parents: [parentId]
+      })
+    });
+  }
+
+  async function ensureFolder(name, parentId) {
+    const existing = await findFolder(name, parentId);
+    if (existing) return existing;
+    const created = await createFolder(name, parentId);
+    // fetch webViewLink
+    const detail = await driveRequest(
+      `https://www.googleapis.com/drive/v3/files/${created.id}?fields=id,name,webViewLink`
+    );
+    return detail;
+  }
+
+  // ── Client folder management ───────────────────────
+  async function ensureClientFolder(clientId, clientName) {
+    if (!driveConnected) return null;
+    if (clientFolderCache[clientId]) return clientFolderCache[clientId];
+    try {
+      const folderName = clientId + ' — ' + clientName;
+      const folder = await ensureFolder(folderName, getDriveFolderId());
+      clientFolderCache[clientId] = folder;
+      // Update client banner if this is the active client
+      const pathEl = document.getElementById('clientFolderPath');
+      if (pathEl) pathEl.textContent = folderName + ' / All Documents';
+      return folder;
+    } catch(e) {
+      console.error('ensureClientFolder error:', e);
+      return null;
+    }
+  }
+
+  function openClientFolder() {
+    const folder = clientFolderCache['IC-2024-0082'];
+    if (folder && folder.webViewLink) {
+      window.open(folder.webViewLink, '_blank');
+    } else if (driveConnected) {
+      showToast('📁 Creating your folder in Google Drive...', '⏳');
+      ensureClientFolder('IC-2024-0082', 'Sarah Johnson').then(f => {
+        if (f && f.webViewLink) window.open(f.webViewLink, '_blank');
+      });
+    } else {
+      showToast('Connect Google Drive first (Staff View → Connect Google Drive)', '⚠️');
+    }
+  }
+
+  function openStaffClientFolder(clientId, clientName) {
+    const folder = clientFolderCache[clientId];
+    if (folder && folder.webViewLink) {
+      window.open(folder.webViewLink, '_blank');
+    } else if (driveConnected) {
+      showToast('📁 Opening ' + clientName + "'s folder...");
+      ensureClientFolder(clientId, clientName).then(f => {
+        if (f && f.webViewLink) window.open(f.webViewLink, '_blank');
+        else showToast('Could not open folder — check Drive permissions.', '⚠️');
+      });
+    } else {
+      showToast('Connect Google Drive first (Staff View → Connect Google Drive)', '⚠️');
+    }
+  }
+
+  // ── File upload to Drive ───────────────────────────
+  async function uploadFileToDrive(file, savedName, clientId, clientName) {
+    if (!driveConnected) return null;
+    try {
+      const folder = await ensureClientFolder(clientId, clientName);
+      if (!folder) return null;
+
+      const metadata = { name: savedName, parents: [folder.id] };
+      const form = new FormData();
+      form.append('metadata', new Blob([JSON.stringify(metadata)], { type: 'application/json' }));
+      form.append('file', file);
+
+      const resp = await fetch(
+        'https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id,name,webViewLink',
+        {
+          method: 'POST',
+          headers: { 'Authorization': 'Bearer ' + driveAccessToken },
+          body: form
+        }
+      );
+      if (!resp.ok) throw new Error('Upload failed: ' + resp.status);
+      return await resp.json();
+    } catch(e) {
+      console.error('uploadFileToDrive error:', e);
+      return null;
+    }
+  }
+
+
+  // ═══════════════════════════════════════════════════
+  // CLIENT MANAGEMENT
+  // ═══════════════════════════════════════════════════
+
+  // Dynamic clients (staff-created)
+  let clients = [
+    { id:'IC-2024-0082', name:'Sarah Johnson', email:'sarah.johnson@email.com', phone:'0411 222 333', step:'Step 5 — Financial Adviser',   adviser:'s1', docs:['payslip','id','bank','super','tax','employment'], driveFolderId:null },
+    { id:'IC-2024-0091', name:'Daniel Tran',   email:'daniel.tran@email.com',   phone:'0422 333 444', step:'Step 2 — Wealth Consultation', adviser:'s2', docs:['payslip','id','bank'],                                driveFolderId:null },
+    { id:'IC-2024-0075', name:'Priya Nair',    email:'priya.nair@email.com',     phone:'0433 444 555', step:'Step 9 — Choosing Home',       adviser:'s3', docs:['employment','tax'],                                     driveFolderId:null },
+  ];
+
+  // Current active client (shown in client view)
+  let activeClientId = 'IC-2024-0082';
+  function getActiveClient() { return clients.find(c => c.id === activeClientId) || clients[0]; }
+
+  // ─── Render dynamic client groups in staff view ───
+  function renderClientGroups() {
+    const container = document.getElementById('dynamicClientsList');
+    if (!container) return;
+    container.innerHTML = '';
+    clients.forEach(client => {
+      const initials = client.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+      const requiredDocs = client.docs.map(id => docLibrary.find(d => d.id === id)).filter(Boolean);
+      const pendingCount = requiredDocs.filter(d => !d.uploaded).length;
+      const allDone = pendingCount === 0;
+
+      const group = document.createElement('div');
+      group.className = 'client-files-group';
+      group.id = 'clientgroup-' + client.id;
+      group.innerHTML = `
+        <div class="client-files-header">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--gold-dim),var(--gold));display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:14px;font-weight:700;color:var(--navy);flex-shrink:0;">${initials}</div>
+            <div>
+              <div class="client-files-name">${client.name}</div>
+              <div class="client-files-id">${client.id} · ${client.step}</div>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+            <button onclick="copyClientPortalLink('${client.id}')" style="padding:4px 10px;background:rgba(76,175,130,0.1);border:1px solid rgba(76,175,130,0.25);border-radius:6px;color:var(--success);font-size:9px;letter-spacing:1px;text-transform:uppercase;cursor:pointer;font-family:'Montserrat',sans-serif;">🔗 Portal Link</button>
+            <a class="client-folder-link" href="#" onclick="openStaffClientFolder('${client.id}','${client.name}');return false;">📁 Open Folder</a>
+            <span class="doc-status-pill ${allDone?'pill-reviewed':'pill-pending'}" id="badge-${client.id}">${allDone ? 'All Reviewed' : pendingCount + ' Pending'}</span>
+          </div>
+        </div>
+        ${requiredDocs.map(doc => `
+        <div class="staff-doc-row" id="staffrow-${client.id}-${doc.id}">
+          <div class="staff-doc-icon">${doc.icon}</div>
+          <div class="staff-doc-name">
+            <div>${doc.name}</div>
+            <div class="staff-doc-saved-name">${doc.uploaded ? doc.name + ' - ' + client.name + '.pdf' : 'Not yet uploaded'}</div>
+          </div>
+          <div class="staff-doc-date" style="font-size:10px;color:var(--white-dim);flex-shrink:0;">${doc.uploaded ? 'Uploaded' : '—'}</div>
+          <div class="staff-assignee-pill">${getStaffName(doc.assignee)}</div>
+          ${doc.uploaded
+            ? `<button class="review-btn" onclick="markReviewed(this,'badge-${client.id}')">Mark Reviewed</button>
+               <button class="reject-btn" onclick="openRejectModal(this,'badge-${client.id}','${doc.name}','${client.name}')">Return</button>`
+            : `<span style="font-size:10px;color:rgba(255,255,255,0.25);font-style:italic;">Awaiting upload</span>`
+          }
+        </div>`).join('')}`;
+      container.appendChild(group);
+    });
+  }
+
+  // ─── Open New Client Modal ────────────────────────
+  function openNewClientModal() {
+    // Populate adviser dropdown
+    const advSel = document.getElementById('newClientAdviser');
+    advSel.innerHTML = staffMembers.map(s => `<option value="${s.id}">${s.name} — ${s.email}</option>`).join('');
+
+    // Auto-suggest next ID
+    const ids = clients.map(c => parseInt((c.id.match(/\d+$/) || ['0'])[0]));
+    const nextNum = (Math.max(...ids, 0) + 1).toString().padStart(4,'0');
+    const year = new Date().getFullYear();
+    document.getElementById('newClientId').value = generateClientId();
+
+    // Populate doc picker checkboxes
+    const picker = document.getElementById('newClientDocPicker');
+    picker.innerHTML = docLibrary.map(doc => `
+      <label style="display:flex;align-items:center;gap:8px;padding:7px 10px;border:1px solid rgba(255,255,255,0.07);border-radius:8px;cursor:pointer;font-size:12px;color:var(--white);background:rgba(255,255,255,0.02);transition:border-color 0.15s;">
+        <input type="checkbox" value="${doc.id}" checked style="accent-color:var(--gold);width:14px;height:14px;">
+        ${doc.icon} ${doc.name}
+      </label>`).join('');
+
+    // Reset portal link
+    document.getElementById('newClientPortalLink').style.display = 'none';
+    document.getElementById('newClientName').value = '';
+    document.getElementById('newClientEmail').value = '';
+    document.getElementById('newClientPhone').value = '';
+    document.getElementById('newClientStep').value = 'Step 1 — Initial Consultation';
+    document.getElementById('newClientSaveBtn').textContent = 'Create Client';
+
+    document.getElementById('newClientModal').classList.add('open');
+  }
+
+  let lastCreatedClient = null;
+
+  function saveNewClient() {
+    const name    = document.getElementById('newClientName').value.trim();
+    const id      = document.getElementById('newClientId').value.trim();
+    const email   = document.getElementById('newClientEmail').value.trim();
+    const phone   = document.getElementById('newClientPhone').value.trim();
+    const step    = document.getElementById('newClientStep').value.trim();
+    const adviser = document.getElementById('newClientAdviser').value;
+
+    if (!name || !id || !email) {
+      showToast('Please fill in Name, Client ID and Email.', '⚠️');
+      return;
+    }
+    if (clients.find(c => c.id === id)) {
+      showToast('A client with this ID already exists.', '⚠️');
+      return;
+    }
+
+    const checkedDocs = [...document.querySelectorAll('#newClientDocPicker input[type=checkbox]:checked')].map(cb => cb.value);
+
+    const newClient = { id, name, email, phone, step, adviser, docs: checkedDocs, driveFolderId: null };
+    clients.push(newClient);
+    lastCreatedClient = newClient;
+
+    // Show portal link
+    const portalUrl = generatePortalUrl(id, name);
+    document.getElementById('newClientPortalUrl').textContent = portalUrl;
+    document.getElementById('newClientPortalLink').style.display = 'block';
+    document.getElementById('newClientSaveBtn').textContent = 'Done';
+    document.getElementById('newClientSaveBtn').onclick = () => closeModal('newClientModal');
+
+    // Create Drive folder
+    if (driveConnected) {
+      ensureClientFolder(id, name).then(f => {
+        if (f) { newClient.driveFolderId = f.id; showToast('📁 Drive folder created for ' + name); }
+      });
+    }
+
+    renderClientGroups();
+    showToast('✅ ' + name + ' added! Portal link ready to copy.');
+  }
+
+  function generatePortalUrl(clientId, clientName) {
+    const base = window.location.href.split('?')[0];
+    const params = new URLSearchParams({ client: clientId, name: clientName });
+    return base + '?' + params.toString();
+  }
+
+  function copyPortalLink() {
+    const url = document.getElementById('newClientPortalUrl').textContent;
+    navigator.clipboard.writeText(url).then(() => showToast('✅ Portal link copied to clipboard!'));
+  }
+
+  function copyClientPortalLink(clientId) {
+    const client = clients.find(c => c.id === clientId);
+    if (!client) return;
+    const url = generatePortalUrl(clientId, client.name);
+    navigator.clipboard.writeText(url).then(() => showToast('✅ Portal link for ' + client.name + ' copied!'));
+  }
+
+  // ─── Checklist picker in upload modal ────────────────
+  let selectedChecklistDocId = null;
+  let currentSuggestedDocId  = null;
+
+  // ── Keyword map: doc library id → keywords to scan filename/type for ────────
+  const docKeywords = {
+    payslip:    ['payslip','pay slip','pay_slip','salary','wage','earnings','payroll','paystub'],
+    id:         ['licence','license','passport','id','identity','photo id','drivers','driver'],
+    bank:       ['bank','statement','bsb','transaction','account','anz','commbank','nab','westpac','ing','bendigo'],
+    super:      ['super','superannuation','retirement','fund','smsf','australian super','aware','hostplus','rest'],
+    tax:        ['tax','return','ato','notice of assessment','noa','tfn','income tax','group cert'],
+    employment: ['employment','letter','employer','position','contract','offer','appointed','commence'],
+    rates:      ['rates','council','land tax','municipal','local government'],
+    insurance:  ['insurance','policy','insurer','cover note','home insurance','landlord'],
+  };
+
+  // ── Scan filename + docType select to guess the doc ──────────────────────────
+  function detectDocFromFile(file) {
+    const name    = (file.name || '').toLowerCase().replace(/[_\-\.]/g,' ');
+    const docType = (document.getElementById('docTypeSelect')?.value || '').toLowerCase();
+    const combined = name + ' ' + docType;
+
+    const client   = getActiveClient();
+    const required = client.docs.map(id => docLibrary.find(d => d.id === id)).filter(d => d && !d.uploaded);
+
+    let bestId    = null;
+    let bestScore = 0;
+    let bestReason = '';
+
+    required.forEach(doc => {
+      const keywords = docKeywords[doc.id] || [doc.name.toLowerCase()];
+      let score = 0;
+      let matchedKw = '';
+      keywords.forEach(kw => {
+        if (combined.includes(kw)) { score += kw.length; if (!matchedKw) matchedKw = kw; }
+      });
+      if (score > bestScore) { bestScore = score; bestId = doc.id; bestReason = matchedKw; }
+    });
+
+    return bestScore > 0 ? { docId: bestId, reason: bestReason } : null;
+  }
+
+  // ── Main function: scan and show smart UI ───────────────────────────────────
+  function runSmartDetection() {
+    const section = document.getElementById('smartDetectSection');
+    if (!section) return;
+    section.style.display = 'block';
+
+    const file = pendingFiles[0];
+    if (!file) { showFullPicker(); return; }
+
+    const suggestion = detectDocFromFile(file);
+
+    if (suggestion) {
+      const doc = docLibrary.find(d => d.id === suggestion.docId);
+      if (!doc) { showFullPicker(); return; }
+      currentSuggestedDocId = suggestion.docId;
+
+      // Populate banner
+      document.getElementById('smartSuggestIcon').textContent  = doc.icon;
+      document.getElementById('smartSuggestName').textContent  = doc.name;
+      document.getElementById('smartSuggestReason').textContent =
+        'Detected "' + suggestion.reason + '" in the filename or document type.';
+
+      document.getElementById('smartSuggestionBanner').style.display = 'block';
+      document.getElementById('fullPickerSection').style.display      = 'none';
+    } else {
+      currentSuggestedDocId = null;
+      showFullPicker();
+    }
+  }
+
+  function confirmSuggestion() {
+    selectedChecklistDocId = currentSuggestedDocId;
+    // Visually confirm
+    const banner = document.getElementById('smartSuggestionBanner');
+    banner.style.background = 'rgba(76,175,130,0.12)';
+    banner.style.border     = '1px solid rgba(76,175,130,0.3)';
+    banner.querySelector('div').style.borderColor = 'rgba(76,175,130,0.3)';
+    const confirmBtn = banner.querySelector('button');
+    if (confirmBtn) { confirmBtn.textContent = '✓ Confirmed'; confirmBtn.style.opacity = '0.7'; confirmBtn.disabled = true; }
+    const declineBtn = banner.querySelectorAll('button')[1];
+    if (declineBtn) declineBtn.style.display = 'none';
+  }
+
+  function declineSuggestion() {
+    currentSuggestedDocId = null;
+    selectedChecklistDocId = null;
+    document.getElementById('smartSuggestionBanner').style.display = 'none';
+    showFullPicker();
+  }
+
+  function showFullPicker() {
+    renderChecklistPicker();
+    document.getElementById('fullPickerSection').style.display = 'block';
+  }
+
+  function renderChecklistPicker() {
+    const grid = document.getElementById('checklistPickGrid');
+    if (!grid) return;
+    selectedChecklistDocId = null;
+    const client   = getActiveClient();
+    const required = client.docs.map(id => docLibrary.find(d => d.id === id)).filter(Boolean);
+
+    if (required.length === 0) {
+      grid.innerHTML = '<div style="font-size:11px;color:var(--white-dim);padding:6px;">No required documents set for this client.</div>';
+      return;
+    }
+
+    grid.innerHTML = required.map(doc => `
+      <div class="checklist-pick-item ${doc.uploaded ? 'already-done' : ''}"
+           id="cpick-${doc.id}"
+           onclick="${doc.uploaded ? '' : "selectChecklistDoc('" + doc.id + "')"}">
+        <div class="checklist-pick-radio"></div>
+        <div class="checklist-pick-icon">${doc.icon}</div>
+        <div class="checklist-pick-name">${doc.name}</div>
+        ${doc.uploaded ? '<div class="checklist-pick-done">✓ Uploaded</div>' : ''}
+      </div>`).join('');
+  }
+
+  function selectChecklistDoc(docId) {
+    document.querySelectorAll('.checklist-pick-item').forEach(el => el.classList.remove('selected'));
+    selectedChecklistDocId = docId;
+    const el = document.getElementById('cpick-' + docId);
+    if (el) el.classList.add('selected');
+  }
+
+
+  // ═══════════════════════════════════════════════════
+  // MAINTENANCE / SETTINGS
+  // ═══════════════════════════════════════════════════
+
+  const SETTINGS_KEY = 'ic_portal_settings';
+
+  const defaultSettings = {
+    companyName:      'Walk With You Capital',
+    portalSubtitle:   'Document Portal',
+    clientIdPrefix:   'IC',
+    clientIdFormat:   'PREFIX-YYYY-NNNN',
+    maxFileMb:        20,
+    acceptedTypes:    '.pdf,.jpg,.jpeg,.png,.doc,.docx',
+    uploadHint:       'Files are encrypted and securely stored',
+    eyebrow:          'Secure Document Submission',
+    pageTitle:        'Upload Your Documents',
+    pageSub:          'Please upload all required documents below. Our team will review and confirm each one. You'll be notified once your documents have been checked.',
+    uploadModalSub:   'Fill in the details below so this document is filed correctly. The file will be renamed automatically.',
+    senderName:       'Walk With You Capital Portal',
+    replyTo:          'portal@walkwithyoucapital.com.au',
+    uploadNotifMsg:   'A new document has been uploaded and is ready for your review.',
+    driveClientId:    '574128239955-9llb4c5ei838th0055jkh63ng94hmpjs.apps.googleusercontent.com',
+    driveFolderId:    '15puRUXEiAg7naBS9W3RLtX5cxBGa6APf',
+  };
+
+  let portalSettings = { ...defaultSettings };
+
+  function loadSettings() {
+    try {
+      const saved = localStorage.getItem(SETTINGS_KEY);
+      if (saved) portalSettings = { ...defaultSettings, ...JSON.parse(saved) };
+    } catch(e) { portalSettings = { ...defaultSettings }; }
+    applySettings();
+  }
+
+  function applySettings() {
+    const s = portalSettings;
+
+    // Branding
+    const logoText = document.querySelector('.logo-text');
+    const logoSub  = document.querySelector('.logo-sub');
+    if (logoText) logoText.textContent = s.companyName;
+    if (logoSub)  logoSub.textContent  = s.portalSubtitle;
+    document.title = s.companyName + ' | Document Upload';
+
+    // Client-facing copy
+    const eyebrowEl = document.querySelector('.page-eyebrow');
+    const titleEl   = document.querySelector('.page-title');
+    const subEl     = document.querySelector('.page-sub');
+    if (eyebrowEl) eyebrowEl.textContent = s.eyebrow;
+    if (titleEl)   titleEl.innerHTML = s.pageTitle.replace('Documents', '<span>Documents</span>');
+    if (subEl)     subEl.textContent = s.pageSub;
+
+    // Upload zone hint
+    const hintEl = document.querySelector('.drag-hint');
+    if (hintEl) hintEl.textContent = s.uploadHint;
+
+    // Upload zone accepted text
+    const uploadSubEl = document.querySelector('.upload-sub');
+    if (uploadSubEl) {
+      const types = s.acceptedTypes.replace(/\./g,'').toUpperCase().split(',').join(', ');
+      uploadSubEl.innerHTML = `Accepted formats: ${types} · Max ${s.maxFileMb}MB per file<br>You can upload multiple files at once`;
+    }
+
+    // File input accepted types
+    document.querySelectorAll('input[type="file"]').forEach(inp => {
+      inp.accept = s.acceptedTypes;
+    });
+
+    // Modal subtitle
+    const modalSubEl = document.querySelector('#uploadModal .modal-sub');
+    if (modalSubEl) modalSubEl.textContent = s.uploadModalSub;
+
+    // Drive config (update JS constants used by Drive functions)
+    // These are read from portalSettings at call time by the Drive helpers
+  }
+
+  function populateMaintenanceForm() {
+    const s = portalSettings;
+    const set = (id, val) => { const el = document.getElementById(id); if (el) el.value = val || ''; };
+    set('cfg-companyName',    s.companyName);
+    set('cfg-portalSubtitle', s.portalSubtitle);
+    set('cfg-clientIdPrefix', s.clientIdPrefix);
+    set('cfg-clientIdFormat', s.clientIdFormat);
+    set('cfg-maxFileMb',      s.maxFileMb);
+    set('cfg-acceptedTypes',  s.acceptedTypes);
+    set('cfg-uploadHint',     s.uploadHint);
+    set('cfg-eyebrow',        s.eyebrow);
+    set('cfg-pageTitle',      s.pageTitle);
+    set('cfg-pageSub',        s.pageSub);
+    set('cfg-uploadModalSub', s.uploadModalSub);
+    set('cfg-senderName',     s.senderName);
+    set('cfg-replyTo',        s.replyTo);
+    set('cfg-uploadNotifMsg', s.uploadNotifMsg);
+    set('cfg-driveClientId',  s.driveClientId);
+    set('cfg-driveFolderId',  s.driveFolderId);
+
+    // Reflect drive connection status
+    const dot   = document.getElementById('maintDriveDot');
+    const label = document.getElementById('maintDriveLabel');
+    if (dot && label) {
+      if (driveConnected) {
+        dot.classList.add('connected');
+        label.textContent = '✓ Google Drive connected';
+        label.style.color = 'var(--success)';
+      } else {
+        dot.classList.remove('connected');
+        label.textContent = 'Not connected';
+        label.style.color = '';
+      }
+    }
+  }
+
+  function saveSettings() {
+    const get = id => { const el = document.getElementById(id); return el ? el.value.trim() : ''; };
+    portalSettings = {
+      companyName:      get('cfg-companyName')    || defaultSettings.companyName,
+      portalSubtitle:   get('cfg-portalSubtitle') || defaultSettings.portalSubtitle,
+      clientIdPrefix:   get('cfg-clientIdPrefix') || defaultSettings.clientIdPrefix,
+      clientIdFormat:   get('cfg-clientIdFormat') || defaultSettings.clientIdFormat,
+      maxFileMb:        parseInt(get('cfg-maxFileMb')) || defaultSettings.maxFileMb,
+      acceptedTypes:    get('cfg-acceptedTypes')  || defaultSettings.acceptedTypes,
+      uploadHint:       get('cfg-uploadHint')     || defaultSettings.uploadHint,
+      eyebrow:          get('cfg-eyebrow')        || defaultSettings.eyebrow,
+      pageTitle:        get('cfg-pageTitle')      || defaultSettings.pageTitle,
+      pageSub:          get('cfg-pageSub')        || defaultSettings.pageSub,
+      uploadModalSub:   get('cfg-uploadModalSub') || defaultSettings.uploadModalSub,
+      senderName:       get('cfg-senderName')     || defaultSettings.senderName,
+      replyTo:          get('cfg-replyTo')        || defaultSettings.replyTo,
+      uploadNotifMsg:   get('cfg-uploadNotifMsg') || defaultSettings.uploadNotifMsg,
+      driveClientId:    get('cfg-driveClientId')  || defaultSettings.driveClientId,
+      driveFolderId:    get('cfg-driveFolderId')  || defaultSettings.driveFolderId,
+    };
+
+    try {
+      localStorage.setItem(SETTINGS_KEY, JSON.stringify(portalSettings));
+    } catch(e) {
+      showToast('Could not save to browser storage — settings applied for this session only.', '⚠️');
+    }
+
+    applySettings();
+
+    const statusEl = document.getElementById('maintSaveStatus');
+    if (statusEl) {
+      statusEl.innerHTML = '<span class="maint-saved-tick">✓ All settings saved!</span>';
+      setTimeout(() => { if (statusEl) statusEl.innerHTML = ''; }, 3000);
+    }
+    showToast('✅ Settings saved and applied.');
+  }
+
+  function resetSettings() {
+    if (!confirm('Reset all settings to defaults? This cannot be undone.')) return;
+    localStorage.removeItem(SETTINGS_KEY);
+    portalSettings = { ...defaultSettings };
+    populateMaintenanceForm();
+    applySettings();
+    showToast('↺ Settings reset to defaults.');
+  }
+
+  // Override DRIVE_CLIENT_ID and DRIVE_ROOT_FOLDER to read from portalSettings
+  // (The Drive functions already use the const variables; we patch them here)
+  function getDriveClientId()  { return portalSettings.driveClientId  || DRIVE_CLIENT_ID;  }
+  function getDriveFolderId()  { return portalSettings.driveFolderId  || DRIVE_ROOT_FOLDER; }
+
+  // Also generate client IDs using settings prefix/format
+  function generateClientId() {
+    const prefix = portalSettings.clientIdPrefix || 'IC';
+    const fmt    = portalSettings.clientIdFormat || 'PREFIX-YYYY-NNNN';
+    const ids    = clients.map(c => parseInt((c.id.match(/\d+$/) || ['0'])[0]));
+    const nextNum = (Math.max(...ids, 0) + 1).toString().padStart(4, '0');
+    const year   = new Date().getFullYear();
+    return fmt
+      .replace('PREFIX', prefix)
+      .replace('YYYY',   year)
+      .replace('NNNN',   nextNum)
+      .replace('YYYYNNNN', year + nextNum);
+  }
+
+  function formatSize(bytes) {
+    if (!bytes || bytes === 0) return '—';
+    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(0) + 'KB';
+    return (bytes / (1024 * 1024)).toFixed(1) + 'MB';
+  }
+
+  function showToast(msg, icon = '✅') {
+    const t = document.getElementById('toast');
+    document.getElementById('toastMsg').textContent = msg;
+    document.getElementById('toastIcon').textContent = icon;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 5000);
+  }
+</script>
+</body>
+</html>
