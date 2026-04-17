@@ -1905,6 +1905,17 @@
     <button class="toggle-btn" onclick="setView('maintenance')">⚙️ Maintenance</button>
   </div>
 
+  <!-- ═══ LANDING PAGE (shown when no client link) ═══ -->
+  <div id="landingView" style="display:none;flex-direction:column;align-items:center;justify-content:center;min-height:60vh;text-align:center;padding:48px 24px;">
+    <div style="font-size:64px;margin-bottom:24px;">📁</div>
+    <div style="font-family:'Cormorant Garamond',serif;font-size:36px;font-weight:700;color:var(--navy);margin-bottom:12px;">Welcome to the<br>Document Portal</div>
+    <div style="font-size:15px;color:var(--text-sub);max-width:420px;line-height:1.8;margin-bottom:32px;font-weight:500;">Please use the personal link sent to you by your adviser to access your secure document upload page.</div>
+    <div style="background:var(--gold-pale);border:2px solid var(--gold-light);border-radius:var(--radius-lg);padding:20px 28px;max-width:400px;">
+      <div style="font-size:12px;font-weight:800;color:var(--navy);margin-bottom:6px;letter-spacing:0.5px;">NEED HELP?</div>
+      <div style="font-size:13px;color:var(--text-sub);font-weight:500;">Contact your Walk With You Capital adviser and ask them to resend your portal link.</div>
+    </div>
+  </div>
+
   <!-- ═══ CLIENT VIEW ═══ -->
   <div class="client-section" id="clientView">
 
@@ -2374,6 +2385,11 @@
 
   </div>
 
+  <!-- Hidden staff access trigger — triple-click the footer text -->
+  <div style="text-align:center;padding:40px 0 20px;cursor:default;" ondblclick="showStaffToggle()" title="">
+    <span style="font-size:11px;color:#D1D5DB;user-select:none;">© Walk With You Capital</span>
+  </div>
+
 </main>
 
 <!-- ══ UPLOAD MODAL ══ -->
@@ -2659,7 +2675,7 @@
       <button class="pw-toggle" onclick="togglePwVisibility()" id="pwToggleBtn" title="Show/hide password">👁</button>
     </div>
     <div class="pw-error" id="pwError">Incorrect password. Please try again.</div>
-    <button class="pw-submit" onclick="submitPassword()">Unlock Staff View</button>
+    <button class="pw-submit" id="pwSubmit" onclick="submitPassword()">Unlock Staff View</button>
     <button class="pw-cancel" onclick="closePwModal()">← Back to Client View</button>
     <div class="pw-hint" id="pwHint">Contact your administrator if you've forgotten the password.</div>
   </div>
@@ -3153,7 +3169,48 @@
     renderClientGroups();
     updateLockButtons();
     setDriveStatus(false);
-    // Pre-cache demo client folders once Drive is connected (triggered on auth callback)
+
+    // ── Read URL params to identify client ──────────────────────────────────
+    const params = new URLSearchParams(window.location.search);
+    const urlClientId   = params.get('client');
+    const urlClientName = params.get('name');
+
+    if (urlClientId) {
+      // Find or temporarily create client entry from URL
+      const found = clients.find(c => c.id === urlClientId);
+      if (found) {
+        activeClientId = found.id;
+      } else {
+        // Client not in list yet — create minimal entry so page renders
+        clients.push({
+          id: urlClientId,
+          name: urlClientName || urlClientId,
+          email: '', phone: '', step: '', adviser: staffMembers[0]?.id || 's1',
+          docs: docLibrary.map(d => d.id),
+          driveFolderId: null
+        });
+        activeClientId = urlClientId;
+      }
+      // Update header pill
+      const nameEl = document.querySelector('.client-name-sm');
+      const idEl   = document.querySelector('.client-id-sm');
+      if (nameEl && urlClientName) nameEl.textContent = urlClientName;
+      if (idEl)   idEl.textContent = urlClientId;
+      // Update folder path
+      const pathEl = document.getElementById('clientFolderPath');
+      if (pathEl && urlClientName) pathEl.textContent = urlClientId + ' — ' + urlClientName + ' / All Documents';
+      // Show client view normally
+      document.getElementById('clientView').classList.remove('hidden');
+      document.getElementById('landingView') && (document.getElementById('landingView').style.display = 'none');
+    } else {
+      // No client param — show landing page, hide client view
+      document.getElementById('clientView').classList.add('hidden');
+      const landing = document.getElementById('landingView');
+      if (landing) landing.style.display = 'flex';
+      // Hide the view toggle entirely (clients should not see staff buttons)
+      const toggle = document.querySelector('.view-toggle');
+      if (toggle) toggle.style.display = 'none';
+    }
   });
 
 
@@ -4197,7 +4254,21 @@
   function closePwModal() {
     document.getElementById('pwOverlay').classList.remove('open');
     pendingView = null;
+    // Re-highlight client button as active since we cancelled
+    document.querySelectorAll('.toggle-btn').forEach((b, i) => {
+      b.classList.toggle('active', i === 0);
+    });
   }
+
+  // Close pw modal if clicking the backdrop
+  document.addEventListener('DOMContentLoaded', () => {
+    const overlay = document.getElementById('pwOverlay');
+    if (overlay) {
+      overlay.addEventListener('click', e => {
+        if (e.target === overlay) closePwModal();
+      });
+    }
+  });
 
   function submitPassword() {
     const entered = document.getElementById('pwInput').value;
@@ -4269,6 +4340,17 @@
     }
     try { localStorage.setItem(PW_KEY, newPw); } catch(e) {}
     return true;
+  }
+
+  function showStaffToggle() {
+    const toggle = document.querySelector('.view-toggle');
+    if (toggle) {
+      toggle.style.display = toggle.style.display === 'none' ? 'flex' : 'flex';
+      toggle.style.display = 'flex';
+    }
+    // Hide landing, show client view shell
+    const landing = document.getElementById('landingView');
+    if (landing) landing.style.display = 'none';
   }
 
   function formatSize(bytes) {
