@@ -1709,6 +1709,160 @@
     .maint-field--full { grid-column: 1; }
   }
 
+
+  /* ─── STAFF PASSWORD MODAL ─── */
+  .pw-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(28,68,117,0.55);
+    backdrop-filter: blur(6px);
+    z-index: 500;
+    align-items: center;
+    justify-content: center;
+  }
+  .pw-overlay.open { display: flex; }
+
+  .pw-box {
+    background: var(--white);
+    border: 2px solid var(--border);
+    border-radius: var(--radius-xl);
+    padding: 40px 36px 36px;
+    width: 90%;
+    max-width: 380px;
+    text-align: center;
+    box-shadow: var(--shadow-lg);
+    animation: slideUp 0.35s cubic-bezier(0.34,1.56,0.64,1);
+  }
+
+  .pw-lock {
+    width: 56px; height: 56px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--navy), var(--navy-mid));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 24px;
+    margin: 0 auto 20px;
+    box-shadow: 0 4px 16px rgba(28,68,117,0.3);
+  }
+
+  .pw-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 6px;
+  }
+
+  .pw-sub {
+    font-size: 13px;
+    color: var(--text-sub);
+    margin-bottom: 24px;
+    line-height: 1.5;
+    font-weight: 500;
+  }
+
+  .pw-input-wrap { position: relative; margin-bottom: 10px; }
+
+  .pw-input {
+    width: 100%;
+    border: 2px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 13px 46px 13px 18px;
+    font-size: 16px;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 600;
+    color: var(--text-main);
+    background: var(--surface-2);
+    text-align: center;
+    letter-spacing: 3px;
+    transition: all 0.2s;
+    box-sizing: border-box;
+  }
+
+  .pw-input:focus {
+    outline: none;
+    border-color: var(--navy);
+    background: var(--white);
+    box-shadow: 0 0 0 4px rgba(28,68,117,0.08);
+  }
+
+  .pw-input.error { border-color: var(--crimson); box-shadow: 0 0 0 4px rgba(140,4,4,0.08); }
+
+  .pw-toggle {
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 18px;
+    color: var(--text-sub);
+    padding: 0;
+    line-height: 1;
+  }
+
+  .pw-error {
+    font-size: 12px;
+    color: var(--crimson);
+    font-weight: 700;
+    margin-bottom: 12px;
+    min-height: 18px;
+    display: none;
+  }
+  .pw-error.show { display: block; }
+
+  .pw-submit {
+    width: 100%;
+    padding: 13px;
+    background: linear-gradient(135deg, var(--navy), var(--navy-mid));
+    color: white;
+    border: none;
+    border-radius: var(--radius-md);
+    font-size: 14px;
+    font-weight: 800;
+    font-family: 'Nunito', sans-serif;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 4px 14px rgba(28,68,117,0.3);
+    margin-bottom: 14px;
+  }
+
+  .pw-submit:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(28,68,117,0.4); }
+
+  .pw-cancel {
+    font-size: 12px;
+    color: var(--text-sub);
+    cursor: pointer;
+    font-weight: 600;
+    background: none;
+    border: none;
+    font-family: 'Nunito', sans-serif;
+  }
+  .pw-cancel:hover { color: var(--navy); }
+
+  .pw-hint {
+    font-size: 11px;
+    color: var(--text-sub);
+    margin-top: 16px;
+    padding-top: 14px;
+    border-top: 1px solid var(--border);
+    font-weight: 500;
+  }
+
+  /* Lock icon on staff/maintenance buttons when not authenticated */
+  .toggle-btn.locked::after {
+    content: ' 🔒';
+    font-size: 11px;
+    opacity: 0.7;
+  }
+  .toggle-btn.unlocked::after {
+    content: ' ✓';
+    font-size: 11px;
+    color: var(--gold);
+    opacity: 1;
+  }
+
   @media (max-width: 600px) {
     .header { padding: 16px 20px; }
     .main { padding: 32px 16px 60px; }
@@ -1878,6 +2032,7 @@
       <button class="staff-settings-btn" onclick="openDocLibraryModal()">📋 Manage Doc Library</button>
       <button class="staff-settings-btn" onclick="openStepFoldersModal()">📂 Manage Step Folders</button>
       <button class="staff-settings-btn" onclick="openManageStaffModal()" style="background:rgba(107,79,160,0.1);border-color:rgba(107,79,160,0.3);color:#a88fd4;">👤 Manage Staff</button>
+      <button class="staff-settings-btn" onclick="lockStaff()" style="margin-left:auto;background:rgba(140,4,4,0.08);border-color:rgba(140,4,4,0.25);color:var(--crimson);">🔒 Lock &amp; Exit</button>
       <div id="driveConnectWrap" style="display:flex;align-items:center;gap:8px;margin-left:auto;">
         <div id="driveStatusDot" style="width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,0.2);flex-shrink:0;"></div>
         <span id="driveStatusLabel" style="font-size:10px;color:var(--white-dim);">Google Drive not connected</span>
@@ -2181,6 +2336,35 @@
       </div>
     </div>
 
+
+    <!-- ── PASSWORD ── -->
+    <div class="maint-card">
+      <div class="maint-card-header">
+        <div class="maint-card-icon">🔐</div>
+        <div>
+          <div class="maint-card-title">Staff Password</div>
+          <div class="maint-card-sub">Password required to access Staff View and Maintenance</div>
+        </div>
+      </div>
+      <div class="maint-grid">
+        <div class="maint-field">
+          <label class="maint-label">Current Password</label>
+          <input class="maint-input" id="cfg-pwCurrent" type="password" placeholder="Enter current password to verify">
+        </div>
+        <div class="maint-field">
+          <label class="maint-label">New Password</label>
+          <input class="maint-input" id="cfg-pwNew" type="password" placeholder="Leave blank to keep current">
+        </div>
+        <div class="maint-field">
+          <label class="maint-label">Confirm New Password</label>
+          <input class="maint-input" id="cfg-pwConfirm" type="password" placeholder="Repeat new password">
+        </div>
+        <div class="maint-field" style="display:flex;align-items:flex-end;">
+          <div style="font-size:12px;color:var(--text-sub);line-height:1.6;font-weight:500;">The default password is <strong style="color:var(--navy);">wwyc2025</strong>. Change it here and click Save All Settings.</div>
+        </div>
+      </div>
+    </div>
+
     <!-- ── SAVE BAR ── -->
     <div class="maint-save-bar">
       <div class="maint-save-status" id="maintSaveStatus"></div>
@@ -2458,6 +2642,26 @@
       <button class="btn-secondary" onclick="closeModal('newClientModal')">Cancel</button>
       <button class="btn-primary" id="newClientSaveBtn" onclick="saveNewClient()">Create Client</button>
     </div>
+  </div>
+</div>
+
+
+<!-- ══ STAFF PASSWORD MODAL ══ -->
+<div class="pw-overlay" id="pwOverlay">
+  <div class="pw-box">
+    <div class="pw-lock">🔐</div>
+    <div class="pw-title">Staff Access</div>
+    <div class="pw-sub" id="pwSubText">Enter the staff password to access the dashboard.</div>
+    <div class="pw-input-wrap">
+      <input class="pw-input" id="pwInput" type="password" placeholder="••••••••"
+        onkeydown="if(event.key==='Enter') submitPassword()"
+        oninput="document.getElementById('pwError').classList.remove('show');this.classList.remove('error');">
+      <button class="pw-toggle" onclick="togglePwVisibility()" id="pwToggleBtn" title="Show/hide password">👁</button>
+    </div>
+    <div class="pw-error" id="pwError">Incorrect password. Please try again.</div>
+    <button class="pw-submit" onclick="submitPassword()">Unlock Staff View</button>
+    <button class="pw-cancel" onclick="closePwModal()">← Back to Client View</button>
+    <div class="pw-hint" id="pwHint">Contact your administrator if you've forgotten the password.</div>
   </div>
 </div>
 
@@ -2947,6 +3151,7 @@
     renderIndividualDocs();
     renderStepFolders();
     renderClientGroups();
+    updateLockButtons();
     setDriveStatus(false);
     // Pre-cache demo client folders once Drive is connected (triggered on auth callback)
   });
@@ -3024,7 +3229,8 @@
   }
 
   // ─── VIEW TOGGLE ───
-  function setView(view) {
+  // Direct view switch (no password check — used after auth)
+  function setViewDirect(view) {
     document.querySelectorAll('.toggle-btn').forEach((b, i) => {
       b.classList.toggle('active',
         (view === 'client'      && i === 0) ||
@@ -3037,6 +3243,15 @@
     const mv = document.getElementById('maintenanceView');
     if (mv) mv.classList.toggle('active', view === 'maintenance');
     if (view === 'maintenance') populateMaintenanceForm();
+  }
+
+  // Gated view switch — requires password for staff/maintenance
+  function setView(view) {
+    if ((view === 'staff' || view === 'maintenance') && !staffUnlocked) {
+      openPwModal(view);
+      return;
+    }
+    setViewDirect(view);
   }
 
   // ─── NORMAL FILE SELECT (drag/drop zone or Choose Files) ───
@@ -3858,6 +4073,10 @@
     set('cfg-driveClientId',  s.driveClientId);
     set('cfg-driveFolderId',  s.driveFolderId);
 
+    // Clear password fields (never pre-fill)
+    const pwFields = ['cfg-pwCurrent','cfg-pwNew','cfg-pwConfirm'];
+    pwFields.forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+
     // Reflect drive connection status
     const dot   = document.getElementById('maintDriveDot');
     const label = document.getElementById('maintDriveLabel');
@@ -3908,6 +4127,9 @@
       statusEl.innerHTML = '<span class="maint-saved-tick">✓ All settings saved!</span>';
       setTimeout(() => { if (statusEl) statusEl.innerHTML = ''; }, 3000);
     }
+    // Handle password change
+    if (!savePasswordFromMaintenance()) return;
+
     showToast('✅ Settings saved and applied.');
   }
 
@@ -3937,6 +4159,116 @@
       .replace('YYYY',   year)
       .replace('NNNN',   nextNum)
       .replace('YYYYNNNN', year + nextNum);
+  }
+
+
+  // ═══════════════════════════════════════════════════
+  // STAFF PASSWORD PROTECTION
+  // ═══════════════════════════════════════════════════
+
+  const PW_KEY          = 'ic_staff_pw';
+  const DEFAULT_PW      = 'wwyc2025';
+  let   staffUnlocked   = false;
+  let   pendingView     = null;   // which view to go to after auth
+
+  function getStoredPassword() {
+    try { return localStorage.getItem(PW_KEY) || DEFAULT_PW; }
+    catch(e) { return DEFAULT_PW; }
+  }
+
+  function openPwModal(targetView) {
+    pendingView = targetView;
+    document.getElementById('pwInput').value = '';
+    document.getElementById('pwInput').classList.remove('error');
+    document.getElementById('pwError').classList.remove('show');
+    document.getElementById('pwInput').type = 'password';
+    document.getElementById('pwToggleBtn').textContent = '👁';
+
+    // Update sub text based on target
+    const label = targetView === 'maintenance' ? 'Maintenance settings.' : 'Staff dashboard.';
+    document.getElementById('pwSubText').textContent = 'Enter the staff password to access the ' + label;
+    document.getElementById('pwSubmit') && (document.getElementById('pwSubmit').textContent =
+      targetView === 'maintenance' ? 'Unlock Maintenance' : 'Unlock Staff View');
+
+    document.getElementById('pwOverlay').classList.add('open');
+    setTimeout(() => document.getElementById('pwInput').focus(), 100);
+  }
+
+  function closePwModal() {
+    document.getElementById('pwOverlay').classList.remove('open');
+    pendingView = null;
+  }
+
+  function submitPassword() {
+    const entered = document.getElementById('pwInput').value;
+    const correct = getStoredPassword();
+    if (entered === correct) {
+      staffUnlocked = true;
+      document.getElementById('pwOverlay').classList.remove('open');
+      updateLockButtons();
+      if (pendingView) {
+        const pv = pendingView;
+        pendingView = null;
+        setViewDirect(pv);
+      }
+    } else {
+      document.getElementById('pwInput').classList.add('error');
+      document.getElementById('pwError').classList.add('show');
+      document.getElementById('pwInput').value = '';
+      document.getElementById('pwInput').focus();
+      // Shake animation
+      const box = document.querySelector('.pw-box');
+      box.style.transform = 'translateX(-8px)';
+      setTimeout(() => box.style.transform = 'translateX(8px)', 80);
+      setTimeout(() => box.style.transform = 'translateX(-4px)', 160);
+      setTimeout(() => box.style.transform = 'translateX(0)', 240);
+    }
+  }
+
+  function togglePwVisibility() {
+    const inp = document.getElementById('pwInput');
+    const btn = document.getElementById('pwToggleBtn');
+    if (inp.type === 'password') { inp.type = 'text'; btn.textContent = '🙈'; }
+    else { inp.type = 'password'; btn.textContent = '👁'; }
+  }
+
+  function updateLockButtons() {
+    document.querySelectorAll('.toggle-btn').forEach((b, i) => {
+      if (i === 0) { b.classList.remove('locked','unlocked'); return; } // client view
+      b.classList.remove('locked','unlocked');
+      b.classList.add(staffUnlocked ? 'unlocked' : 'locked');
+    });
+  }
+
+  function lockStaff() {
+    staffUnlocked = false;
+    updateLockButtons();
+    setViewDirect('client');
+    showToast('🔒 Staff view locked.');
+  }
+
+  // Save new password from Maintenance
+  function savePasswordFromMaintenance() {
+    const current  = document.getElementById('cfg-pwCurrent').value;
+    const newPw    = document.getElementById('cfg-pwNew').value;
+    const confirm  = document.getElementById('cfg-pwConfirm').value;
+
+    if (!newPw) return true; // no change requested
+
+    if (current !== getStoredPassword()) {
+      showToast('Current password is incorrect.', '⚠️');
+      return false;
+    }
+    if (newPw.length < 6) {
+      showToast('New password must be at least 6 characters.', '⚠️');
+      return false;
+    }
+    if (newPw !== confirm) {
+      showToast('Passwords do not match.', '⚠️');
+      return false;
+    }
+    try { localStorage.setItem(PW_KEY, newPw); } catch(e) {}
+    return true;
   }
 
   function formatSize(bytes) {
