@@ -4155,6 +4155,7 @@ Kind regards,
         clients.push(found);
       }
       activeClientId = found.id;
+      window._currentClientId = found.id;
 
       // Update header pill with real client name
       const displayName = found.name || urlClientName || urlClientId;
@@ -4179,6 +4180,7 @@ Kind regards,
       var docsList = document.getElementById('docsList');
       if (docsList) {
         docsList.innerHTML = '';
+        window._currentClientId = urlClientId;
         var saved = window.loadClientUploads(urlClientId);
         // Restore uploaded flags in docLibrary
         saved.forEach(function(u) {
@@ -4456,9 +4458,9 @@ Kind regards,
         if (matchedDoc) matchedDoc.uploaded = true;
       }
       // Save to localStorage for this client
-      var ac = window.getActiveClient();
-      if (ac) {
-        window.saveClientUpload(ac.id, {
+      var clientId = window._currentClientId || (window.getActiveClient() && window.getActiveClient().id);
+      if (clientId) {
+        window.saveClientUpload(clientId, {
           name: savedName,
           icon: icon,
           date: displayDate,
@@ -4613,6 +4615,26 @@ Kind regards,
   let clientFolderCache = {}; // clientId -> Drive folder id
 
   // ── Auth ──────────────────────────────────────────
+  // Auto-reconnect Drive silently if previously connected
+  window.autoReconnectDrive = function autoReconnectDrive() {
+    try {
+      if (localStorage.getItem('ic_drive_connected') !== '1') return;
+      if (typeof google === 'undefined' || !google.accounts) return;
+      const silentClient = google.accounts.oauth2.initTokenClient({
+        client_id: getDriveClientId(),
+        scope: DRIVE_SCOPES,
+        prompt: '',  // silent — no popup
+        callback: (resp) => {
+          if (resp.error) return; // silently fail — user can reconnect manually
+          driveAccessToken = resp.access_token;
+          driveConnected   = true;
+          setDriveStatus(true);
+        }
+      });
+      silentClient.requestAccessToken();
+    } catch(e) {}
+  };
+
   window.initiateDriveAuth = function initiateDriveAuth() {
     if (typeof google === 'undefined') {
       showToast('Google Sign-In script not yet loaded — please wait a moment and try again.', '⚠️');
@@ -4631,6 +4653,15 @@ Kind regards,
     });
     client.requestAccessToken();
   }
+
+  // Try silent reconnect once GSI is available
+  (function tryAutoReconnect() {
+    if (typeof google !== 'undefined' && google.accounts) {
+      setTimeout(function() { if (window.autoReconnectDrive) window.autoReconnectDrive(); }, 1000);
+    } else {
+      setTimeout(tryAutoReconnect, 500);
+    }
+  })();
 
   window.setDriveStatus = function setDriveStatus(connected) {
     const dot   = document.getElementById('driveStatusDot');
@@ -4870,7 +4901,15 @@ Kind regards,
     container.innerHTML = '';
     clients.forEach(client => {
       const initials = client.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
-      const requiredDocs = client.docs.map(id => docLibrary.find(d => d.id === id)).filter(Boolean);
+      // Load this client's uploaded docs from localStorage
+      const clientUploads = window.loadClientUploads(client.id);
+      const uploadedKeys  = clientUploads.map(u => u.matchKey).filter(Boolean);
+      const requiredDocs  = client.docs.map(id => {
+        const doc = docLibrary.find(d => d.id === id);
+        if (!doc) return null;
+        // Check if this doc was uploaded by this client (from their localStorage)
+        return Object.assign({}, doc, { uploaded: uploadedKeys.indexOf(doc.id) !== -1 });
+      }).filter(Boolean);
       const pendingCount = requiredDocs.filter(d => !d.uploaded).length;
       const allDone = pendingCount === 0;
 
