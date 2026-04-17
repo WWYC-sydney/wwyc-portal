@@ -4789,27 +4789,25 @@ Kind regards,
   };
 
   window.loadPersistedData = function loadPersistedData() {
+    var demoIds = ['IC-2024-0082','IC-2024-0091','IC-2024-0075'];
     try {
       var sc = localStorage.getItem(IC_CLIENTS_KEY);
       if (sc) {
         var parsed = JSON.parse(sc);
-        if (Array.isArray(parsed) && parsed.length > 0) {
-          // Filter out old demo clients that were hardcoded in earlier versions
-          var demoIds = ['IC-2024-0082','IC-2024-0091','IC-2024-0075'];
+        if (Array.isArray(parsed)) {
+          // Remove any demo clients
           var real = parsed.filter(function(c) { return demoIds.indexOf(c.id) === -1; });
-          // If ALL stored clients are demo clients, clear them
-          if (real.length === 0 && parsed.length > 0) {
-            // Only demo clients stored — wipe them
-            localStorage.removeItem(IC_CLIENTS_KEY);
-          } else {
-            clients = real;
-            if (clients.length > 0) activeClientId = clients[0].id;
+          if (real.length !== parsed.length) {
+            // Had demo clients — save cleaned version back
+            localStorage.setItem(IC_CLIENTS_KEY, JSON.stringify(real));
           }
+          clients = real;
+          if (clients.length > 0) activeClientId = clients[0].id;
         }
       }
     } catch(e) {}
     // Clear demo client upload data
-    ['IC-2024-0082','IC-2024-0091','IC-2024-0075'].forEach(function(id) {
+    demoIds.forEach(function(id) {
       try { localStorage.removeItem(IC_UPLOADS_KEY + '_' + id); } catch(e) {}
     });
 
@@ -6337,30 +6335,6 @@ Kind regards,
   }
 </script>
 
-<div id="debugBar" style="position:fixed;bottom:40px;left:0;right:0;background:#1C4475;color:white;font-family:monospace;font-size:11px;padding:6px 12px;z-index:99999;display:flex;gap:16px;align-items:center;flex-wrap:wrap;">
-  <span style="font-weight:bold;">DEBUG:</span>
-  <span id="dbViews">views: ?</span>
-  <span id="dbUnlocked">unlocked: ?</span>
-  <span id="dbClients">clients: ?</span>
-  <span id="dbShowView">showView: ?</span>
-  <button onclick="document.getElementById('debugBar').style.display='none'" style="background:rgba(255,255,255,0.2);border:none;color:white;cursor:pointer;padding:2px 8px;margin-left:auto;">✕</button>
-</div>
-<script>
-setInterval(function() {
-  var cv = document.getElementById('clientView');
-  var sv = document.getElementById('staffView');
-  var mv = document.getElementById('maintenanceView');
-  var getDisplay = function(el) { return el ? (el.style.display || '[css]') : 'missing'; };
-  document.getElementById('dbViews').textContent = 
-    'client:' + getDisplay(cv) + ' staff:' + getDisplay(sv) + ' maint:' + getDisplay(mv);
-  document.getElementById('dbUnlocked').textContent = 
-    'unlocked: _staff=' + window._staffIsUnlocked + ' staffUL=' + window.staffUnlocked;
-  document.getElementById('dbClients').textContent = 
-    'clients:' + (typeof clients !== 'undefined' ? clients.length : 'undefined');
-  document.getElementById('dbShowView').textContent = 
-    '_showView:' + (typeof window._showView);
-}, 500);
-</script>
-
+<!-- debug bar removed -->
 </body>
 </html>
