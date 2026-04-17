@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <!-- WWYC Portal v2.0 - 2024-fixed -->
 <html lang="en">
@@ -3714,8 +3715,8 @@ Kind regards,
   // ═══════════════════════════════════════════════════
 
   let docLibrary = [
-    { id:'payslip',    icon:'💼', name:'Recent Payslips',    desc:'Last 2 payslips (PDF or image)',         assignee:'s1', note:"Please provide your two most recent payslips showing employer name, gross/net salary, and pay date. Must be within the last 60 days.", uploaded:true  },
-    { id:'id',         icon:'🪪', name:'Photo ID',           desc:"Driver's licence or passport",           assignee:'s2', note:"We accept Australian Driver's Licence (front & back) or a current passport. Ensure the document is not expired.",                   uploaded:true  },
+    { id:'payslip',    icon:'💼', name:'Recent Payslips',    desc:'Last 2 payslips (PDF or image)',         assignee:'s1', note:"Please provide your two most recent payslips showing employer name, gross/net salary, and pay date. Must be within the last 60 days.", uploaded:false },
+    { id:'id',         icon:'🪪', name:'Photo ID',           desc:"Driver's licence or passport",           assignee:'s2', note:"We accept Australian Driver's Licence (front & back) or a current passport. Ensure the document is not expired.",                   uploaded:false },
     { id:'bank',       icon:'🏦', name:'Bank Statements',    desc:'Last 3 months of statements',            assignee:'s1', note:"Download statements from your bank's internet banking (PDF preferred). Must show full name, BSB, account number and all transactions.", uploaded:false },
     { id:'super',      icon:'📊', name:'Super Statement',    desc:'Most recent annual statement',           assignee:'s3', note:"Your most recent super annual statement. Find it in your super fund's online portal under 'Statements'.",                             uploaded:false },
     { id:'tax',        icon:'📋', name:'Tax Return',         desc:'Most recent ATO tax return',             assignee:'s3', note:"Your most recent Notice of Assessment from the ATO, or the full tax return lodged with your accountant. Log in to myGov to download.", uploaded:false },
@@ -4285,9 +4286,11 @@ Kind regards,
     });
     // Remove any blanks
     staffMembers = staffMembers.filter(s => s.name.trim() !== '');
+    window.persistAll();
     closeModal('manageStaffModal');
     renderIndividualDocs();
     renderStepFolders();
+    renderClientGroups();
     showToast('✅ Staff members saved. ' + staffMembers.length + ' member' + (staffMembers.length !== 1 ? 's' : '') + ' in the system.');
   }
 
