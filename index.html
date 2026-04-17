@@ -672,8 +672,11 @@
   /* Staff docs table */
   .staff-section { display: none; }
   .staff-section.active { display: block; }
-  .client-section { display: block; }
-  .client-section.hidden { display: none; }
+  .client-section { display: none; }
+  .client-section.hidden { display: none !important; }
+  #clientView { display: none; }
+  #staffView { display: none; }
+  #maintenanceView { display: none; }
 
   .staff-banner {
     background: var(--purple-light);
@@ -2603,9 +2606,9 @@
 
   <!-- VIEW TOGGLE -->
   <div class="view-toggle" id="viewToggle" style="display:none;">
-    <button class="toggle-btn active" onclick="window.setView('client')">📁 Client View</button>
-    <button class="toggle-btn" onclick="window.setView('staff')">👥 Staff View</button>
-    <button class="toggle-btn" onclick="window.setView('maintenance')">⚙️ Maintenance</button>
+    <button class="toggle-btn active" id="btn-client">📁 Client View</button>
+    <button class="toggle-btn" id="btn-staff">👥 Staff View</button>
+    <button class="toggle-btn" id="btn-maint">⚙️ Maintenance</button>
   </div>
 
   <!-- ═══ LANDING PAGE (shown when no client link) ═══ -->
@@ -2620,7 +2623,7 @@
   </div>
 
   <!-- ═══ CLIENT VIEW ═══ -->
-  <div class="client-section hidden" id="clientView">
+  <div class="client-section hidden" id="clientView" style="display:none;">
 
     <div class="page-hero">
       <div class="page-eyebrow">Secure Document Submission</div>
@@ -2638,14 +2641,9 @@
     </div>
 
     <!-- Client Folder Link -->
-    <div class="folder-banner" onclick="window.openClientFolder()" id="clientFolderBanner">
-      <div class="folder-icon">📁</div>
-      <div class="folder-info">
-        <div class="folder-title">Your Secure Document Folder</div>
-        <div class="folder-path" id="clientFolderPath">Sarah Johnson (IC-2024-0082) / All Documents</div>
-      </div>
+    <!-- folder banner removed — clients do not need Drive access -->
       <div class="folder-arrow">→</div>
-    </div>
+    
 
 
     <!-- Information Request Forms (shown when staff have activated requests) -->
@@ -2694,7 +2692,7 @@
           </div>
           <div class="doc-right">
             <span class="doc-status-pill pill-reviewed">✓ Reviewed</span>
-            <button class="doc-delete" title="Remove" onclick="window.removeDoc(this, '1')">✕</button>
+
           </div>
         </div>
 
@@ -2706,7 +2704,7 @@
           </div>
           <div class="doc-right">
             <span class="doc-status-pill pill-reviewed">✓ Reviewed</span>
-            <button class="doc-delete" title="Remove" onclick="window.removeDoc(this, '2')">✕</button>
+
           </div>
         </div>
 
@@ -2720,7 +2718,7 @@
               </div>
               <div class="doc-right">
                 <span class="doc-status-pill pill-rejected">⚠ Returned</span>
-                <button class="doc-delete" title="Remove" onclick="window.removeDoc(this, '3')">✕</button>
+
               </div>
             </div>
             <div class="rejection-note">
@@ -2737,7 +2735,9 @@
   </div>
 
   <!-- ═══ STAFF VIEW ═══ -->
-  <div class="staff-section" id="staffView">
+
+
+  <div class="staff-section" id="staffView" style="display:none;">
 
     <div class="staff-banner">
       <span>👥</span>
@@ -2916,7 +2916,7 @@
 
 
   <!-- ═══ MAINTENANCE VIEW ═══ -->
-  <div class="maint-section" id="maintenanceView">
+  <div class="maint-section" id="maintenanceView" style="display:none;">
 
     <div class="maint-banner">
       <span style="font-size:20px;">⚙️</span>
@@ -3104,6 +3104,84 @@
     <span style="font-size:11px;color:#D1D5DB;user-select:none;">© Walk With You Capital</span>
   </div>
 
+
+<script>
+(function() {
+  function showView(view) {
+    var views = {
+      client:      document.getElementById('clientView'),
+      staff:       document.getElementById('staffView'),
+      maintenance: document.getElementById('maintenanceView'),
+      landing:     document.getElementById('landingView')
+    };
+    var btns = {
+      client: document.getElementById('btn-client'),
+      staff:  document.getElementById('btn-staff'),
+      maint:  document.getElementById('btn-maint')
+    };
+
+    // Hide all views
+    Object.keys(views).forEach(function(k) {
+      if (views[k]) views[k].style.display = 'none';
+    });
+
+    // Remove active from all buttons
+    Object.keys(btns).forEach(function(k) {
+      if (btns[k]) btns[k].classList.remove('active');
+    });
+
+    // Show the requested view
+    if (view === 'client' && views.client) {
+      views.client.style.display = 'block';
+      if (btns.client) btns.client.classList.add('active');
+    } else if (view === 'staff' && views.staff) {
+      views.staff.style.display = 'block';
+      if (btns.staff) btns.staff.classList.add('active');
+    } else if (view === 'maintenance' && views.maintenance) {
+      views.maintenance.style.display = 'block';
+      if (btns.maint) btns.maint.classList.add('active');
+      if (window.populateMaintenanceForm) window.populateMaintenanceForm();
+    }
+  }
+
+  window._showView = showView;
+
+  document.addEventListener('DOMContentLoaded', function() {
+    var bc = document.getElementById('btn-client');
+    var bs = document.getElementById('btn-staff');
+    var bm = document.getElementById('btn-maint');
+
+    if (bc) bc.addEventListener('click', function() { showView('client'); });
+    if (bs) bs.addEventListener('click', function() {
+      if (window._staffIsUnlocked || window.staffUnlocked) {
+        showView('staff');
+      } else {
+        window._pendingView = 'staff';
+        var o = document.getElementById('pwOverlay');
+        if (o) o.style.display = 'flex';
+        var i = document.getElementById('pwInput');
+        if (i) { i.value = ''; setTimeout(function(){ i.focus(); }, 100); }
+        var e = document.getElementById('pwErrorMsg');
+        if (e) e.style.display = 'none';
+      }
+    });
+    if (bm) bm.addEventListener('click', function() {
+      if (window._staffIsUnlocked || window.staffUnlocked) {
+        showView('maintenance');
+      } else {
+        window._pendingView = 'maintenance';
+        var o = document.getElementById('pwOverlay');
+        if (o) o.style.display = 'flex';
+        var i = document.getElementById('pwInput');
+        if (i) { i.value = ''; setTimeout(function(){ i.focus(); }, 100); }
+        var e = document.getElementById('pwErrorMsg');
+        if (e) e.style.display = 'none';
+      }
+    });
+  });
+})();
+</script>
+
 </main>
 
 <!-- ══ UPLOAD MODAL ══ -->
@@ -3114,7 +3192,7 @@
     <div class="modal-sub">Fill in the details below so this document is filed correctly. The file will be renamed automatically.</div>
 
     <div class="modal-label">Document Type</div>
-    <select class="modal-doctype-select" id="docTypeSelect" onchange="window.updateSavedNamePreview(); if(pendingFiles.length) { selectedChecklistDocId=null; currentSuggestedDocId=null; const s=document.getElementById('smartDetectSection'); if(s) s.style.display='none'; setTimeout(runSmartDetection,80); }">
+    <select class="modal-doctype-select" id="docTypeSelect" onchange="window.updateSavedNamePreview(); var odr=document.getElementById('otherDescRow'); if(odr) odr.style.display=this.value==='Other'?'block':'none'; if(pendingFiles.length) { selectedChecklistDocId=null; currentSuggestedDocId=null; const s=document.getElementById('smartDetectSection'); if(s) s.style.display='none'; setTimeout(runSmartDetection,80); }">
       <option value="Payslip">Payslip</option>
       <option value="Bank Statement">Bank Statement</option>
       <option value="Income Statement">Income Statement</option>
@@ -3125,6 +3203,10 @@
       <option value="Photo ID">Photo ID</option>
       <option value="Other">Other</option>
     </select>
+    <div id="otherDescRow" style="display:none;margin-top:8px;">
+      <div class="modal-label">Brief description <span style="color:var(--white-dim);font-size:9px;text-transform:none;letter-spacing:0;">(e.g. Council rates notice)</span></div>
+      <input type="text" class="modal-doctype-select" id="otherDescInput" placeholder="Describe this document" oninput="window.updateSavedNamePreview()" style="margin-bottom:0;">
+    </div>
 
     <div class="modal-label" style="margin-top:14px;">Institution / Employer <span style="color:var(--white-dim);font-size:9px;text-transform:none;letter-spacing:0;">(optional — e.g. Westpac, Sweet Treats Pty Ltd)</span></div>
     <input type="text" class="modal-doctype-select" id="institutionInput" placeholder="Leave blank if not applicable" oninput="window.updateSavedNamePreview()" style="margin-bottom:0;">
@@ -3412,15 +3494,20 @@ document.getElementById('pwDoSubmit').addEventListener('click', function() {
     return;
   }
   document.getElementById('pwOverlay').style.display = 'none';
-  var tog = document.getElementById('viewToggle');    if(tog) tog.style.display = 'flex';
-  var lan = document.getElementById('landingView');   if(lan) lan.style.display = 'none';
-  var cv  = document.getElementById('clientView');    if(cv)  { cv.style.display='none'; cv.classList.add('hidden'); }
-  var sv  = document.getElementById('staffView');     if(sv)  { sv.style.display='block'; sv.classList.add('active'); }
-  var mv  = document.getElementById('maintenanceView'); if(mv) { mv.style.display='none'; mv.classList.remove('active'); }
-  document.querySelectorAll('.toggle-btn').forEach(function(b,i){ b.classList.remove('active'); if(i===1) b.classList.add('active'); });
   window._staffIsUnlocked = true;
   window.staffUnlocked = true;
   try { staffUnlocked = true; } catch(e) {}
+  var tog = document.getElementById('viewToggle'); if(tog) tog.style.display = 'flex';
+  var tv = window._pendingView || 'staff';
+  window._pendingView = null;
+  if (window._showView) {
+    window._showView(tv);
+  } else {
+    var allViews = ['clientView','staffView','maintenanceView','landingView'];
+    allViews.forEach(function(id){ var el=document.getElementById(id); if(el) el.style.display='none'; });
+    var target = document.getElementById(tv === 'maintenance' ? 'maintenanceView' : 'staffView');
+    if(target) target.style.display = 'block';
+  }
 });
 </script>
 
@@ -4092,7 +4179,7 @@ Kind regards,
     setTimeout(openNextFolderUpload, 400);
   }
 
-  window.addUploadedCard = function addUploadedCard(savedName, icon, date, size, typeLabel) {
+  window.addUploadedCard = function addUploadedCard(savedName, icon, date, size, typeLabel, skipSave) {
     const list = document.getElementById('docsList');
     docCounter++;
     const iconClass = typeLabel === 'PDF' ? 'pdf' : ['JPG','JPEG','PNG'].includes(typeLabel) ? 'img' : 'doc';
@@ -4107,7 +4194,7 @@ Kind regards,
       </div>
       <div class="doc-right">
         <span class="doc-status-pill pill-pending">Pending Review</span>
-        <button class="doc-delete" title="Remove" onclick="window.removeDoc(this, '${docCounter}')">✕</button>
+<!-- upload locked -->
       </div>`;
     list.appendChild(card);
     const empty = document.getElementById('emptyState');
@@ -4230,6 +4317,7 @@ Kind regards,
   // ─── INIT ───
   document.addEventListener('DOMContentLoaded', () => {
     window.loadSettings();
+    window.loadPersistedData();
     window.renderIndividualDocs();
     renderStepFolders();
     renderClientGroups();
@@ -4280,13 +4368,21 @@ Kind regards,
       window.renderIndividualDocs();
       window.renderStepFolders();
       window.renderClientInfoForms();
+      // Clear and reload this client's uploaded docs
+      var uploadList = document.getElementById('uploadedDocsList');
+      if (uploadList) {
+        uploadList.innerHTML = '';
+        var saved = window.loadClientUploads(urlClientId);
+        saved.forEach(function(u) { window.addUploadedCard(u.name, u.icon, u.date, u.size, u.type); });
+      }
 
       // Show client view, hide landing
-      document.getElementById('clientView').classList.remove('hidden');
+      document.getElementById('clientView').style.cssText = 'display:block !important';
       document.getElementById('landingView').style.display = 'none';
 
     } else {
       // No client param — show landing page only
+      document.getElementById('clientView').style.display = 'none';
       document.getElementById('clientView').classList.add('hidden');
       document.getElementById('landingView').style.display = 'flex';
       // View toggle stays hidden (staff access via double-click footer)
@@ -4396,7 +4492,7 @@ Kind regards,
 
   // Gated view switch — requires password for staff/maintenance
   window.setView = function setView(view) {
-    var unlocked = window._staffIsUnlocked || window.staffUnlocked || false;
+    var unlocked = window._staffIsUnlocked === true || window.staffUnlocked === true;
     if ((view === 'staff' || view === 'maintenance') && !unlocked) {
       window._pendingView = view;
       var o = document.getElementById('pwOverlay');
@@ -4481,7 +4577,9 @@ Kind regards,
   }
 
   window.buildSavedName = function buildSavedName(ext) {
-    const docType     = document.getElementById('docTypeSelect').value;
+    var rawDocType    = document.getElementById('docTypeSelect').value;
+    var otherDesc     = document.getElementById('otherDescInput') ? document.getElementById('otherDescInput').value.trim() : '';
+    const docType     = (rawDocType === 'Other' && otherDesc) ? otherDesc : rawDocType;
     const institution = document.getElementById('institutionInput').value.trim();
     const clientName  = 'Sarah Johnson';
     const dateStr     = buildDateString();
@@ -4552,7 +4650,7 @@ Kind regards,
         </div>
         <div class="doc-right">
           <span class="doc-status-pill pill-pending">Pending Review</span>
-          <button class="doc-delete" title="Remove" onclick="window.removeDoc(this, '${docCounter}')">✕</button>
+  <!-- upload locked -->
         </div>`;
       document.getElementById('docsList').appendChild(card);
       uploadedCount++;
@@ -4653,8 +4751,10 @@ Kind regards,
         el.innerHTML = `<div class="req-assignee-dot"></div>Assigned: ${sel.value}`;
       });
     });
+    window.persistAll();
+    renderClientGroups();
     closeModal('assignModal');
-    showToast('✅ Staff assignments saved.');
+    showToast('✅ Staff assignments saved — all client views updated.');
   }
 
   // ─── EXPLANATION MANAGER ───
@@ -4882,6 +4982,53 @@ Kind regards,
     { id:'IC-2024-0075', name:'Priya Nair',    email:'priya.nair@email.com',     phone:'0433 444 555', step:'Step 9 — Choosing Home',       adviser:'s3', docs:['employment','tax'],                                     driveFolderId:null },
   ];
 
+  // ── PERSISTENCE ────────────────────────────────────────────────
+  var IC_CLIENTS_KEY     = 'ic_clients_v2';
+  var IC_ASSIGNMENTS_KEY = 'ic_assignments_v2';
+  var IC_STAFF_KEY       = 'ic_staff_v2';
+  var IC_UPLOADS_KEY     = 'ic_uploads_v2';   // per-client uploaded docs
+
+  window.persistAll = function persistAll() {
+    try {
+      localStorage.setItem(IC_CLIENTS_KEY,     JSON.stringify(clients));
+      localStorage.setItem(IC_ASSIGNMENTS_KEY, JSON.stringify(staffAssignments));
+      localStorage.setItem(IC_STAFF_KEY,       JSON.stringify(staffMembers));
+    } catch(e) { console.warn('localStorage full or unavailable'); }
+  };
+
+  window.loadPersistedData = function loadPersistedData() {
+    try {
+      var sc = localStorage.getItem(IC_CLIENTS_KEY);
+      if (sc) { var parsed = JSON.parse(sc); if (Array.isArray(parsed) && parsed.length > 0) clients = parsed; }
+    } catch(e) {}
+    try {
+      var sa = localStorage.getItem(IC_ASSIGNMENTS_KEY);
+      if (sa) { var pa = JSON.parse(sa); Object.assign(staffAssignments, pa); }
+    } catch(e) {}
+    try {
+      var ss = localStorage.getItem(IC_STAFF_KEY);
+      if (ss) { var ps = JSON.parse(ss); if (Array.isArray(ps) && ps.length > 0) staffMembers = ps; }
+    } catch(e) {}
+  };
+
+  // Per-client uploaded docs (saved separately so they persist across sessions)
+  window.loadClientUploads = function loadClientUploads(clientId) {
+    try {
+      var key = IC_UPLOADS_KEY + '_' + clientId;
+      var saved = localStorage.getItem(key);
+      return saved ? JSON.parse(saved) : [];
+    } catch(e) { return []; }
+  };
+
+  window.saveClientUpload = function saveClientUpload(clientId, uploadObj) {
+    try {
+      var key = IC_UPLOADS_KEY + '_' + clientId;
+      var existing = window.loadClientUploads(clientId);
+      existing.push(uploadObj);
+      localStorage.setItem(key, JSON.stringify(existing));
+    } catch(e) {}
+  };
+
   // Current active client (shown in client view)
   let activeClientId = 'IC-2024-0082';
   window.getActiveClient = function getActiveClient() { return clients.find(c => c.id === activeClientId) || clients[0]; }
@@ -4912,6 +5059,8 @@ Kind regards,
           <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
             <button onclick="window.copyClientPortalLink('${client.id}')" style="padding:4px 10px;background:rgba(76,175,130,0.1);border:1px solid rgba(76,175,130,0.25);border-radius:6px;color:var(--success);font-size:9px;letter-spacing:1px;text-transform:uppercase;cursor:pointer;font-family:'Montserrat',sans-serif;">🔗 Portal Link</button>
             <a class="client-folder-link" href="#" onclick="window.openStaffClientFolder('${client.id}','${client.name}');return false;">📁 Open Folder</a>
+            <button onclick="window.openEditClientModal('${client.id}')" style="padding:4px 10px;background:rgba(28,68,117,0.08);border:1px solid rgba(28,68,117,0.2);border-radius:6px;color:var(--navy);font-size:9px;letter-spacing:1px;text-transform:uppercase;cursor:pointer;font-family:'Nunito',sans-serif;">✏ Edit</button>
+            <button onclick="window.deleteClient('${client.id}','${client.name}')" style="padding:4px 10px;background:rgba(140,4,4,0.07);border:1px solid rgba(140,4,4,0.2);border-radius:6px;color:var(--crimson);font-size:9px;letter-spacing:1px;text-transform:uppercase;cursor:pointer;font-family:'Nunito',sans-serif;">🗑 Delete</button>
             <span class="doc-status-pill ${allDone?'pill-reviewed':'pill-pending'}" id="badge-${client.id}">${allDone ? 'All Reviewed' : pendingCount + ' Pending'}</span>
           </div>
         </div>
@@ -5005,6 +5154,7 @@ Kind regards,
       });
     }
 
+    persistAll();
     renderClientGroups();
     showToast('✅ ' + name + ' added! Portal link ready to copy.');
   }
@@ -5347,7 +5497,7 @@ Kind regards,
 
   const PW_KEY          = 'ic_staff_pw';
   const DEFAULT_PW      = 'wwyc2025';
-  window.staffUnlocked = false; var staffUnlocked = false;
+  if (!window._staffIsUnlocked) window.staffUnlocked = false; var staffUnlocked = false;
   let   pendingView     = null;   // which view to go to after auth
 
   window.getStoredPassword = function getStoredPassword() {
@@ -5433,7 +5583,7 @@ Kind regards,
   }
 
   window.lockStaff = function lockStaff() {
-    staffUnlocked = false; window.staffUnlocked = false;
+    staffUnlocked = false; window.staffUnlocked = false; window._staffIsUnlocked = false;
     updateLockButtons();
     setViewDirect('client');
     showToast('🔒 Staff view locked.');
@@ -5841,6 +5991,7 @@ Kind regards,
     client.phone   = document.getElementById('editClientPhone').value.trim() || client.phone;
     client.step    = document.getElementById('editClientStep').value.trim()  || client.step;
     client.adviser = document.getElementById('editClientAdviser').value      || client.adviser;
+    window.persistAll();
     window.closeModal('editClientModal');
     window.renderClientGroups();
     window.renderReminderClientTable();
@@ -6295,6 +6446,16 @@ Kind regards,
     } catch(e) {
       showToast('Document library error: ' + e.message, '⚠️');
     }
+  };
+
+
+  window.deleteClient = function deleteClient(clientId, clientName) {
+    if (!confirm('Delete ' + clientName + '? This cannot be undone.')) return;
+    clients = clients.filter(function(c) { return c.id !== clientId; });
+    window.persistAll();
+    window.renderClientGroups();
+    window.renderReminderClientTable();
+    showToast('🗑 ' + clientName + ' deleted.');
   };
 
   window.formatSize = function formatSize(bytes) {
