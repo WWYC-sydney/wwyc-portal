@@ -858,6 +858,8 @@
   .modal-sub { font-size: 13px; color: var(--text-sub); margin-bottom: 20px; line-height: 1.6; font-weight: 500; }
   .modal-close { float: right; background: var(--surface-2); border: 2px solid var(--border); color: var(--text-sub); font-size: 16px; cursor: pointer; width: 32px; height: 32px; border-radius: 50%; display:flex; align-items:center; justify-content:center; transition: all 0.2s; }
   .modal-close:hover { background: var(--rejected-light); border-color: #FCA5A5; color: var(--red); }
+  .modal select option { background: white; color: var(--text-main); }
+  .modal input, .modal select, .modal textarea { color: var(--text-main) !important; background: var(--surface-2) !important; }
 
   .modal-file-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; max-height: 200px; overflow-y: auto; }
 
@@ -1380,6 +1382,549 @@
   }
 
 
+
+  /* ─── REMINDERS SECTION ─── */
+  .reminders-section {
+    background: var(--white);
+    border: 2px solid var(--border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    margin-bottom: 24px;
+    box-shadow: var(--shadow-md);
+  }
+
+  .reminders-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 24px;
+    background: var(--surface-2);
+    border-bottom: 2px solid var(--border);
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.15s;
+  }
+
+  .reminders-header:hover { background: var(--gold-pale); }
+
+  .reminders-header-left {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .reminders-icon {
+    width: 42px; height: 42px;
+    border-radius: var(--radius-sm);
+    background: linear-gradient(135deg, #FFF7ED, #FDEAEA);
+    border: 2px solid #FDBA74;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+
+  .reminders-title { font-size: 15px; font-weight: 800; color: var(--text-main); }
+  .reminders-sub   { font-size: 12px; color: var(--text-sub); font-weight: 500; margin-top: 2px; }
+
+  .reminders-chevron {
+    font-size: 18px;
+    color: var(--text-sub);
+    transition: transform 0.2s;
+    font-weight: 700;
+  }
+  .reminders-section.open .reminders-chevron { transform: rotate(90deg); }
+
+  .reminders-body {
+    display: none;
+    padding: 24px;
+  }
+  .reminders-section.open .reminders-body { display: block; }
+
+  /* Toggle switch */
+  .reminder-toggle-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 20px;
+    padding: 14px 18px;
+    background: var(--surface-2);
+    border-radius: var(--radius-md);
+    border: 2px solid var(--border);
+  }
+
+  .toggle-switch {
+    position: relative;
+    width: 48px;
+    height: 26px;
+    flex-shrink: 0;
+  }
+
+  .toggle-switch input { opacity: 0; width: 0; height: 0; }
+
+  .toggle-track {
+    position: absolute;
+    inset: 0;
+    background: #D1D5DB;
+    border-radius: 99px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .toggle-track::after {
+    content: '';
+    position: absolute;
+    left: 3px;
+    top: 3px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: white;
+    transition: transform 0.2s;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+  }
+
+  .toggle-switch input:checked + .toggle-track { background: var(--gold); }
+  .toggle-switch input:checked + .toggle-track::after { transform: translateX(22px); }
+
+  .toggle-label { font-size: 13px; font-weight: 700; color: var(--text-main); flex: 1; }
+  .toggle-status { font-size: 11px; font-weight: 700; color: var(--text-sub); }
+  .toggle-status.active { color: var(--gold); }
+
+  /* Reminder config grid */
+  .reminder-config-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+
+  .reminder-field { display: flex; flex-direction: column; gap: 6px; }
+  .reminder-field--full { grid-column: 1 / -1; }
+
+  .reminder-label {
+    font-size: 12px;
+    font-weight: 800;
+    color: var(--text-main);
+  }
+
+  .reminder-input {
+    border: 2px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 10px 14px;
+    font-size: 13px;
+    font-weight: 600;
+    font-family: 'Nunito', sans-serif;
+    color: var(--text-main);
+    background: var(--surface-2);
+    transition: all 0.2s;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .reminder-input:focus {
+    outline: none;
+    border-color: var(--gold);
+    background: white;
+    box-shadow: 0 0 0 3px rgba(32,171,164,0.1);
+  }
+
+  .reminder-textarea {
+    border: 2px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
+    font-size: 13px;
+    font-weight: 500;
+    font-family: 'Nunito', sans-serif;
+    color: var(--text-main);
+    background: var(--surface-2);
+    resize: vertical;
+    min-height: 140px;
+    line-height: 1.7;
+    width: 100%;
+    box-sizing: border-box;
+    transition: all 0.2s;
+  }
+
+  .reminder-textarea:focus {
+    outline: none;
+    border-color: var(--gold);
+    background: white;
+    box-shadow: 0 0 0 3px rgba(32,171,164,0.1);
+  }
+
+  .reminder-hint {
+    font-size: 11px;
+    color: var(--text-sub);
+    font-weight: 500;
+    margin-top: 4px;
+    line-height: 1.5;
+  }
+
+  .reminder-variables {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 8px;
+  }
+
+  .reminder-var-chip {
+    font-size: 11px;
+    font-weight: 700;
+    font-family: monospace;
+    background: var(--gold-pale);
+    border: 1.5px solid var(--gold-light);
+    color: var(--gold-dim);
+    border-radius: 6px;
+    padding: 3px 8px;
+    cursor: pointer;
+    transition: all 0.15s;
+    user-select: none;
+  }
+
+  .reminder-var-chip:hover {
+    background: var(--gold-light);
+    color: var(--navy);
+  }
+
+  /* Client reminder status table */
+  .reminder-client-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    border: 2px solid var(--border);
+  }
+
+  .reminder-client-table th {
+    background: var(--navy);
+    color: white;
+    font-size: 11px;
+    font-weight: 700;
+    font-family: 'Nunito', sans-serif;
+    padding: 10px 14px;
+    text-align: left;
+    letter-spacing: 0.5px;
+  }
+
+  .reminder-client-table td {
+    padding: 11px 14px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-main);
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+  }
+
+  .reminder-client-table tr:last-child td { border-bottom: none; }
+  .reminder-client-table tr:hover td { background: var(--gold-pale); }
+
+  .reminder-status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 99px;
+  }
+
+  .badge-pending  { background: var(--warning-light);  color: #92400E; }
+  .badge-complete { background: var(--success-light);  color: #065F46; }
+  .badge-paused   { background: #F3F4F6; color: #6B7280; }
+
+  .reminder-send-now-btn {
+    padding: 5px 12px;
+    background: var(--gold-pale);
+    border: 2px solid var(--gold-light);
+    border-radius: 99px;
+    font-size: 11px;
+    font-weight: 700;
+    font-family: 'Nunito', sans-serif;
+    color: var(--gold-dim);
+    cursor: pointer;
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+
+  .reminder-send-now-btn:hover { background: var(--gold-light); color: var(--navy); }
+  .reminder-send-now-btn:disabled { opacity: 0.4; cursor: default; }
+
+  /* EmailJS setup banner */
+  .emailjs-setup-banner {
+    background: linear-gradient(135deg, #EFF6FF, #E0F2FE);
+    border: 2px solid #BFDBFE;
+    border-radius: var(--radius-md);
+    padding: 16px 20px;
+    margin-bottom: 20px;
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+  }
+
+  .emailjs-setup-icon { font-size: 22px; flex-shrink: 0; }
+
+  .emailjs-setup-title { font-size: 13px; font-weight: 800; color: #1E40AF; margin-bottom: 4px; }
+  .emailjs-setup-sub   { font-size: 12px; color: #3B82F6; font-weight: 500; line-height: 1.5; }
+
+  .emailjs-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    margin-top: 8px;
+    padding: 6px 14px;
+    background: #1E40AF;
+    color: white;
+    border-radius: 99px;
+    font-size: 11px;
+    font-weight: 700;
+    font-family: 'Nunito', sans-serif;
+    text-decoration: none;
+    transition: opacity 0.2s;
+  }
+
+  .emailjs-link:hover { opacity: 0.85; }
+
+  .reminder-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+  }
+
+  .reminder-save-btn {
+    padding: 11px 28px;
+    background: linear-gradient(135deg, var(--navy), var(--navy-mid));
+    color: white;
+    border: none;
+    border-radius: 99px;
+    font-size: 13px;
+    font-weight: 800;
+    font-family: 'Nunito', sans-serif;
+    cursor: pointer;
+    box-shadow: 0 4px 14px rgba(28,68,117,0.3);
+    transition: all 0.2s;
+  }
+
+  .reminder-save-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(28,68,117,0.4); }
+
+  .reminder-test-btn {
+    padding: 11px 22px;
+    background: var(--surface-2);
+    border: 2px solid var(--border);
+    border-radius: 99px;
+    font-size: 13px;
+    font-weight: 700;
+    font-family: 'Nunito', sans-serif;
+    color: var(--text-sub);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .reminder-test-btn:hover { border-color: var(--gold); color: var(--navy); }
+
+  @media (max-width: 600px) {
+    .reminder-config-grid { grid-template-columns: 1fr; }
+    .reminder-field--full { grid-column: 1; }
+  }
+
+
+  /* ─── INFO REQUESTS ─── */
+  .info-req-card {
+    background: var(--white);
+    border: 2px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 14px 16px;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    transition: all 0.15s;
+    margin-bottom: 8px;
+  }
+  .info-req-card:hover { border-color: var(--gold-light); }
+  .info-req-card.active-req { border-color: #20ABA4; background: var(--gold-pale); }
+
+  .info-req-check {
+    width: 20px; height: 20px; border-radius: 6px;
+    border: 2px solid #D1D5DB; flex-shrink: 0; margin-top: 2px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; cursor: pointer; transition: all 0.15s;
+    background: white;
+  }
+  .info-req-card.active-req .info-req-check {
+    background: #20ABA4; border-color: #20ABA4; color: white; font-weight: 800;
+  }
+
+  .info-req-body { flex: 1; }
+  .info-req-title { font-size: 13px; font-weight: 700; color: var(--text-main); margin-bottom: 4px; }
+  .info-req-desc  { font-size: 11px; color: var(--text-sub); font-weight: 500; line-height: 1.5; }
+
+  .info-req-fields {
+    display: none;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .info-req-field-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 10px;
+    background: var(--surface-2);
+    border-radius: var(--radius-sm);
+    border: 1.5px solid var(--border);
+  }
+
+  .info-req-field-label { font-size: 12px; font-weight: 700; color: var(--text-main); flex: 1; }
+  .info-req-field-type  { font-size: 10px; color: var(--text-sub); background: #F3F4F6; border-radius: 4px; padding: 2px 7px; font-weight: 600; }
+
+  .info-req-add-btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 6px 14px;
+    background: var(--gold-pale);
+    border: 2px solid var(--gold-light);
+    border-radius: 99px;
+    font-size: 11px; font-weight: 700;
+    font-family: 'Nunito', sans-serif;
+    color: var(--gold-dim); cursor: pointer;
+    transition: all 0.15s; margin-top: 8px;
+  }
+  .info-req-add-btn:hover { background: var(--gold-light); color: var(--navy); }
+
+  .info-req-tab-row {
+    display: flex; gap: 6px; margin-bottom: 16px;
+  }
+  .info-req-tab {
+    padding: 7px 16px; border-radius: 99px; font-size: 12px; font-weight: 700;
+    cursor: pointer; border: 2px solid var(--border);
+    background: var(--white); color: var(--text-sub);
+    font-family: 'Nunito', sans-serif; transition: all 0.15s;
+  }
+  .info-req-tab.active { background: var(--navy); border-color: var(--navy); color: white; }
+
+  .info-req-section-label {
+    font-size: 10px; font-weight: 800; letter-spacing: 1px;
+    text-transform: uppercase; color: var(--text-sub);
+    margin: 16px 0 8px;
+  }
+
+
+  /* ─── CLIENT INFO REQUEST FORM ─── */
+  .info-form-section {
+    background: var(--white);
+    border: 2px solid var(--border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    margin-bottom: 24px;
+    box-shadow: var(--shadow-md);
+    animation: fadeIn 0.3s ease;
+  }
+
+  .info-form-header {
+    background: linear-gradient(135deg, var(--navy), var(--navy-mid));
+    padding: 18px 24px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .info-form-header-icon {
+    width: 40px; height: 40px;
+    border-radius: var(--radius-sm);
+    background: rgba(255,255,255,0.15);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px; flex-shrink: 0;
+  }
+
+  .info-form-header-title { font-size: 15px; font-weight: 800; color: white; }
+  .info-form-header-sub   { font-size: 12px; color: rgba(255,255,255,0.65); margin-top: 2px; font-weight: 500; }
+
+  .info-form-body { padding: 22px 24px; display: flex; flex-direction: column; gap: 14px; }
+
+  .info-form-field { display: flex; flex-direction: column; gap: 6px; }
+
+  .info-form-label {
+    font-size: 12px; font-weight: 800; color: var(--text-main);
+  }
+
+  .info-form-input {
+    border: 2px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 11px 14px;
+    font-size: 13px; font-weight: 600;
+    font-family: 'Nunito', sans-serif;
+    color: var(--text-main);
+    background: var(--surface-2);
+    width: 100%; box-sizing: border-box;
+    transition: all 0.2s;
+  }
+
+  .info-form-input:focus {
+    outline: none;
+    border-color: var(--gold);
+    background: white;
+    box-shadow: 0 0 0 3px rgba(32,171,164,0.1);
+  }
+
+  .info-form-input::placeholder { color: #9CA3AF; font-weight: 400; }
+
+  .info-form-select {
+    border: 2px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 11px 14px;
+    font-size: 13px; font-weight: 600;
+    font-family: 'Nunito', sans-serif;
+    color: var(--text-main);
+    background: var(--surface-2);
+    width: 100%; box-sizing: border-box;
+    appearance: none; cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .info-form-select:focus {
+    outline: none; border-color: var(--gold);
+    box-shadow: 0 0 0 3px rgba(32,171,164,0.1);
+  }
+
+  .info-form-footer {
+    padding: 16px 24px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+    background: var(--surface-2);
+  }
+
+  .info-form-submit {
+    padding: 12px 28px;
+    background: linear-gradient(135deg, var(--navy), var(--navy-mid));
+    color: white; border: none; border-radius: 99px;
+    font-size: 13px; font-weight: 800;
+    font-family: 'Nunito', sans-serif;
+    cursor: pointer;
+    box-shadow: 0 4px 14px rgba(28,68,117,0.3);
+    transition: all 0.2s;
+  }
+  .info-form-submit:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(28,68,117,0.4); }
+
+  .info-form-submitted {
+    padding: 20px 24px;
+    display: flex; align-items: center; gap: 14px;
+    background: var(--success-light);
+    border-top: 1px solid #6EE7B7;
+  }
+
+  .info-form-submitted-icon { font-size: 28px; }
+  .info-form-submitted-title { font-size: 14px; font-weight: 800; color: #065F46; }
+  .info-form-submitted-sub   { font-size: 12px; color: #047857; margin-top: 2px; font-weight: 500; }
+
   /* ─── NEW CLIENT BUTTON ─── */
   .new-client-btn {
     display: flex;
@@ -1450,17 +1995,19 @@
   /* ─── FORM INPUT (shared) ─── */
   .modal-input {
     width: 100%;
-    background: rgba(255,255,255,0.05);
-    border: 1px solid rgba(201,168,76,0.2);
-    border-radius: 8px;
-    color: var(--white);
+    background: var(--surface-2);
+    border: 2px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--text-main);
     font-family: 'Nunito', sans-serif;
-    font-size: 12px;
+    font-size: 13px;
+    font-weight: 600;
     padding: 10px 14px;
     margin-bottom: 4px;
+    box-sizing: border-box;
   }
-  .modal-input::placeholder { color: rgba(248,244,236,0.3); }
-  .modal-input:focus { outline: none; border-color: rgba(201,168,76,0.5); }
+  .modal-input::placeholder { color: #9CA3AF; font-weight: 400; }
+  .modal-input:focus { outline: none; border-color: var(--gold); box-shadow: 0 0 0 3px rgba(32,171,164,0.12); }
 
 
   /* ═══ MAINTENANCE VIEW ═══ */
@@ -1863,6 +2410,157 @@
     opacity: 1;
   }
 
+
+  /* ─── DOCUMENT PREVIEW MODAL ─── */
+  .doc-preview-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(14,39,68,0.85);
+    z-index: 800;
+    flex-direction: column;
+  }
+  .doc-preview-overlay.open { display: flex; }
+
+  .doc-preview-topbar {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 20px;
+    background: #0E2744;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    flex-shrink: 0;
+  }
+
+  .doc-preview-title {
+    flex: 1;
+    font-size: 13px;
+    font-weight: 700;
+    color: white;
+    font-family: 'Nunito', sans-serif;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .doc-preview-subtitle {
+    font-size: 11px;
+    color: rgba(255,255,255,0.5);
+    font-weight: 400;
+    margin-top: 1px;
+  }
+
+  .doc-preview-controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+
+  .preview-ctrl-btn {
+    width: 36px; height: 36px;
+    border-radius: 8px;
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.15);
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.15s;
+    font-family: 'Nunito', sans-serif;
+  }
+  .preview-ctrl-btn:hover { background: rgba(255,255,255,0.2); }
+
+  .preview-zoom-label {
+    font-size: 12px;
+    font-weight: 700;
+    color: white;
+    min-width: 44px;
+    text-align: center;
+    font-family: 'Nunito', sans-serif;
+  }
+
+  .preview-open-drive-btn {
+    padding: 8px 16px;
+    background: #20ABA4;
+    border: none;
+    border-radius: 8px;
+    color: white;
+    font-size: 12px;
+    font-weight: 700;
+    font-family: 'Nunito', sans-serif;
+    cursor: pointer;
+    transition: opacity 0.2s;
+    white-space: nowrap;
+  }
+  .preview-open-drive-btn:hover { opacity: 0.85; }
+
+  .preview-close-btn {
+    width: 36px; height: 36px;
+    border-radius: 8px;
+    background: rgba(140,4,4,0.4);
+    border: 1px solid rgba(140,4,4,0.5);
+    color: white;
+    font-size: 18px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.15s;
+  }
+  .preview-close-btn:hover { background: rgba(140,4,4,0.7); }
+
+  .doc-preview-body {
+    flex: 1;
+    overflow: auto;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 32px;
+    background: #1a2a3a;
+  }
+
+  .doc-preview-inner {
+    transform-origin: top center;
+    transition: transform 0.2s ease;
+    background: white;
+    border-radius: 4px;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.5);
+    min-width: 600px;
+  }
+
+  .doc-preview-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 500px;
+    min-width: 600px;
+    background: white;
+    border-radius: 4px;
+    gap: 16px;
+    padding: 60px 40px;
+    text-align: center;
+  }
+
+  .doc-preview-placeholder-icon { font-size: 72px; }
+  .doc-preview-placeholder-name { font-size: 18px; font-weight: 700; color: #1C4475; font-family: 'Nunito', sans-serif; }
+  .doc-preview-placeholder-sub  { font-size: 13px; color: #6B7280; font-family: 'Nunito', sans-serif; max-width: 320px; line-height: 1.6; }
+  .doc-preview-drive-cta {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 12px 24px;
+    background: #20ABA4;
+    color: white;
+    border-radius: 99px;
+    font-size: 13px;
+    font-weight: 700;
+    font-family: 'Nunito', sans-serif;
+    cursor: pointer;
+    border: none;
+    margin-top: 8px;
+    box-shadow: 0 4px 14px rgba(32,171,164,0.35);
+    transition: all 0.2s;
+  }
+  .doc-preview-drive-cta:hover { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(32,171,164,0.45); }
+
   @media (max-width: 600px) {
     .header { padding: 16px 20px; }
     .main { padding: 32px 16px 60px; }
@@ -1872,6 +2570,8 @@
   }
 </style>
   <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/docx@8.5.0/build/index.umd.min.js"></script>
   <script src="https://apis.google.com/js/api.js" async defer></script>
 </head>
 <body>
@@ -1883,14 +2583,17 @@
     <div style="display:flex;flex-direction:column;">
       <div class="logo-text">Walk With You Capital</div>
       <div class="logo-sub">Document Portal</div>
+      <button onclick="var o=document.getElementById('pwOverlay');o.style.display='flex';var i=document.getElementById('pwInput');i.value='';i.type='password';document.getElementById('pwErrorMsg').style.display='none';window._pendingView='staff';setTimeout(function(){i.focus();},50);"
+      style="background:none;border:none;padding:0;margin-top:3px;font-size:10px;font-weight:700;color:#1C4475;opacity:0.45;cursor:pointer;font-family:'Nunito',sans-serif;letter-spacing:0.5px;text-align:left;transition:opacity 0.2s;"
+      onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.45'">Staff Login →</button>
     </div>
   </div>
-  <div class="header-right">
-    <div class="client-pill">
-      <div class="client-avatar">SJ</div>
+  <div class="header-right" id="headerRight" style="display:none;">
+    <div class="client-pill" id="clientPill">
+      <div class="client-avatar" id="clientAvatar">?</div>
       <div class="client-info">
-        <div class="client-name-sm">Sarah Johnson</div>
-        <div class="client-id-sm">IC-2024-0082</div>
+        <div class="client-name-sm" id="clientNameDisplay"></div>
+        <div class="client-id-sm" id="clientIdDisplay"></div>
       </div>
     </div>
   </div>
@@ -1899,10 +2602,10 @@
 <main class="main">
 
   <!-- VIEW TOGGLE -->
-  <div class="view-toggle">
-    <button class="toggle-btn active" onclick="setView('client')">📁 Client View</button>
-    <button class="toggle-btn" onclick="setView('staff')">👥 Staff View</button>
-    <button class="toggle-btn" onclick="setView('maintenance')">⚙️ Maintenance</button>
+  <div class="view-toggle" id="viewToggle" style="display:none;">
+    <button class="toggle-btn active" onclick="window.setView('client')">📁 Client View</button>
+    <button class="toggle-btn" onclick="window.setView('staff')">👥 Staff View</button>
+    <button class="toggle-btn" onclick="window.setView('maintenance')">⚙️ Maintenance</button>
   </div>
 
   <!-- ═══ LANDING PAGE (shown when no client link) ═══ -->
@@ -1917,7 +2620,7 @@
   </div>
 
   <!-- ═══ CLIENT VIEW ═══ -->
-  <div class="client-section" id="clientView">
+  <div class="client-section hidden" id="clientView">
 
     <div class="page-hero">
       <div class="page-eyebrow">Secure Document Submission</div>
@@ -1935,7 +2638,7 @@
     </div>
 
     <!-- Client Folder Link -->
-    <div class="folder-banner" onclick="openClientFolder()" id="clientFolderBanner">
+    <div class="folder-banner" onclick="window.openClientFolder()" id="clientFolderBanner">
       <div class="folder-icon">📁</div>
       <div class="folder-info">
         <div class="folder-title">Your Secure Document Folder</div>
@@ -1944,12 +2647,16 @@
       <div class="folder-arrow">→</div>
     </div>
 
+
+    <!-- Information Request Forms (shown when staff have activated requests) -->
+    <div id="clientInfoFormsSection"></div>
+
     <!-- Required Documents Picker -->
     <div class="required-section">
       <div class="section-label" style="margin-bottom:12px;">Required Documents</div>
       <div class="req-tabs">
-        <button class="req-tab active" onclick="switchReqTab('individual',this)">📄 Individual Documents</button>
-        <button class="req-tab" onclick="switchReqTab('folders',this)">📂 Step Folders</button>
+        <button class="req-tab active" onclick="window.switchReqTab('individual',this)">📄 Individual Documents</button>
+        <button class="req-tab" onclick="window.switchReqTab('folders',this)">📂 Step Folders</button>
       </div>
       <div id="tabIndividual" class="req-tab-panel">
         <div class="req-individual-list" id="reqIndividualList"></div>
@@ -1970,8 +2677,8 @@
       <button class="upload-btn" onclick="event.stopPropagation(); document.getElementById('fileInput').click()">Choose Files</button>
       <div class="or-divider">— or drag & drop —</div>
       <div class="drag-hint">Files are encrypted and securely stored</div>
-      <input type="file" id="fileInput" multiple accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" onchange="handleFileSelect(event)">
-      <input type="file" id="folderFileInput" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" onchange="handleFolderFileSelect(event)" style="display:none;">
+      <input type="file" id="fileInput" multiple accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" onchange="window.handleFileSelect(event)">
+      <input type="file" id="folderFileInput" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" onchange="window.handleFolderFileSelect(event)" style="display:none;">
     </div>
 
     <!-- Uploaded Documents -->
@@ -1987,7 +2694,7 @@
           </div>
           <div class="doc-right">
             <span class="doc-status-pill pill-reviewed">✓ Reviewed</span>
-            <button class="doc-delete" title="Remove" onclick="removeDoc(this, '1')">✕</button>
+            <button class="doc-delete" title="Remove" onclick="window.removeDoc(this, '1')">✕</button>
           </div>
         </div>
 
@@ -1999,7 +2706,7 @@
           </div>
           <div class="doc-right">
             <span class="doc-status-pill pill-reviewed">✓ Reviewed</span>
-            <button class="doc-delete" title="Remove" onclick="removeDoc(this, '2')">✕</button>
+            <button class="doc-delete" title="Remove" onclick="window.removeDoc(this, '2')">✕</button>
           </div>
         </div>
 
@@ -2013,7 +2720,7 @@
               </div>
               <div class="doc-right">
                 <span class="doc-status-pill pill-rejected">⚠ Returned</span>
-                <button class="doc-delete" title="Remove" onclick="removeDoc(this, '3')">✕</button>
+                <button class="doc-delete" title="Remove" onclick="window.removeDoc(this, '3')">✕</button>
               </div>
             </div>
             <div class="rejection-note">
@@ -2038,23 +2745,30 @@
     </div>
 
     <div class="staff-settings-row">
-      <button class="staff-settings-btn" onclick="openAssignModal()">⚙ Manage Assignments</button>
-      <button class="staff-settings-btn" onclick="openExplanationManager()">✏ Edit Explanations</button>
-      <button class="staff-settings-btn" onclick="openDocLibraryModal()">📋 Manage Doc Library</button>
-      <button class="staff-settings-btn" onclick="openStepFoldersModal()">📂 Manage Step Folders</button>
-      <button class="staff-settings-btn" onclick="openManageStaffModal()" style="background:rgba(107,79,160,0.1);border-color:rgba(107,79,160,0.3);color:#a88fd4;">👤 Manage Staff</button>
-      <button class="staff-settings-btn" onclick="lockStaff()" style="margin-left:auto;background:rgba(140,4,4,0.08);border-color:rgba(140,4,4,0.25);color:var(--crimson);">🔒 Lock &amp; Exit</button>
+      <button class="staff-settings-btn" onclick="window.openAssignModal()">⚙ Manage Assignments</button>
+      <button class="staff-settings-btn" onclick="window.openExplanationManager()">✏ Edit Explanations</button>
+      <button class="staff-settings-btn" onclick="window.openDocLibraryModal()">📋 Manage Doc Library</button>
+      <button class="staff-settings-btn" onclick="window.openStepFoldersModal()">📂 Manage Step Folders</button>
+      <button class="staff-settings-btn" onclick="window.openManageStaffModal()" style="background:rgba(107,79,160,0.1);border-color:rgba(107,79,160,0.3);color:#a88fd4;">👤 Manage Staff</button>
+      <button class="staff-settings-btn" onclick="window.lockStaff()" style="margin-left:auto;background:rgba(140,4,4,0.08);border-color:rgba(140,4,4,0.25);color:var(--crimson);">🔒 Lock &amp; Exit</button>
       <div id="driveConnectWrap" style="display:flex;align-items:center;gap:8px;margin-left:auto;">
         <div id="driveStatusDot" style="width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,0.2);flex-shrink:0;"></div>
         <span id="driveStatusLabel" style="font-size:10px;color:var(--white-dim);">Google Drive not connected</span>
-        <button class="staff-settings-btn" id="driveConnectBtn" onclick="initiateDriveAuth()" style="background:rgba(66,133,244,0.12);border-color:rgba(66,133,244,0.35);color:#6ba3f5;">
+        <button class="staff-settings-btn" id="driveConnectBtn" onclick="window.initiateDriveAuth()" style="background:rgba(66,133,244,0.12);border-color:rgba(66,133,244,0.35);color:#6ba3f5;">
           🔗 Connect Google Drive
         </button>
       </div>
     </div>
 
-    <!-- New Client Button -->
-    <button class="new-client-btn" onclick="openNewClientModal()">＋ New Client</button>
+
+    <!-- ── REMINDERS + INFO REQUESTS (compact buttons) ── -->
+    <div style="display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;">
+      <button class="staff-settings-btn" onclick="window.openRemindersModal()" style="background:rgba(32,171,164,0.1);border-color:rgba(32,171,164,0.3);color:#167A75;">🔔 Reminders</button>
+      <button class="staff-settings-btn" onclick="window.openInfoRequestsModal()" style="background:rgba(28,68,117,0.08);border-color:rgba(28,68,117,0.2);color:var(--navy);">📋 Information Requests</button>
+    </div>
+
+        <!-- New Client Button -->
+    <button class="new-client-btn" onclick="window.openNewClientModal()">＋ New Client</button>
 
     <!-- Dynamic clients rendered here -->
     <div id="dynamicClientsList"></div>
@@ -2068,11 +2782,11 @@
           <div class="client-files-id">IC-2024-0082 · Step 5 — Financial Adviser</div>
         </div>
         <div style="display:flex;align-items:center;gap:10px;">
-          <a class="client-folder-link" href="#" onclick="openStaffClientFolder('IC-2024-0082','Sarah Johnson');return false;">📁 Open Folder</a>
+          <a class="client-folder-link" href="#" onclick="window.openStaffClientFolder('IC-2024-0082','Sarah Johnson');return false;">📁 Open Folder</a>
           <span class="doc-status-pill pill-pending" id="badge-1">2 Pending Review</span>
         </div>
       </div>
-      <div class="staff-doc-row">
+      <div class="staff-doc-row" style="cursor:pointer;" onclick="window.openDocPreview('Payslip_Nov2023.pdf','Payslip - Sarah Johnson - 5 Jan 2024.pdf','📄',null,'')">
         <div class="staff-doc-icon">📄</div>
         <div class="staff-doc-name">
           <div>Payslip_Nov2023.pdf</div>
@@ -2082,7 +2796,7 @@
         <div class="staff-assignee-pill">Emily Chen</div>
         <button class="review-btn done">✓ Reviewed</button>
       </div>
-      <div class="staff-doc-row">
+      <div class="staff-doc-row" style="cursor:pointer;" onclick="window.openDocPreview('Drivers_Licence_Front.jpg','Photo ID - Sarah Johnson - 5 Jan 2024.jpg','🪪',null,'Sarah Johnson')">
         <div class="staff-doc-icon">🪪</div>
         <div class="staff-doc-name">
           <div>Drivers_Licence_Front.jpg</div>
@@ -2092,7 +2806,7 @@
         <div class="staff-assignee-pill">Marcus Webb</div>
         <button class="review-btn done">✓ Reviewed</button>
       </div>
-      <div class="staff-doc-row">
+      <div class="staff-doc-row" style="cursor:pointer;" onclick="window.openDocPreview('Super_Statement_AustralianSuper.pdf','Super Statement - Australian Super - Sarah Johnson - 9 Jan 2024.pdf','📊',null,'Sarah Johnson')">
         <div class="staff-doc-icon">📊</div>
         <div class="staff-doc-name">
           <div>Super_Statement_AustralianSuper.pdf</div>
@@ -2100,10 +2814,10 @@
         </div>
         <div class="staff-doc-date">9 Jan 2024 · 990KB</div>
         <div class="staff-assignee-pill">James Holloway</div>
-        <button class="review-btn" onclick="markReviewed(this, 'badge-1')">Mark Reviewed</button>
-        <button class="reject-btn" onclick="openRejectModal(this, 'badge-1', 'Super_Statement_AustralianSuper.pdf', 'Sarah Johnson')">Return</button>
+        <button class="review-btn" onclick="window.markReviewed(this, 'badge-1')">Mark Reviewed</button>
+        <button class="reject-btn" onclick="window.openRejectModal(this, 'badge-1', 'Super_Statement_AustralianSuper.pdf', 'Sarah Johnson')">Return</button>
       </div>
-      <div class="staff-doc-row">
+      <div class="staff-doc-row" style="cursor:pointer;" onclick="window.openDocPreview('Bank_Statement_NAB_Jan.pdf','Bank Statement - NAB - Sarah Johnson - 8 Jan 2024.pdf','🏦',null,'Sarah Johnson')">
         <div class="staff-doc-icon">🏦</div>
         <div class="staff-doc-name">
           <div>Bank_Statement_NAB_Jan.pdf</div>
@@ -2111,8 +2825,8 @@
         </div>
         <div class="staff-doc-date">8 Jan 2024 · 2.1MB</div>
         <div class="staff-assignee-pill">Emily Chen</div>
-        <button class="review-btn" onclick="markReviewed(this, 'badge-1')">Mark Reviewed</button>
-        <button class="reject-btn" onclick="openRejectModal(this, 'badge-1', 'Bank_Statement_NAB_Jan.pdf', 'Sarah Johnson')">Return</button>
+        <button class="review-btn" onclick="window.markReviewed(this, 'badge-1')">Mark Reviewed</button>
+        <button class="reject-btn" onclick="window.openRejectModal(this, 'badge-1', 'Bank_Statement_NAB_Jan.pdf', 'Sarah Johnson')">Return</button>
       </div>
     </div>
 
@@ -2124,11 +2838,11 @@
           <div class="client-files-id">IC-2024-0091 · Step 2 — Wealth Consultation</div>
         </div>
         <div style="display:flex;align-items:center;gap:10px;">
-          <a class="client-folder-link" href="#" onclick="openStaffClientFolder('IC-2024-0091','Daniel Tran');return false;">📁 Open Folder</a>
+          <a class="client-folder-link" href="#" onclick="window.openStaffClientFolder('IC-2024-0091','Daniel Tran');return false;">📁 Open Folder</a>
           <span class="doc-status-pill pill-pending" id="badge-2">3 Pending Review</span>
         </div>
       </div>
-      <div class="staff-doc-row">
+      <div class="staff-doc-row" style="cursor:pointer;" onclick="window.openDocPreview('Payslip_Dec2023.pdf','Payslip - Daniel Tran - 6 Feb 2024.pdf','📄',null,'Daniel Tran')">
         <div class="staff-doc-icon">📄</div>
         <div class="staff-doc-name">
           <div>Payslip_Dec2023.pdf</div>
@@ -2136,10 +2850,10 @@
         </div>
         <div class="staff-doc-date">6 Feb 2024 · 980KB</div>
         <div class="staff-assignee-pill">Emily Chen</div>
-        <button class="review-btn" onclick="markReviewed(this, 'badge-2')">Mark Reviewed</button>
-        <button class="reject-btn" onclick="openRejectModal(this, 'badge-2', 'Payslip_Dec2023.pdf', 'Daniel Tran')">Return</button>
+        <button class="review-btn" onclick="window.markReviewed(this, 'badge-2')">Mark Reviewed</button>
+        <button class="reject-btn" onclick="window.openRejectModal(this, 'badge-2', 'Payslip_Dec2023.pdf', 'Daniel Tran')">Return</button>
       </div>
-      <div class="staff-doc-row">
+      <div class="staff-doc-row" style="cursor:pointer;" onclick="window.openDocPreview('Passport_Scan.jpg','Photo ID - Daniel Tran - 6 Feb 2024.jpg','🪪',null,'Daniel Tran')">
         <div class="staff-doc-icon">🪪</div>
         <div class="staff-doc-name">
           <div>Passport_Scan.jpg</div>
@@ -2147,10 +2861,10 @@
         </div>
         <div class="staff-doc-date">6 Feb 2024 · 1.4MB</div>
         <div class="staff-assignee-pill">Marcus Webb</div>
-        <button class="review-btn" onclick="markReviewed(this, 'badge-2')">Mark Reviewed</button>
-        <button class="reject-btn" onclick="openRejectModal(this, 'badge-2', 'Passport_Scan.jpg', 'Daniel Tran')">Return</button>
+        <button class="review-btn" onclick="window.markReviewed(this, 'badge-2')">Mark Reviewed</button>
+        <button class="reject-btn" onclick="window.openRejectModal(this, 'badge-2', 'Passport_Scan.jpg', 'Daniel Tran')">Return</button>
       </div>
-      <div class="staff-doc-row">
+      <div class="staff-doc-row" style="cursor:pointer;" onclick="window.openDocPreview('Bank_Statement_NAB_Q4.pdf','Bank Statement - NAB - Daniel Tran - 7 Feb 2024.pdf','🏦',null,'Daniel Tran')">
         <div class="staff-doc-icon">🏦</div>
         <div class="staff-doc-name">
           <div>Bank_Statement_NAB_Q4.pdf</div>
@@ -2158,8 +2872,8 @@
         </div>
         <div class="staff-doc-date">7 Feb 2024 · 2.1MB</div>
         <div class="staff-assignee-pill">Emily Chen</div>
-        <button class="review-btn" onclick="markReviewed(this, 'badge-2')">Mark Reviewed</button>
-        <button class="reject-btn" onclick="openRejectModal(this, 'badge-2', 'Bank_Statement_NAB_Q4.pdf', 'Daniel Tran')">Return</button>
+        <button class="review-btn" onclick="window.markReviewed(this, 'badge-2')">Mark Reviewed</button>
+        <button class="reject-btn" onclick="window.openRejectModal(this, 'badge-2', 'Bank_Statement_NAB_Q4.pdf', 'Daniel Tran')">Return</button>
       </div>
     </div>
 
@@ -2171,11 +2885,11 @@
           <div class="client-files-id">IC-2024-0075 · Step 9 — Choosing Home</div>
         </div>
         <div style="display:flex;align-items:center;gap:10px;">
-          <a class="client-folder-link" href="#" onclick="openStaffClientFolder('IC-2024-0075','Priya Nair');return false;">📁 Open Folder</a>
+          <a class="client-folder-link" href="#" onclick="window.openStaffClientFolder('IC-2024-0075','Priya Nair');return false;">📁 Open Folder</a>
           <span class="doc-status-pill pill-reviewed" id="badge-3">All Reviewed</span>
         </div>
       </div>
-      <div class="staff-doc-row">
+      <div class="staff-doc-row" style="cursor:pointer;" onclick="window.openDocPreview('Employment_Letter_Telstra.pdf','Employment Letter - Telstra - Priya Nair - 3 Jan 2024.pdf','📄',null,'Priya Nair')">
         <div class="staff-doc-icon">📄</div>
         <div class="staff-doc-name">
           <div>Employment_Letter_Telstra.pdf</div>
@@ -2185,7 +2899,7 @@
         <div class="staff-assignee-pill">Marcus Webb</div>
         <button class="review-btn done">✓ Reviewed</button>
       </div>
-      <div class="staff-doc-row">
+      <div class="staff-doc-row" style="cursor:pointer;" onclick="window.openDocPreview('Tax_Return_FY2023.pdf','Tax Return - Priya Nair - 2023 to 2024.pdf','📋',null,'Priya Nair')">
         <div class="staff-doc-icon">📋</div>
         <div class="staff-doc-name">
           <div>Tax_Return_FY2023.pdf</div>
@@ -2318,7 +3032,7 @@
       <div class="maint-drive-status" id="maintDriveStatus">
         <div class="maint-drive-dot" id="maintDriveDot"></div>
         <span id="maintDriveLabel">Not connected</span>
-        <button class="maint-drive-btn" onclick="initiateDriveAuth()">Connect Now</button>
+        <button class="maint-drive-btn" onclick="window.initiateDriveAuth()">Connect Now</button>
       </div>
     </div>
 
@@ -2379,14 +3093,14 @@
     <!-- ── SAVE BAR ── -->
     <div class="maint-save-bar">
       <div class="maint-save-status" id="maintSaveStatus"></div>
-      <button class="maint-reset-btn" onclick="resetSettings()">↺ Reset to Defaults</button>
-      <button class="maint-save-btn" onclick="saveSettings()">💾 Save All Settings</button>
+      <button class="maint-reset-btn" onclick="window.resetSettings()">↺ Reset to Defaults</button>
+      <button class="maint-save-btn" onclick="window.saveSettings()">💾 Save All Settings</button>
     </div>
 
   </div>
 
-  <!-- Hidden staff access trigger — triple-click the footer text -->
-  <div style="text-align:center;padding:40px 0 20px;cursor:default;" ondblclick="showStaffToggle()" title="">
+  <!-- Footer -->
+  <div style="text-align:center;padding:40px 0 20px;">
     <span style="font-size:11px;color:#D1D5DB;user-select:none;">© Walk With You Capital</span>
   </div>
 
@@ -2395,12 +3109,12 @@
 <!-- ══ UPLOAD MODAL ══ -->
 <div class="modal-overlay" id="uploadModal">
   <div class="modal" style="max-width:520px;">
-    <button class="modal-close" onclick="closeModal('uploadModal')">✕</button>
+    <button class="modal-close" onclick="window.closeModal('uploadModal')">✕</button>
     <div class="modal-title">Confirm Upload</div>
     <div class="modal-sub">Fill in the details below so this document is filed correctly. The file will be renamed automatically.</div>
 
     <div class="modal-label">Document Type</div>
-    <select class="modal-doctype-select" id="docTypeSelect" onchange="updateSavedNamePreview(); if(pendingFiles.length) { selectedChecklistDocId=null; currentSuggestedDocId=null; const s=document.getElementById('smartDetectSection'); if(s) s.style.display='none'; setTimeout(runSmartDetection,80); }">
+    <select class="modal-doctype-select" id="docTypeSelect" onchange="window.updateSavedNamePreview(); if(pendingFiles.length) { selectedChecklistDocId=null; currentSuggestedDocId=null; const s=document.getElementById('smartDetectSection'); if(s) s.style.display='none'; setTimeout(runSmartDetection,80); }">
       <option value="Payslip">Payslip</option>
       <option value="Bank Statement">Bank Statement</option>
       <option value="Income Statement">Income Statement</option>
@@ -2413,10 +3127,10 @@
     </select>
 
     <div class="modal-label" style="margin-top:14px;">Institution / Employer <span style="color:var(--white-dim);font-size:9px;text-transform:none;letter-spacing:0;">(optional — e.g. Westpac, Sweet Treats Pty Ltd)</span></div>
-    <input type="text" class="modal-doctype-select" id="institutionInput" placeholder="Leave blank if not applicable" oninput="updateSavedNamePreview()" style="margin-bottom:0;">
+    <input type="text" class="modal-doctype-select" id="institutionInput" placeholder="Leave blank if not applicable" oninput="window.updateSavedNamePreview()" style="margin-bottom:0;">
 
     <div class="modal-label" style="margin-top:14px;">Date Type</div>
-    <select class="modal-doctype-select" id="dateTypeSelect" onchange="toggleDateFields(); updateSavedNamePreview()">
+    <select class="modal-doctype-select" id="dateTypeSelect" onchange="window.toggleDateFields(); updateSavedNamePreview()">
       <option value="single">Single date (e.g. 23 Mar 2023)</option>
       <option value="range">Date range (e.g. 23 Mar 2023 to 30 Mar 2023)</option>
       <option value="year_range">Financial / tax year (e.g. 2025 to 2026)</option>
@@ -2424,19 +3138,19 @@
 
     <div id="dateFieldsSingle" style="margin-top:10px;">
       <div class="modal-label">Date</div>
-      <input type="date" class="modal-doctype-select" id="singleDate" oninput="updateSavedNamePreview()">
+      <input type="date" class="modal-doctype-select" id="singleDate" oninput="window.updateSavedNamePreview()">
     </div>
 
     <div id="dateFieldsRange" style="display:none;margin-top:10px;display:none;">
       <div style="display:flex;gap:10px;align-items:center;">
         <div style="flex:1;">
           <div class="modal-label">From</div>
-          <input type="date" class="modal-doctype-select" id="rangeFrom" oninput="updateSavedNamePreview()">
+          <input type="date" class="modal-doctype-select" id="rangeFrom" oninput="window.updateSavedNamePreview()">
         </div>
         <div style="color:var(--white-dim);margin-top:18px;">to</div>
         <div style="flex:1;">
           <div class="modal-label">To</div>
-          <input type="date" class="modal-doctype-select" id="rangeTo" oninput="updateSavedNamePreview()">
+          <input type="date" class="modal-doctype-select" id="rangeTo" oninput="window.updateSavedNamePreview()">
         </div>
       </div>
     </div>
@@ -2445,12 +3159,12 @@
       <div style="display:flex;gap:10px;align-items:center;">
         <div style="flex:1;">
           <div class="modal-label">Year From</div>
-          <input type="number" class="modal-doctype-select" id="yearFrom" placeholder="e.g. 2025" min="2000" max="2099" oninput="updateSavedNamePreview()">
+          <input type="number" class="modal-doctype-select" id="yearFrom" placeholder="e.g. 2025" min="2000" max="2099" oninput="window.updateSavedNamePreview()">
         </div>
         <div style="color:var(--white-dim);margin-top:18px;">to</div>
         <div style="flex:1;">
           <div class="modal-label">Year To</div>
-          <input type="number" class="modal-doctype-select" id="yearTo" placeholder="e.g. 2026" min="2000" max="2099" oninput="updateSavedNamePreview()">
+          <input type="number" class="modal-doctype-select" id="yearTo" placeholder="e.g. 2026" min="2000" max="2099" oninput="window.updateSavedNamePreview()">
         </div>
       </div>
     </div>
@@ -2474,10 +3188,10 @@
             </div>
           </div>
           <div style="display:flex;gap:8px;margin-top:12px;">
-            <button onclick="confirmSuggestion()" style="flex:1;padding:9px;background:linear-gradient(135deg,var(--gold-dim),var(--gold));border:none;border-radius:8px;color:var(--navy);font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;cursor:pointer;font-family:'Montserrat',sans-serif;">
+            <button onclick="window.confirmSuggestion()" style="flex:1;padding:9px;background:linear-gradient(135deg,var(--gold-dim),var(--gold));border:none;border-radius:8px;color:var(--navy);font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;cursor:pointer;font-family:'Montserrat',sans-serif;">
               ✓ Yes, that's right
             </button>
-            <button onclick="declineSuggestion()" style="flex:1;padding:9px;background:transparent;border:1px solid rgba(255,255,255,0.15);border-radius:8px;color:var(--white-dim);font-size:11px;letter-spacing:1px;text-transform:uppercase;cursor:pointer;font-family:'Montserrat',sans-serif;">
+            <button onclick="window.declineSuggestion()" style="flex:1;padding:9px;background:transparent;border:1px solid rgba(255,255,255,0.15);border-radius:8px;color:var(--white-dim);font-size:11px;letter-spacing:1px;text-transform:uppercase;cursor:pointer;font-family:'Montserrat',sans-serif;">
               No, let me choose
             </button>
           </div>
@@ -2494,8 +3208,8 @@
     </div>
 
     <div class="modal-actions">
-      <button class="btn-secondary" onclick="closeModal('uploadModal')">Cancel</button>
-      <button class="btn-primary" onclick="submitUpload()">Upload Files</button>
+      <button class="btn-secondary" onclick="window.closeModal('uploadModal')">Cancel</button>
+      <button class="btn-primary" onclick="window.submitUpload()">Upload Files</button>
     </div>
   </div>
 </div>
@@ -2503,14 +3217,14 @@
 <!-- ══ REJECT MODAL ══ -->
 <div class="modal-overlay" id="rejectModal">
   <div class="modal reject-modal">
-    <button class="modal-close" onclick="closeModal('rejectModal')">✕</button>
+    <button class="modal-close" onclick="window.closeModal('rejectModal')">✕</button>
     <div class="modal-title">Return Document</div>
     <div class="modal-sub" id="rejectModalSub">Provide an explanation so the client knows exactly what to fix and resubmit.</div>
     <div class="modal-label">Rejection Reason</div>
     <textarea class="modal-textarea" id="rejectReason" placeholder="e.g. The statement only covers one month. Please provide the last 3 months in a single PDF covering Oct–Dec 2023."></textarea>
     <div class="modal-actions">
-      <button class="btn-secondary" onclick="closeModal('rejectModal')">Cancel</button>
-      <button class="btn-danger" onclick="submitReject()">Return to Client</button>
+      <button class="btn-secondary" onclick="window.closeModal('rejectModal')">Cancel</button>
+      <button class="btn-danger" onclick="window.submitReject()">Return to Client</button>
     </div>
   </div>
 </div>
@@ -2518,15 +3232,15 @@
 <!-- ══ ASSIGN MODAL ══ -->
 <div class="modal-overlay" id="assignModal">
   <div class="modal assign-modal">
-    <button class="modal-close" onclick="closeModal('assignModal')">✕</button>
+    <button class="modal-close" onclick="window.closeModal('assignModal')">✕</button>
     <div class="modal-title">Document Assignments</div>
     <div class="modal-sub">Assign each document type to a staff member. They will receive an email notification when a client uploads that document type.</div>
 
     <div id="assignList"><!-- rendered by renderAssignModal() --></div>
 
     <div class="modal-actions">
-      <button class="btn-secondary" onclick="closeModal('assignModal')">Cancel</button>
-      <button class="btn-primary" onclick="saveAssignments()">Save Assignments</button>
+      <button class="btn-secondary" onclick="window.closeModal('assignModal')">Cancel</button>
+      <button class="btn-primary" onclick="window.saveAssignments()">Save Assignments</button>
     </div>
   </div>
 </div>
@@ -2534,7 +3248,7 @@
 <!-- ══ EXPLANATION MANAGER MODAL ══ -->
 <div class="modal-overlay" id="explanationModal">
   <div class="modal" style="max-width:540px;">
-    <button class="modal-close" onclick="closeModal('explanationModal')">✕</button>
+    <button class="modal-close" onclick="window.closeModal('explanationModal')">✕</button>
     <div class="modal-title">Edit Explanations</div>
     <div class="modal-sub">These notes appear when clients hover over the ℹ button on each document requirement. Keep them clear and specific.</div>
 
@@ -2566,8 +3280,8 @@
     </div>
 
     <div class="modal-actions">
-      <button class="btn-secondary" onclick="closeModal('explanationModal')">Cancel</button>
-      <button class="btn-primary" onclick="saveExplanations()">Save Explanations</button>
+      <button class="btn-secondary" onclick="window.closeModal('explanationModal')">Cancel</button>
+      <button class="btn-primary" onclick="window.saveExplanations()">Save Explanations</button>
     </div>
   </div>
 </div>
@@ -2576,14 +3290,14 @@
 <!-- ══ DOC LIBRARY MODAL ══ -->
 <div class="modal-overlay" id="docLibraryModal">
   <div class="modal" style="max-width:580px;">
-    <button class="modal-close" onclick="closeModal('docLibraryModal')">✕</button>
+    <button class="modal-close" onclick="window.closeModal('docLibraryModal')">✕</button>
     <div class="modal-title">Document Library</div>
     <div class="modal-sub">Add, edit or remove document types from the library. These appear as individual documents clients can select.</div>
     <div id="docLibraryList" style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px;max-height:340px;overflow-y:auto;"></div>
-    <button class="staff-settings-btn" onclick="addDocToLibrary()" style="margin-bottom:16px;">+ Add New Document Type</button>
+    <button class="staff-settings-btn" onclick="window.addDocToLibrary()" style="margin-bottom:16px;">+ Add New Document Type</button>
     <div class="modal-actions">
-      <button class="btn-secondary" onclick="closeModal('docLibraryModal')">Cancel</button>
-      <button class="btn-primary" onclick="saveDocLibrary()">Save Library</button>
+      <button class="btn-secondary" onclick="window.closeModal('docLibraryModal')">Cancel</button>
+      <button class="btn-primary" onclick="window.saveDocLibrary()">Save Library</button>
     </div>
   </div>
 </div>
@@ -2591,14 +3305,14 @@
 <!-- ══ STEP FOLDERS MODAL ══ -->
 <div class="modal-overlay" id="stepFoldersModal">
   <div class="modal" style="max-width:640px;">
-    <button class="modal-close" onclick="closeModal('stepFoldersModal')">✕</button>
+    <button class="modal-close" onclick="window.closeModal('stepFoldersModal')">✕</button>
     <div class="modal-title">Step Folders</div>
     <div class="modal-sub">Create folders for each step of the process. Each folder holds a set of required documents. Clients can select all or pick individually.</div>
     <div id="stepFoldersEditorList" style="display:flex;flex-direction:column;gap:12px;margin-bottom:16px;max-height:400px;overflow-y:auto;"></div>
-    <button class="staff-settings-btn" onclick="addStepFolder()" style="margin-bottom:16px;">+ Add New Step Folder</button>
+    <button class="staff-settings-btn" onclick="window.addStepFolder()" style="margin-bottom:16px;">+ Add New Step Folder</button>
     <div class="modal-actions">
-      <button class="btn-secondary" onclick="closeModal('stepFoldersModal')">Cancel</button>
-      <button class="btn-primary" onclick="saveStepFolders()">Save Folders</button>
+      <button class="btn-secondary" onclick="window.closeModal('stepFoldersModal')">Cancel</button>
+      <button class="btn-primary" onclick="window.saveStepFolders()">Save Folders</button>
     </div>
   </div>
 </div>
@@ -2607,14 +3321,14 @@
 <!-- ══ MANAGE STAFF MODAL ══ -->
 <div class="modal-overlay" id="manageStaffModal">
   <div class="modal" style="max-width:560px;">
-    <button class="modal-close" onclick="closeModal('manageStaffModal')">✕</button>
+    <button class="modal-close" onclick="window.closeModal('manageStaffModal')">✕</button>
     <div class="modal-title">Manage Staff</div>
     <div class="modal-sub">Add or edit staff members. Their names and email addresses appear in all document assignment dropdowns throughout the portal.</div>
     <div id="staffMemberList" style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px;max-height:380px;overflow-y:auto;"></div>
-    <button class="staff-settings-btn" onclick="addStaffMember()" style="margin-bottom:16px;">+ Add Staff Member</button>
+    <button class="staff-settings-btn" onclick="window.addStaffMember()" style="margin-bottom:16px;">+ Add Staff Member</button>
     <div class="modal-actions">
-      <button class="btn-secondary" onclick="closeModal('manageStaffModal')">Cancel</button>
-      <button class="btn-primary" onclick="saveStaffMembers()">Save Staff</button>
+      <button class="btn-secondary" onclick="window.closeModal('manageStaffModal')">Cancel</button>
+      <button class="btn-primary" onclick="window.saveStaffMembers()">Save Staff</button>
     </div>
   </div>
 </div>
@@ -2623,7 +3337,7 @@
 <!-- ══ NEW CLIENT MODAL ══ -->
 <div class="modal-overlay" id="newClientModal">
   <div class="modal" style="max-width:520px;">
-    <button class="modal-close" onclick="closeModal('newClientModal')">✕</button>
+    <button class="modal-close" onclick="window.closeModal('newClientModal')">✕</button>
     <div class="modal-title">Add New Client</div>
     <div class="modal-sub">Create a new client profile. A unique portal link will be generated and their Google Drive folder created automatically.</div>
 
@@ -2651,33 +3365,370 @@
     <div id="newClientPortalLink" class="portal-link-box" style="display:none;">
       <div class="portal-link-label">✓ Client Portal Link</div>
       <div class="portal-link-url" id="newClientPortalUrl"></div>
-      <button class="portal-link-copy" onclick="copyPortalLink()">Copy Link</button>
+      <button class="portal-link-copy" onclick="window.copyPortalLink()">Copy Link</button>
     </div>
 
     <div class="modal-actions" style="margin-top:20px;">
-      <button class="btn-secondary" onclick="closeModal('newClientModal')">Cancel</button>
-      <button class="btn-primary" id="newClientSaveBtn" onclick="saveNewClient()">Create Client</button>
+      <button class="btn-secondary" onclick="window.closeModal('newClientModal')">Cancel</button>
+      <button class="btn-primary" id="newClientSaveBtn" onclick="window.saveNewClient()">Create Client</button>
     </div>
   </div>
 </div>
 
 
 <!-- ══ STAFF PASSWORD MODAL ══ -->
-<div class="pw-overlay" id="pwOverlay">
-  <div class="pw-box">
-    <div class="pw-lock">🔐</div>
-    <div class="pw-title">Staff Access</div>
-    <div class="pw-sub" id="pwSubText">Enter the staff password to access the dashboard.</div>
-    <div class="pw-input-wrap">
-      <input class="pw-input" id="pwInput" type="password" placeholder="••••••••"
-        onkeydown="if(event.key==='Enter') submitPassword()"
-        oninput="document.getElementById('pwError').classList.remove('show');this.classList.remove('error');">
-      <button class="pw-toggle" onclick="togglePwVisibility()" id="pwToggleBtn" title="Show/hide password">👁</button>
+<div id="pwOverlay" style="display:none;position:fixed;inset:0;background:rgba(28,68,117,0.6);z-index:9999;align-items:center;justify-content:center;">
+  <div style="background:#fff;border-radius:24px;padding:40px 36px 32px;width:90%;max-width:360px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.2);">
+    <div style="font-size:40px;margin-bottom:16px;">🔐</div>
+    <div style="font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:700;color:#1C4475;margin-bottom:8px;">Staff Access</div>
+    <div style="font-size:13px;color:#6B7280;margin-bottom:24px;">Enter the staff password to continue.</div>
+    <input id="pwInput" type="password" placeholder="Enter password"
+      style="width:100%;padding:13px 16px;border:2px solid #E5E7EB;border-radius:12px;font-size:16px;font-family:'Nunito',sans-serif;color:#1C4475;text-align:center;letter-spacing:2px;box-sizing:border-box;margin-bottom:8px;outline:none;"
+      onfocus="this.style.borderColor='#20ABA4'"
+      onblur="this.style.borderColor='#E5E7EB'"
+      onkeydown="if(event.key==='Enter') document.getElementById('pwDoSubmit').click();">
+    <div id="pwShowToggle" style="font-size:12px;color:#9CA3AF;cursor:pointer;margin-bottom:12px;text-align:right;padding-right:4px;"
+      onclick="var i=document.getElementById('pwInput');if(i.type==='password'){i.type='text';this.textContent='Hide password';}else{i.type='password';this.textContent='Show password';}">Show password</div>
+    <div id="pwErrorMsg" style="display:none;color:#8C0404;font-size:12px;font-weight:700;margin-bottom:10px;">Incorrect password. Please try again.</div>
+    <button id="pwDoSubmit"
+      style="width:100%;padding:13px;background:linear-gradient(135deg,#1C4475,#2D6AAD);color:#fff;border:none;border-radius:12px;font-size:14px;font-weight:700;font-family:'Nunito',sans-serif;cursor:pointer;margin-bottom:12px;">
+      Unlock Staff View
+    </button>
+    <button onclick="document.getElementById('pwOverlay').style.display='none';"
+      style="background:none;border:none;font-size:12px;color:#9CA3AF;cursor:pointer;font-family:'Nunito',sans-serif;">← Back</button>
+  </div>
+</div>
+<script>
+document.getElementById('pwDoSubmit').addEventListener('click', function() {
+  var pw = document.getElementById('pwInput').value;
+  var stored = 'wwyc2025';
+  try { stored = localStorage.getItem('ic_staff_pw') || 'wwyc2025'; } catch(e) {}
+  if (pw !== stored) {
+    document.getElementById('pwErrorMsg').style.display = 'block';
+    document.getElementById('pwInput').value = '';
+    document.getElementById('pwInput').style.borderColor = '#8C0404';
+    document.getElementById('pwInput').focus();
+    setTimeout(function(){ document.getElementById('pwInput').style.borderColor='#E5E7EB'; }, 1500);
+    return;
+  }
+  document.getElementById('pwOverlay').style.display = 'none';
+  var tog = document.getElementById('viewToggle');    if(tog) tog.style.display = 'flex';
+  var lan = document.getElementById('landingView');   if(lan) lan.style.display = 'none';
+  var cv  = document.getElementById('clientView');    if(cv)  { cv.style.display='none'; cv.classList.add('hidden'); }
+  var sv  = document.getElementById('staffView');     if(sv)  { sv.style.display='block'; sv.classList.add('active'); }
+  var mv  = document.getElementById('maintenanceView'); if(mv) { mv.style.display='none'; mv.classList.remove('active'); }
+  document.querySelectorAll('.toggle-btn').forEach(function(b,i){ b.classList.remove('active'); if(i===1) b.classList.add('active'); });
+  window._staffIsUnlocked = true;
+  window.staffUnlocked = true;
+  try { staffUnlocked = true; } catch(e) {}
+});
+</script>
+
+
+<!-- ══ DOCUMENT PREVIEW MODAL ══ -->
+<div class="doc-preview-overlay" id="docPreviewOverlay">
+  <div class="doc-preview-topbar">
+    <div style="flex:1;min-width:0;">
+      <div class="doc-preview-title" id="previewDocTitle">Document Preview</div>
+      <div class="doc-preview-subtitle" id="previewDocSubtitle"></div>
     </div>
-    <div class="pw-error" id="pwError">Incorrect password. Please try again.</div>
-    <button class="pw-submit" id="pwSubmit" onclick="submitPassword()">Unlock Staff View</button>
-    <button class="pw-cancel" onclick="closePwModal()">← Back to Client View</button>
-    <div class="pw-hint" id="pwHint">Contact your administrator if you've forgotten the password.</div>
+    <div class="doc-preview-controls">
+      <button class="preview-ctrl-btn" onclick="window.previewZoom(-0.25)" title="Zoom out">−</button>
+      <span class="preview-zoom-label" id="previewZoomLabel">100%</span>
+      <button class="preview-ctrl-btn" onclick="window.previewZoom(+0.25)" title="Zoom in">+</button>
+      <button class="preview-ctrl-btn" onclick="window.previewZoomReset()" title="Reset zoom" style="font-size:12px;">⊡</button>
+      <button class="preview-open-drive-btn" id="previewDriveBtn" onclick="window.previewOpenInDrive()" style="display:none;">📁 Open in Drive</button>
+      <button class="preview-close-btn" onclick="window.closeDocPreview()" title="Close">✕</button>
+    </div>
+  </div>
+  <div class="doc-preview-body" id="previewBody">
+    <div class="doc-preview-inner" id="previewInner">
+      <div class="doc-preview-placeholder" id="previewPlaceholder">
+        <div class="doc-preview-placeholder-icon" id="previewPlaceholderIcon">📄</div>
+        <div class="doc-preview-placeholder-name" id="previewPlaceholderName"></div>
+        <div class="doc-preview-placeholder-sub">This document is stored in Google Drive. Connect Google Drive and open the client's folder to view and download the file.</div>
+        <button class="doc-preview-drive-cta" onclick="window.previewOpenInDrive()">📁 Open in Google Drive</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══ EDIT CLIENT MODAL ══ -->
+<div class="modal-overlay" id="editClientModal">
+  <div class="modal" style="max-width:480px;">
+    <button class="modal-close" onclick="window.closeModal('editClientModal')">✕</button>
+    <div class="modal-title">Edit Client</div>
+    <div class="modal-sub">Update client details. Changes apply immediately.</div>
+    <input type="hidden" id="editClientId">
+    <div class="modal-label">Full Name</div>
+    <input class="modal-input" id="editClientName" type="text" placeholder="Full name">
+    <div class="modal-label" style="margin-top:12px;">Email Address</div>
+    <input class="modal-input" id="editClientEmail" type="email" placeholder="email@example.com">
+    <div class="modal-label" style="margin-top:12px;">Phone</div>
+    <input class="modal-input" id="editClientPhone" type="text" placeholder="0412 345 678">
+    <div class="modal-label" style="margin-top:12px;">Current Step</div>
+    <input class="modal-input" id="editClientStep" type="text" placeholder="e.g. Step 3 — Property Purchase">
+    <div class="modal-label" style="margin-top:12px;">Assigned Adviser</div>
+    <select class="modal-input" id="editClientAdviser" style="appearance:none;cursor:pointer;"></select>
+    <div class="modal-actions" style="margin-top:20px;">
+      <button class="btn-secondary" onclick="window.closeModal('editClientModal')">Cancel</button>
+      <button class="btn-primary" onclick="window.saveEditClient()">Save Changes</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══ REMINDERS MODAL ══ -->
+<div class="modal-overlay" id="remindersModal">
+  <div class="modal" style="max-width:600px;">
+    <button class="modal-close" onclick="window.closeModal('remindersModal')">✕</button>
+    <div class="modal-title">🔔 Reminders</div>
+    <div class="modal-sub">Set up automatic reminder emails sent to clients with outstanding documents.</div>
+
+    <!-- EmailJS banner -->
+    <div class="emailjs-setup-banner" style="margin-bottom:16px;">
+      <div class="emailjs-setup-icon">📧</div>
+      <div>
+        <div class="emailjs-setup-title">Powered by EmailJS — free, no server needed</div>
+        <div class="emailjs-setup-sub">Create a free account, set up a service and template, paste your credentials below.</div>
+        <a href="https://www.emailjs.com" target="_blank" class="emailjs-link">Get started at emailjs.com →</a>
+      </div>
+    </div>
+
+    <!-- Toggle -->
+    <div class="reminder-toggle-row">
+      <label class="toggle-switch">
+        <input type="checkbox" id="reminderEnabled" onchange="window.updateReminderStatus()">
+        <div class="toggle-track"></div>
+      </label>
+      <div class="toggle-label">Automatic reminders enabled</div>
+      <div class="toggle-status" id="reminderToggleStatus">Off</div>
+    </div>
+
+    <div class="reminder-config-grid" style="margin-top:16px;">
+      <div class="reminder-field">
+        <label class="reminder-label">📅 Send every</label>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <input class="reminder-input" id="reminderIntervalNum" type="number" min="1" max="52" value="7" style="width:80px;flex-shrink:0;">
+          <select class="reminder-input" id="reminderIntervalUnit" style="flex:1;">
+            <option value="days">Days</option>
+            <option value="weeks" selected>Weeks</option>
+            <option value="months">Months</option>
+          </select>
+        </div>
+      </div>
+      <div class="reminder-field">
+        <label class="reminder-label">🕐 Send time</label>
+        <input class="reminder-input" id="reminderTime" type="time" value="09:00">
+      </div>
+      <div class="reminder-field">
+        <label class="reminder-label">📧 EmailJS Service ID</label>
+        <input class="reminder-input maint-mono" id="reminderServiceId" placeholder="service_xxxxxxx">
+      </div>
+      <div class="reminder-field">
+        <label class="reminder-label">📋 EmailJS Template ID</label>
+        <input class="reminder-input maint-mono" id="reminderTemplateId" placeholder="template_xxxxxxx">
+      </div>
+      <div class="reminder-field reminder-field--full">
+        <label class="reminder-label">🔑 EmailJS Public Key</label>
+        <input class="reminder-input maint-mono" id="reminderPublicKey" placeholder="your_public_key">
+      </div>
+      <div class="reminder-field reminder-field--full">
+        <label class="reminder-label">📝 Email Subject</label>
+        <input class="reminder-input" id="reminderSubject" value="Action Required — Outstanding Documents for Your Application">
+        <div class="reminder-variables">
+          <span class="reminder-label" style="font-size:10px;color:var(--text-sub);font-weight:500;align-self:center;">Insert: </span>
+          <span class="reminder-var-chip" onclick="window.insertReminderVar('reminderSubject','{{client_name}}')">{{client_name}}</span>
+          <span class="reminder-var-chip" onclick="window.insertReminderVar('reminderSubject','{{company_name}}')">{{company_name}}</span>
+          <span class="reminder-var-chip" onclick="window.insertReminderVar('reminderSubject','{{outstanding_count}}')">{{outstanding_count}}</span>
+        </div>
+      </div>
+      <div class="reminder-field reminder-field--full">
+        <label class="reminder-label">✉️ Email Body</label>
+        <textarea class="reminder-textarea" id="reminderBody" style="min-height:120px;">Hi {{client_name}},
+
+This is a friendly reminder that we are still waiting on {{outstanding_count}} outstanding item(s) for your application with {{company_name}}.
+
+{{outstanding_docs}}
+
+Please log in to your portal or reply to this email if you have any questions.
+
+Kind regards,
+{{adviser_name}}
+{{company_name}}</textarea>
+        <div class="reminder-variables" style="margin-top:6px;">
+          <span class="reminder-var-chip" onclick="window.insertReminderVar('reminderBody','{{client_name}}')">{{client_name}}</span>
+          <span class="reminder-var-chip" onclick="window.insertReminderVar('reminderBody','{{company_name}}')">{{company_name}}</span>
+          <span class="reminder-var-chip" onclick="window.insertReminderVar('reminderBody','{{outstanding_docs}}')">{{outstanding_docs}}</span>
+          <span class="reminder-var-chip" onclick="window.insertReminderVar('reminderBody','{{outstanding_count}}')">{{outstanding_count}}</span>
+          <span class="reminder-var-chip" onclick="window.insertReminderVar('reminderBody','{{adviser_name}}')">{{adviser_name}}</span>
+          <span class="reminder-var-chip" onclick="window.insertReminderVar('reminderBody','{{portal_link}}')">{{portal_link}}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Client status table -->
+    <div class="reminder-label" style="margin:16px 0 8px;">Client Status</div>
+    <table class="reminder-client-table" id="reminderClientTable" style="font-size:12px;">
+      <thead><tr>
+        <th>Client</th><th>Outstanding</th><th>Last Sent</th><th>Action</th>
+      </tr></thead>
+      <tbody id="reminderClientBody"></tbody>
+    </table>
+
+    <div class="modal-actions" style="margin-top:16px;">
+      <button class="reminder-test-btn" onclick="window.sendTestReminder()">📧 Test Email</button>
+      <button class="reminder-save-btn" onclick="window.saveReminderSettings();window.closeModal('remindersModal');">💾 Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ INFORMATION REQUESTS MODAL ══ -->
+<div class="modal-overlay" id="infoRequestsModal">
+  <div class="modal" style="max-width:640px;">
+    <button class="modal-close" onclick="window.closeModal('infoRequestsModal')">✕</button>
+    <div class="modal-title">📋 Information Requests</div>
+    <div class="modal-sub">Request specific information from clients — not just documents. Select from the library or create custom requests.</div>
+
+    <div class="info-req-tab-row">
+      <button class="info-req-tab active" id="infoTabLibrary" onclick="window.switchInfoTab('library')">📚 Request Library</button>
+      <button class="info-req-tab" id="infoTabActive"  onclick="window.switchInfoTab('active')">✅ Active Requests</button>
+      <button class="info-req-tab" id="infoTabCustom"  onclick="window.switchInfoTab('custom')">＋ Custom Request</button>
+    </div>
+
+    <!-- Library tab -->
+    <div id="infoTabPanelLibrary">
+      <div class="info-req-section-label">Residential History</div>
+
+      <div class="info-req-card" id="ireq-current-res" onclick="window.toggleInfoReq('current-res')">
+        <div class="info-req-check" id="icheck-current-res"></div>
+        <div class="info-req-body">
+          <div class="info-req-title">Current Residence</div>
+          <div class="info-req-desc">Client's current address and move-in date</div>
+          <div class="info-req-fields" id="ifields-current-res">
+            <div class="info-req-field-row"><div class="info-req-field-label">Current address</div><div class="info-req-field-type">Text</div></div>
+            <div class="info-req-field-row"><div class="info-req-field-label">Move-in date</div><div class="info-req-field-type">Date</div></div>
+            <div class="info-req-field-row"><div class="info-req-field-label">Ownership status (own / rent / other)</div><div class="info-req-field-type">Select</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="info-req-card" id="ireq-prev-res" onclick="window.toggleInfoReq('prev-res')">
+        <div class="info-req-check" id="icheck-prev-res"></div>
+        <div class="info-req-body">
+          <div class="info-req-title">Previous Residence</div>
+          <div class="info-req-desc">Previous address with move-in and move-out dates</div>
+          <div class="info-req-fields" id="ifields-prev-res">
+            <div class="info-req-field-row"><div class="info-req-field-label">Previous address</div><div class="info-req-field-type">Text</div></div>
+            <div class="info-req-field-row"><div class="info-req-field-label">Move-in date</div><div class="info-req-field-type">Date</div></div>
+            <div class="info-req-field-row"><div class="info-req-field-label">Move-out date</div><div class="info-req-field-type">Date</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="info-req-section-label">Financial</div>
+
+      <div class="info-req-card" id="ireq-credit-enquiry" onclick="window.toggleInfoReq('credit-enquiry')">
+        <div class="info-req-check" id="icheck-credit-enquiry"></div>
+        <div class="info-req-body">
+          <div class="info-req-title">Credit Enquiry Status</div>
+          <div class="info-req-desc">Details of any recent credit enquiries or defaults</div>
+          <div class="info-req-fields" id="ifields-credit-enquiry">
+            <div class="info-req-field-row"><div class="info-req-field-label">Any credit enquiries in last 12 months?</div><div class="info-req-field-type">Yes / No</div></div>
+            <div class="info-req-field-row"><div class="info-req-field-label">Lender name (if applicable)</div><div class="info-req-field-type">Text</div></div>
+            <div class="info-req-field-row"><div class="info-req-field-label">Purpose of enquiry</div><div class="info-req-field-type">Text</div></div>
+            <div class="info-req-field-row"><div class="info-req-field-label">Any defaults or judgements?</div><div class="info-req-field-type">Yes / No</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="info-req-card" id="ireq-liabilities" onclick="window.toggleInfoReq('liabilities')">
+        <div class="info-req-check" id="icheck-liabilities"></div>
+        <div class="info-req-body">
+          <div class="info-req-title">Existing Liabilities</div>
+          <div class="info-req-desc">Current loans, credit cards and financial commitments</div>
+          <div class="info-req-fields" id="ifields-liabilities">
+            <div class="info-req-field-row"><div class="info-req-field-label">Type of liability (loan / card / HECS / other)</div><div class="info-req-field-type">Select</div></div>
+            <div class="info-req-field-row"><div class="info-req-field-label">Lender / provider</div><div class="info-req-field-type">Text</div></div>
+            <div class="info-req-field-row"><div class="info-req-field-label">Outstanding balance</div><div class="info-req-field-type">Currency</div></div>
+            <div class="info-req-field-row"><div class="info-req-field-label">Monthly repayment</div><div class="info-req-field-type">Currency</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="info-req-section-label">Employment</div>
+
+      <div class="info-req-card" id="ireq-employment-history" onclick="window.toggleInfoReq('employment-history')">
+        <div class="info-req-check" id="icheck-employment-history"></div>
+        <div class="info-req-body">
+          <div class="info-req-title">Employment History</div>
+          <div class="info-req-desc">Current and previous employer details</div>
+          <div class="info-req-fields" id="ifields-employment-history">
+            <div class="info-req-field-row"><div class="info-req-field-label">Current employer name</div><div class="info-req-field-type">Text</div></div>
+            <div class="info-req-field-row"><div class="info-req-field-label">Employment start date</div><div class="info-req-field-type">Date</div></div>
+            <div class="info-req-field-row"><div class="info-req-field-label">Employment type (full-time / part-time / casual / self-employed)</div><div class="info-req-field-type">Select</div></div>
+            <div class="info-req-field-row"><div class="info-req-field-label">Annual salary (before tax)</div><div class="info-req-field-type">Currency</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="info-req-card" id="ireq-dependants" onclick="window.toggleInfoReq('dependants')">
+        <div class="info-req-check" id="icheck-dependants"></div>
+        <div class="info-req-body">
+          <div class="info-req-title">Dependants</div>
+          <div class="info-req-desc">Number and ages of financial dependants</div>
+          <div class="info-req-fields" id="ifields-dependants">
+            <div class="info-req-field-row"><div class="info-req-field-label">Number of dependants</div><div class="info-req-field-type">Number</div></div>
+            <div class="info-req-field-row"><div class="info-req-field-label">Ages of dependants</div><div class="info-req-field-type">Text</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="info-req-section-label">Property</div>
+
+      <div class="info-req-card" id="ireq-property-details" onclick="window.toggleInfoReq('property-details')">
+        <div class="info-req-check" id="icheck-property-details"></div>
+        <div class="info-req-body">
+          <div class="info-req-title">Property Being Purchased</div>
+          <div class="info-req-desc">Details about the target property</div>
+          <div class="info-req-fields" id="ifields-property-details">
+            <div class="info-req-field-row"><div class="info-req-field-label">Property address</div><div class="info-req-field-type">Text</div></div>
+            <div class="info-req-field-row"><div class="info-req-field-label">Purchase price</div><div class="info-req-field-type">Currency</div></div>
+            <div class="info-req-field-row"><div class="info-req-field-label">Property type (house / unit / land / other)</div><div class="info-req-field-type">Select</div></div>
+            <div class="info-req-field-row"><div class="info-req-field-label">Intended use (owner-occupied / investment)</div><div class="info-req-field-type">Select</div></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Active requests tab -->
+    <div id="infoTabPanelActive" style="display:none;">
+      <div id="activeInfoRequestsList">
+        <div style="text-align:center;padding:32px;color:var(--text-sub);font-size:13px;font-weight:500;">No information requests have been activated yet.<br>Select items from the Library tab to activate them.</div>
+      </div>
+    </div>
+
+    <!-- Custom request tab -->
+    <div id="infoTabPanelCustom" style="display:none;">
+      <div class="modal-label">Request Title</div>
+      <input class="modal-input" id="customReqTitle" placeholder="e.g. Medicare Card Number" style="margin-bottom:12px;">
+      <div class="modal-label" style="margin-top:0;">Description</div>
+      <input class="modal-input" id="customReqDesc" placeholder="Short description of what you need" style="margin-bottom:12px;">
+      <div class="modal-label" style="margin-top:0;">Fields required</div>
+      <div id="customFieldsList" style="display:flex;flex-direction:column;gap:8px;margin-bottom:10px;"></div>
+      <button class="info-req-add-btn" onclick="window.addCustomField()">＋ Add Field</button>
+      <div class="modal-actions" style="margin-top:20px;">
+        <button class="btn-secondary" onclick="window.closeModal('infoRequestsModal')">Cancel</button>
+        <button class="btn-primary" onclick="window.saveCustomRequest()">Add to Library</button>
+      </div>
+    </div>
+
+    <div class="modal-actions" id="infoReqLibraryActions" style="margin-top:16px;">
+      <button class="btn-secondary" onclick="window.closeModal('infoRequestsModal')">Close</button>
+      <button class="btn-primary" onclick="window.activateSelectedInfoReqs()">Activate Selected →</button>
+    </div>
   </div>
 </div>
 
@@ -2688,6 +3739,21 @@
 </div>
 
 <script>
+  // Staff login handled via addEventListener on #pwDoSubmit
+
+  // ── Global call dispatcher — defers until all functions are loaded ──────────
+  window.IC = function(fn, arg) {
+    var args = arg !== undefined ? [arg] : [];
+    if (typeof window[fn] === 'function') {
+      window[fn].apply(null, args);
+    } else {
+      setTimeout(function() {
+        if (typeof window[fn] === 'function') { window[fn].apply(null, args); }
+        else { console.error(fn + ' not found'); }
+      }, 300);
+    }
+  };
+
   let pendingFiles = [];
   let docCounter = 10;
   let uploadedCount = 2;
@@ -2714,9 +3780,9 @@
     employment: 's2'
   };
 
-  function getStaffById(id) { return staffMembers.find(s => s.id === id); }
-  function getStaffName(id) { const s = getStaffById(id); return s ? s.name : 'Unassigned'; }
-  function getStaffEmail(id){ const s = getStaffById(id); return s ? s.email : ''; }
+  window.getStaffById = function getStaffById(id) { return staffMembers.find(s => s.id === id); }
+  window.getStaffName = function getStaffName(id) { const s = getStaffById(id); return s ? s.name : 'Unassigned'; }
+  window.getStaffEmail = function getStaffEmail(id){ const s = getStaffById(id); return s ? s.email : ''; }
 
   const docExplanations = {
     payslip: 'Please provide your two most recent payslips showing your employer name, gross and net salary, and pay date. Must be within the last 60 days.',
@@ -2766,7 +3832,7 @@
   let folderSelections = {}; // folderId -> Set of doc ids
 
   // ─── TAB SWITCHING ───
-  function switchReqTab(tab, btn) {
+  window.switchReqTab = function switchReqTab(tab, btn) {
     document.querySelectorAll('.req-tab').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
     document.getElementById('tabIndividual').style.display = tab === 'individual' ? 'block' : 'none';
@@ -2774,7 +3840,7 @@
   }
 
   // ─── RENDER INDIVIDUAL DOC LIST ───
-  function renderIndividualDocs() {
+  window.renderIndividualDocs = function renderIndividualDocs() {
     const container = document.getElementById('reqIndividualList');
     if (!container) return;
     container.innerHTML = '';
@@ -2805,7 +3871,7 @@
   }
 
   // ─── RENDER STEP FOLDERS ───
-  function renderStepFolders() {
+  window.renderStepFolders = function renderStepFolders() {
     const container = document.getElementById('stepFoldersList');
     if (!container) return;
     container.innerHTML = '';
@@ -2823,7 +3889,7 @@
       div.id = 'folder-' + folder.id;
 
       div.innerHTML = `
-        <div class="step-folder-header" onclick="toggleFolder('${folder.id}')">
+        <div class="step-folder-header" onclick="window.toggleFolder('${folder.id}')">
           <div class="step-folder-icon">${folder.icon}</div>
           <div class="step-folder-info">
             <div class="step-folder-name">${folder.name}</div>
@@ -2836,9 +3902,9 @@
         </div>
         <div class="step-folder-body">
           <div class="step-folder-actions">
-            <button class="select-all-btn" onclick="selectAllFolder('${folder.id}')">Select All</button>
+            <button class="select-all-btn" onclick="window.selectAllFolder('${folder.id}')">Select All</button>
             <span class="folder-sel-count" id="selcount-${folder.id}">0 selected</span>
-            <button class="folder-upload-btn" id="folderupload-${folder.id}" onclick="uploadFolderDocs('${folder.id}')">Upload Selected ↑</button>
+            <button class="folder-upload-btn" id="folderupload-${folder.id}" onclick="window.uploadFolderDocs('${folder.id}')">Upload Selected ↑</button>
           </div>
           <div id="folderdocs-${folder.id}">
             ${folderDocs.map(doc => `
@@ -2861,12 +3927,12 @@
     });
   }
 
-  function toggleFolder(folderId) {
+  window.toggleFolder = function toggleFolder(folderId) {
     const el = document.getElementById('folder-' + folderId);
     el.classList.toggle('open');
   }
 
-  function toggleFolderDoc(folderId, docId) {
+  window.toggleFolderDoc = function toggleFolderDoc(folderId, docId) {
     const sel = folderSelections[folderId];
     const row = document.getElementById('steprow-' + folderId + '-' + docId);
     if (!sel || !row) return;
@@ -2875,7 +3941,7 @@
     updateFolderActionBar(folderId);
   }
 
-  function selectAllFolder(folderId) {
+  window.selectAllFolder = function selectAllFolder(folderId) {
     const folder = stepFolders.find(f => f.id === folderId);
     if (!folder) return;
     const sel = folderSelections[folderId];
@@ -2895,7 +3961,7 @@
     updateFolderActionBar(folderId);
   }
 
-  function updateFolderActionBar(folderId) {
+  window.updateFolderActionBar = function updateFolderActionBar(folderId) {
     const sel = folderSelections[folderId];
     const count = sel ? sel.size : 0;
     const countEl = document.getElementById('selcount-' + folderId);
@@ -2915,7 +3981,7 @@
   let folderUploadTotal  = 0;
   let folderUploadDone   = 0;
 
-  function uploadFolderDocs(folderId) {
+  window.uploadFolderDocs = function uploadFolderDocs(folderId) {
     const sel = folderSelections[folderId];
     if (!sel || sel.size === 0) return;
     const uploadable = [...sel].filter(docId => {
@@ -2930,7 +3996,7 @@
     openNextFolderUpload();
   }
 
-  function openNextFolderUpload() {
+  window.openNextFolderUpload = function openNextFolderUpload() {
     if (!folderUploadQueue.length) {
       // All done — finalise
       if (folderSelections[folderUploadId]) folderSelections[folderUploadId].clear();
@@ -2975,17 +4041,17 @@
     document.getElementById('modalFileList').innerHTML = `
       <div class="modal-file-item" style="border-color:rgba(201,168,76,0.2);">
         <div class="modal-file-left" style="color:var(--gold-dim);">📎 <span>Choose file for: ${doc.name}</span></div>
-        <button onclick="triggerFolderFilePick()" style="background:rgba(201,168,76,0.1);border:1px solid rgba(201,168,76,0.3);color:var(--gold);border-radius:5px;font-size:10px;padding:4px 10px;cursor:pointer;font-family:Montserrat,sans-serif;letter-spacing:0.5px;">Browse…</button>
+        <button onclick="window.triggerFolderFilePick()" style="background:rgba(201,168,76,0.1);border:1px solid rgba(201,168,76,0.3);color:var(--gold);border-radius:5px;font-size:10px;padding:4px 10px;cursor:pointer;font-family:Montserrat,sans-serif;letter-spacing:0.5px;">Browse…</button>
       </div>`;
 
     document.getElementById('uploadModal').classList.add('open');
   }
 
-  function triggerFolderFilePick() {
+  window.triggerFolderFilePick = function triggerFolderFilePick() {
     document.getElementById('folderFileInput').click();
   }
 
-  function handleFolderFileSelect(e) {
+  window.handleFolderFileSelect = function handleFolderFileSelect(e) {
     const files = Array.from(e.target.files);
     if (!files.length) return;
     pendingFiles = files;
@@ -3001,7 +4067,7 @@
     e.target.value = '';
   }
 
-  function confirmFolderDoc() {
+  window.confirmFolderDoc = function confirmFolderDoc() {
     // Called by the modal's "Upload Files" button when in folder mode
     const docId = folderUploadQueue.shift();
     const doc   = docLibrary.find(d => d.id === docId);
@@ -3026,7 +4092,7 @@
     setTimeout(openNextFolderUpload, 400);
   }
 
-  function addUploadedCard(savedName, icon, date, size, typeLabel) {
+  window.addUploadedCard = function addUploadedCard(savedName, icon, date, size, typeLabel) {
     const list = document.getElementById('docsList');
     docCounter++;
     const iconClass = typeLabel === 'PDF' ? 'pdf' : ['JPG','JPEG','PNG'].includes(typeLabel) ? 'img' : 'doc';
@@ -3041,7 +4107,7 @@
       </div>
       <div class="doc-right">
         <span class="doc-status-pill pill-pending">Pending Review</span>
-        <button class="doc-delete" title="Remove" onclick="removeDoc(this, '${docCounter}')">✕</button>
+        <button class="doc-delete" title="Remove" onclick="window.removeDoc(this, '${docCounter}')">✕</button>
       </div>`;
     list.appendChild(card);
     const empty = document.getElementById('emptyState');
@@ -3049,12 +4115,12 @@
   }
 
   // ─── DOC LIBRARY MODAL ───
-  function openDocLibraryModal() {
+  window.openDocLibraryModal = function openDocLibraryModal() {
     renderDocLibraryEditor();
     document.getElementById('docLibraryModal').classList.add('open');
   }
 
-  function renderDocLibraryEditor() {
+  window.renderDocLibraryEditor = function renderDocLibraryEditor() {
     const list = document.getElementById('docLibraryList');
     list.innerHTML = '';
     docLibrary.forEach((doc, idx) => {
@@ -3073,23 +4139,23 @@
           style="background:rgba(255,255,255,0.05);border:1px solid rgba(201,168,76,0.2);border-radius:6px;color:var(--white);font-family:Montserrat,sans-serif;font-size:11px;padding:6px 8px;flex-shrink:0;">
           ${staffMembers.map(s => `<option value="${s.id}" ${s.id===doc.assignee?'selected':''}>${s.name} — ${s.email}</option>`).join('')}
         </select>
-        <button onclick="removeDocFromLibrary(${idx})"
+        <button onclick="window.removeDocFromLibrary(${idx})"
           style="background:none;border:none;color:rgba(232,93,74,0.6);font-size:18px;cursor:pointer;padding:2px 4px;flex-shrink:0;" title="Remove">✕</button>`;
       list.appendChild(row);
     });
   }
 
-  function addDocToLibrary() {
+  window.addDocToLibrary = function addDocToLibrary() {
     docLibrary.push({ id:'doc_'+Date.now(), icon:'📄', name:'New Document', desc:'Description', assignee:'Emily Chen', note:'Please upload the required document.', uploaded:false });
     renderDocLibraryEditor();
   }
 
-  function removeDocFromLibrary(idx) {
+  window.removeDocFromLibrary = function removeDocFromLibrary(idx) {
     docLibrary.splice(idx, 1);
     renderDocLibraryEditor();
   }
 
-  function saveDocLibrary() {
+  window.saveDocLibrary = function saveDocLibrary() {
     document.querySelectorAll('#docLibraryList input[data-field], #docLibraryList select[data-field]').forEach(el => {
       const idx = parseInt(el.dataset.idx);
       const field = el.dataset.field;
@@ -3102,12 +4168,12 @@
   }
 
   // ─── STEP FOLDERS MODAL ───
-  function openStepFoldersModal() {
+  window.openStepFoldersModal = function openStepFoldersModal() {
     renderStepFoldersEditor();
     document.getElementById('stepFoldersModal').classList.add('open');
   }
 
-  function renderStepFoldersEditor() {
+  window.renderStepFoldersEditor = function renderStepFoldersEditor() {
     const list = document.getElementById('stepFoldersEditorList');
     list.innerHTML = '';
     stepFolders.forEach((folder, fi) => {
@@ -3121,7 +4187,7 @@
             style="flex:1;background:rgba(255,255,255,0.05);border:1px solid rgba(201,168,76,0.2);border-radius:6px;color:var(--white);font-family:Montserrat,sans-serif;font-size:12px;padding:7px 10px;" placeholder="Folder name">
           <input type="text" value="${folder.desc}" data-fi="${fi}" data-ff="desc"
             style="flex:1.3;background:rgba(255,255,255,0.05);border:1px solid rgba(201,168,76,0.2);border-radius:6px;color:var(--white);font-family:Montserrat,sans-serif;font-size:11px;padding:7px 10px;" placeholder="Description">
-          <button onclick="removeStepFolder(${fi})" style="background:none;border:none;color:rgba(232,93,74,0.6);font-size:18px;cursor:pointer;padding:2px 4px;" title="Delete folder">✕</button>
+          <button onclick="window.removeStepFolder(${fi})" style="background:none;border:none;color:rgba(232,93,74,0.6);font-size:18px;cursor:pointer;padding:2px 4px;" title="Delete folder">✕</button>
         </div>
         <div style="font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold-dim);margin-bottom:8px;">Documents in this folder</div>
         <div style="display:flex;flex-wrap:wrap;gap:6px;">
@@ -3136,14 +4202,14 @@
     });
   }
 
-  function removeStepFolder(fi) { stepFolders.splice(fi, 1); renderStepFoldersEditor(); }
+  window.removeStepFolder = function removeStepFolder(fi) { stepFolders.splice(fi, 1); renderStepFoldersEditor(); }
 
-  function addStepFolder() {
+  window.addStepFolder = function addStepFolder() {
     stepFolders.push({ id:'folder_'+Date.now(), icon:'📁', name:'New Step Folder', desc:'Add a description', docs:[] });
     renderStepFoldersEditor();
   }
 
-  function saveStepFolders() {
+  window.saveStepFolders = function saveStepFolders() {
     document.querySelectorAll('#stepFoldersEditorList input[data-ff]').forEach(el => {
       const fi = parseInt(el.dataset.fi); const ff = el.dataset.ff;
       if (!isNaN(fi) && ff && stepFolders[fi]) stepFolders[fi][ff] = el.value;
@@ -3163,12 +4229,17 @@
 
   // ─── INIT ───
   document.addEventListener('DOMContentLoaded', () => {
-    loadSettings();
-    renderIndividualDocs();
+    window.loadSettings();
+    window.renderIndividualDocs();
     renderStepFolders();
     renderClientGroups();
     updateLockButtons();
     setDriveStatus(false);
+    loadReminderSettings();
+
+    // pw overlay click-outside to close
+    const pwOv = document.getElementById('pwOverlay');
+    if (pwOv) pwOv.addEventListener('click', e => { if (e.target === pwOv) closePwModal(); });
 
     // ── Read URL params to identify client ──────────────────────────────────
     const params = new URLSearchParams(window.location.search);
@@ -3176,65 +4247,74 @@
     const urlClientName = params.get('name');
 
     if (urlClientId) {
-      // Find or temporarily create client entry from URL
-      const found = clients.find(c => c.id === urlClientId);
-      if (found) {
-        activeClientId = found.id;
-      } else {
-        // Client not in list yet — create minimal entry so page renders
-        clients.push({
+      // Find existing client or create minimal entry from URL
+      let found = clients.find(c => c.id === urlClientId);
+      if (!found) {
+        found = {
           id: urlClientId,
           name: urlClientName || urlClientId,
           email: '', phone: '', step: '', adviser: staffMembers[0]?.id || 's1',
           docs: docLibrary.map(d => d.id),
           driveFolderId: null
-        });
-        activeClientId = urlClientId;
+        };
+        clients.push(found);
       }
-      // Update header pill
-      const nameEl = document.querySelector('.client-name-sm');
-      const idEl   = document.querySelector('.client-id-sm');
-      if (nameEl && urlClientName) nameEl.textContent = urlClientName;
-      if (idEl)   idEl.textContent = urlClientId;
+      activeClientId = found.id;
+
+      // Update header pill with real client name
+      const displayName = found.name || urlClientName || urlClientId;
+      const nameEl = document.getElementById('clientNameDisplay');
+      const idEl   = document.getElementById('clientIdDisplay');
+      const avatarEl = document.getElementById('clientAvatar');
+      const headerRight = document.getElementById('headerRight');
+      if (nameEl) nameEl.textContent = displayName;
+      if (idEl)   idEl.textContent   = urlClientId;
+      if (avatarEl) avatarEl.textContent = displayName.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+      if (headerRight) headerRight.style.display = 'flex';
+
       // Update folder path
       const pathEl = document.getElementById('clientFolderPath');
-      if (pathEl && urlClientName) pathEl.textContent = urlClientId + ' — ' + urlClientName + ' / All Documents';
-      // Show client view normally
+      if (pathEl)  pathEl.textContent = urlClientId + ' — ' + displayName + ' / All Documents';
+
+      // Re-render with correct client
+      window.renderIndividualDocs();
+      window.renderStepFolders();
+      window.renderClientInfoForms();
+
+      // Show client view, hide landing
       document.getElementById('clientView').classList.remove('hidden');
-      document.getElementById('landingView') && (document.getElementById('landingView').style.display = 'none');
+      document.getElementById('landingView').style.display = 'none';
+
     } else {
-      // No client param — show landing page, hide client view
+      // No client param — show landing page only
       document.getElementById('clientView').classList.add('hidden');
-      const landing = document.getElementById('landingView');
-      if (landing) landing.style.display = 'flex';
-      // Hide the view toggle entirely (clients should not see staff buttons)
-      const toggle = document.querySelector('.view-toggle');
-      if (toggle) toggle.style.display = 'none';
+      document.getElementById('landingView').style.display = 'flex';
+      // View toggle stays hidden (staff access via double-click footer)
     }
   });
 
 
   // ─── MANAGE STAFF ───
-  function openManageStaffModal() {
+  window.openManageStaffModal = function openManageStaffModal() {
     renderStaffMemberList();
     document.getElementById('manageStaffModal').classList.add('open');
   }
 
-  function renderStaffMemberList() {
+  window.renderStaffMemberList = function renderStaffMemberList() {
     const list = document.getElementById('staffMemberList');
     list.innerHTML = '';
     staffMembers.forEach((staff, idx) => {
       const row = document.createElement('div');
-      row.style.cssText = 'display:flex;align-items:center;gap:8px;background:rgba(107,79,160,0.06);border:1px solid rgba(107,79,160,0.18);border-radius:10px;padding:12px 14px;';
+      row.style.cssText = 'display:flex;align-items:center;gap:8px;background:#F0F6FF;border:2px solid #DBEAFE;border-radius:12px;padding:12px 14px;';
       row.innerHTML = `
-        <div style="width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,rgba(107,79,160,0.5),rgba(107,79,160,0.2));display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:14px;font-weight:700;color:#c4a8e8;flex-shrink:0;">${staff.name.split(' ').map(w=>w[0]).join('')}</div>
+        <div style="width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#1C4475,#20ABA4);display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:14px;font-weight:700;color:#fff;flex-shrink:0;">${staff.name.split(' ').map(w=>w[0]).join('')}</div>
         <input type="text" value="${staff.name}" data-idx="${idx}" data-field="name"
           placeholder="Full name"
-          style="flex:1;background:rgba(255,255,255,0.05);border:1px solid rgba(107,79,160,0.25);border-radius:6px;color:var(--white);font-family:Montserrat,sans-serif;font-size:12px;padding:7px 10px;">
+          style="flex:1;background:#F9FAFB;border:2px solid #E5E7EB;border-radius:8px;color:#1C4475;font-family:'Nunito',sans-serif;font-size:12px;font-weight:600;padding:8px 12px;box-sizing:border-box;">
         <input type="email" value="${staff.email}" data-idx="${idx}" data-field="email"
           placeholder="email@company.com.au"
-          style="flex:1.6;background:rgba(255,255,255,0.05);border:1px solid rgba(107,79,160,0.25);border-radius:6px;color:var(--white);font-family:Montserrat,sans-serif;font-size:12px;padding:7px 10px;">
-        <button onclick="removeStaffMember(${idx})" title="Remove staff member"
+          style="flex:1.6;background:#F9FAFB;border:2px solid #E5E7EB;border-radius:8px;color:#1C4475;font-family:'Nunito',sans-serif;font-size:12px;font-weight:600;padding:8px 12px;box-sizing:border-box;">
+        <button onclick="window.removeStaffMember(${idx})" title="Remove staff member"
           style="background:none;border:none;color:rgba(232,93,74,0.5);font-size:18px;cursor:pointer;padding:2px 6px;flex-shrink:0;transition:color 0.2s;"
           onmouseover="this.style.color='var(--rejected)'" onmouseout="this.style.color='rgba(232,93,74,0.5)'">✕</button>`;
       list.appendChild(row);
@@ -3244,7 +4324,7 @@
     }
   }
 
-  function addStaffMember() {
+  window.addStaffMember = function addStaffMember() {
     staffMembers.push({ id: 'staff_' + Date.now(), name: '', email: '' });
     renderStaffMemberList();
     // Focus the new name input
@@ -3254,7 +4334,7 @@
     }, 50);
   }
 
-  function removeStaffMember(idx) {
+  window.removeStaffMember = function removeStaffMember(idx) {
     const removed = staffMembers[idx];
     staffMembers.splice(idx, 1);
     // Clear any assignments that pointed to this staff member
@@ -3268,7 +4348,7 @@
     renderStaffMemberList();
   }
 
-  function saveStaffMembers() {
+  window.saveStaffMembers = function saveStaffMembers() {
     // Read all inputs back into staffMembers
     document.querySelectorAll('#staffMemberList input').forEach(inp => {
       const idx = parseInt(inp.dataset.idx);
@@ -3287,7 +4367,10 @@
 
   // ─── VIEW TOGGLE ───
   // Direct view switch (no password check — used after auth)
-  function setViewDirect(view) {
+  window.setViewDirect = function setViewDirect(view) {
+    // Always make sure toggle is visible once staff is in
+    const toggle = document.getElementById('viewToggle');
+    if (toggle) toggle.style.display = 'flex';
     document.querySelectorAll('.toggle-btn').forEach((b, i) => {
       b.classList.toggle('active',
         (view === 'client'      && i === 0) ||
@@ -3298,21 +4381,37 @@
     document.getElementById('clientView').classList.toggle('hidden', view !== 'client');
     document.getElementById('staffView').classList.toggle('active', view === 'staff');
     const mv = document.getElementById('maintenanceView');
-    if (mv) mv.classList.toggle('active', view === 'maintenance');
-    if (view === 'maintenance') populateMaintenanceForm();
+    if (mv) {
+      mv.classList.toggle('active', view === 'maintenance');
+      mv.style.display = view === 'maintenance' ? 'block' : 'none';
+    }
+    // Also explicitly hide/show staff view
+    const sv = document.getElementById('staffView');
+    if (sv) {
+      sv.classList.toggle('active', view === 'staff');
+      sv.style.display = view === 'staff' ? 'block' : 'none';
+    }
+    if (view === 'maintenance') window.populateMaintenanceForm();
   }
 
   // Gated view switch — requires password for staff/maintenance
-  function setView(view) {
-    if ((view === 'staff' || view === 'maintenance') && !staffUnlocked) {
-      openPwModal(view);
+  window.setView = function setView(view) {
+    var unlocked = window._staffIsUnlocked || window.staffUnlocked || false;
+    if ((view === 'staff' || view === 'maintenance') && !unlocked) {
+      window._pendingView = view;
+      var o = document.getElementById('pwOverlay');
+      var i = document.getElementById('pwInput');
+      var e = document.getElementById('pwErrorMsg');
+      if (o) o.style.display = 'flex';
+      if (i) { i.value = ''; i.type = 'password'; i.style.borderColor = '#E5E7EB'; setTimeout(function(){ i.focus(); }, 100); }
+      if (e) e.style.display = 'none';
       return;
     }
-    setViewDirect(view);
+    window.setViewDirect(view);
   }
 
   // ─── NORMAL FILE SELECT (drag/drop zone or Choose Files) ───
-  function handleFileSelect(e) {
+  window.handleFileSelect = function handleFileSelect(e) {
     pendingFiles = Array.from(e.target.files);
     if (!pendingFiles.length) return;
     // Reset modal to normal mode
@@ -3321,7 +4420,7 @@
     showUploadModal();
   }
 
-  function showUploadModal() {
+  window.showUploadModal = function showUploadModal() {
     const list = document.getElementById('modalFileList');
     list.innerHTML = '';
     pendingFiles.forEach(file => {
@@ -3354,14 +4453,14 @@
     document.getElementById('uploadModal').classList.add('open');
   }
 
-  function toggleDateFields() {
+  window.toggleDateFields = function toggleDateFields() {
     const type = document.getElementById('dateTypeSelect').value;
     document.getElementById('dateFieldsSingle').style.display    = type === 'single'     ? 'block' : 'none';
     document.getElementById('dateFieldsRange').style.display     = type === 'range'      ? 'block' : 'none';
     document.getElementById('dateFieldsYearRange').style.display = type === 'year_range' ? 'block' : 'none';
   }
 
-  function buildDateString() {
+  window.buildDateString = function buildDateString() {
     const type = document.getElementById('dateTypeSelect').value;
     function fmtDate(val) {
       if (!val) return '';
@@ -3381,7 +4480,7 @@
     }
   }
 
-  function buildSavedName(ext) {
+  window.buildSavedName = function buildSavedName(ext) {
     const docType     = document.getElementById('docTypeSelect').value;
     const institution = document.getElementById('institutionInput').value.trim();
     const clientName  = 'Sarah Johnson';
@@ -3393,13 +4492,13 @@
     return parts.join(' - ') + '.' + ext;
   }
 
-  function updateSavedNamePreview() {
+  window.updateSavedNamePreview = function updateSavedNamePreview() {
     const realFile = pendingFiles.find(f => !f._placeholder);
     const ext = realFile ? realFile.name.split('.').pop() : 'pdf';
     document.getElementById('savedNameSpan').textContent = buildSavedName(ext);
   }
 
-  function closeModal(id) {
+  window.closeModal = function closeModal(id) {
     document.getElementById(id).classList.remove('open');
     if (id === 'uploadModal') {
       // Only wipe pendingFiles if we're NOT in a folder queue
@@ -3417,7 +4516,7 @@
     'Super Statement':'super','Photo ID':'id','Other':'payslip'
   };
 
-  function submitUpload() {
+  window.submitUpload = function submitUpload() {
     // If we're mid-folder-queue, route to folder confirm
     if (folderUploadId !== null) {
       confirmFolderDoc();
@@ -3453,7 +4552,7 @@
         </div>
         <div class="doc-right">
           <span class="doc-status-pill pill-pending">Pending Review</span>
-          <button class="doc-delete" title="Remove" onclick="removeDoc(this, '${docCounter}')">✕</button>
+          <button class="doc-delete" title="Remove" onclick="window.removeDoc(this, '${docCounter}')">✕</button>
         </div>`;
       document.getElementById('docsList').appendChild(card);
       uploadedCount++;
@@ -3464,7 +4563,7 @@
     pendingFiles = [];
   }
 
-  function removeDoc(btn, id) {
+  window.removeDoc = function removeDoc(btn, id) {
     const card = document.querySelector(`[data-id="${id}"]`);
     if (card) {
       card.style.opacity = '0'; card.style.transform = 'translateX(20px)'; card.style.transition = 'all 0.2s';
@@ -3472,7 +4571,7 @@
     }
   }
 
-  function updateProgress() {
+  window.updateProgress = function updateProgress() {
     const pct = Math.min(100, Math.round((uploadedCount / totalRequired) * 100));
     document.getElementById('progressCount').textContent = Math.min(uploadedCount, totalRequired);
     document.getElementById('progressFill').style.width = pct + '%';
@@ -3483,7 +4582,7 @@
   }
 
   // ─── STAFF: MARK REVIEWED ───
-  function markReviewed(btn, badgeId) {
+  window.markReviewed = function markReviewed(btn, badgeId) {
     btn.textContent = '✓ Reviewed'; btn.classList.add('done');
     const row = btn.closest('.staff-doc-row');
     const rejectBtn = row.querySelector('.reject-btn');
@@ -3492,7 +4591,7 @@
     showToast('✅ Document marked as reviewed.');
   }
 
-  function updateGroupBadge(badgeId) {
+  window.updateGroupBadge = function updateGroupBadge(badgeId) {
     const badge = document.getElementById(badgeId);
     if (!badge) return;
     const group = badge.closest('.client-files-group');
@@ -3502,14 +4601,14 @@
   }
 
   // ─── STAFF: REJECT / RETURN ───
-  function openRejectModal(btn, badgeId, filename, clientName) {
+  window.openRejectModal = function openRejectModal(btn, badgeId, filename, clientName) {
     rejectContext = { btn, badgeId, filename, clientName };
     document.getElementById('rejectModalSub').textContent = `Returning "${filename}" to ${clientName}. Provide a clear explanation of what needs to be fixed.`;
     document.getElementById('rejectReason').value = '';
     document.getElementById('rejectModal').classList.add('open');
   }
 
-  function submitReject() {
+  window.submitReject = function submitReject() {
     const reason = document.getElementById('rejectReason').value.trim();
     if (!reason) { document.getElementById('rejectReason').style.borderColor = 'rgba(232,93,74,0.5)'; return; }
     document.getElementById('rejectReason').style.borderColor = '';
@@ -3524,8 +4623,30 @@
   }
 
   // ─── ASSIGN MODAL ───
-  function openAssignModal() { document.getElementById('assignModal').classList.add('open'); }
-  function saveAssignments() {
+  window.openAssignModal = function openAssignModal() {
+    window.renderAssignModal();
+    document.getElementById('assignModal').classList.add('open');
+  }
+  window.renderAssignModal = function renderAssignModal() {
+    var docKeys = [
+      { key:'payslip',    label:'💼 Recent Payslips' },
+      { key:'id',         label:'🪪 Photo ID' },
+      { key:'bank',       label:'🏦 Bank Statements' },
+      { key:'super',      label:'📊 Super Statement' },
+      { key:'tax',        label:'📋 Tax Return' },
+      { key:'employment', label:'📝 Employment Letter' },
+    ];
+    var container = document.getElementById('assignList');
+    if (!container) return;
+    container.innerHTML = '';
+    docKeys.forEach(function(d) {
+      var opts = staffMembers.map(function(s) {
+        return '<option value="' + s.id + '"' + (staffAssignments[d.key] === s.id ? ' selected' : '') + '>' + s.name + ' — ' + s.email + '</option>';
+      }).join('');
+      container.innerHTML += '<div style="margin-bottom:14px;"><div class="modal-label">' + d.label + '</div><select class="modal-select" data-doc="' + d.key + '" style="width:100%;background:#F9FAFB;border:2px solid #E5E7EB;border-radius:8px;color:#1C4475;font-family:Nunito,sans-serif;font-size:13px;padding:10px 14px;">' + opts + '</select></div>';
+    });
+  };
+  window.saveAssignments = function saveAssignments() {
     document.querySelectorAll('#assignList select').forEach(sel => {
       const doc = sel.dataset.doc; staffAssignments[doc] = sel.value;
       document.querySelectorAll(`[data-doc="${doc}"] .req-assignee`).forEach(el => {
@@ -3537,8 +4658,8 @@
   }
 
   // ─── EXPLANATION MANAGER ───
-  function openExplanationManager() { document.getElementById('explanationModal').classList.add('open'); }
-  function saveExplanations() {
+  window.openExplanationManager = function openExplanationManager() { document.getElementById('explanationModal').classList.add('open'); }
+  window.saveExplanations = function saveExplanations() {
     document.querySelectorAll('#explanationList textarea').forEach(ta => {
       const doc = ta.dataset.doc; const newText = ta.value.trim();
       docExplanations[doc] = newText;
@@ -3578,7 +4699,7 @@
   let clientFolderCache = {}; // clientId -> Drive folder id
 
   // ── Auth ──────────────────────────────────────────
-  function initiateDriveAuth() {
+  window.initiateDriveAuth = function initiateDriveAuth() {
     if (typeof google === 'undefined') {
       showToast('Google Sign-In script not yet loaded — please wait a moment and try again.', '⚠️');
       return;
@@ -3598,7 +4719,7 @@
     client.requestAccessToken();
   }
 
-  function setDriveStatus(connected) {
+  window.setDriveStatus = function setDriveStatus(connected) {
     const dot   = document.getElementById('driveStatusDot');
     const label = document.getElementById('driveStatusLabel');
     const btn   = document.getElementById('driveConnectBtn');
@@ -3692,7 +4813,7 @@
     }
   }
 
-  function openClientFolder() {
+  window.openClientFolder = function openClientFolder() {
     const folder = clientFolderCache['IC-2024-0082'];
     if (folder && folder.webViewLink) {
       window.open(folder.webViewLink, '_blank');
@@ -3706,7 +4827,7 @@
     }
   }
 
-  function openStaffClientFolder(clientId, clientName) {
+  window.openStaffClientFolder = function openStaffClientFolder(clientId, clientName) {
     const folder = clientFolderCache[clientId];
     if (folder && folder.webViewLink) {
       window.open(folder.webViewLink, '_blank');
@@ -3763,10 +4884,10 @@
 
   // Current active client (shown in client view)
   let activeClientId = 'IC-2024-0082';
-  function getActiveClient() { return clients.find(c => c.id === activeClientId) || clients[0]; }
+  window.getActiveClient = function getActiveClient() { return clients.find(c => c.id === activeClientId) || clients[0]; }
 
   // ─── Render dynamic client groups in staff view ───
-  function renderClientGroups() {
+  window.renderClientGroups = function renderClientGroups() {
     const container = document.getElementById('dynamicClientsList');
     if (!container) return;
     container.innerHTML = '';
@@ -3789,13 +4910,14 @@
             </div>
           </div>
           <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
-            <button onclick="copyClientPortalLink('${client.id}')" style="padding:4px 10px;background:rgba(76,175,130,0.1);border:1px solid rgba(76,175,130,0.25);border-radius:6px;color:var(--success);font-size:9px;letter-spacing:1px;text-transform:uppercase;cursor:pointer;font-family:'Montserrat',sans-serif;">🔗 Portal Link</button>
-            <a class="client-folder-link" href="#" onclick="openStaffClientFolder('${client.id}','${client.name}');return false;">📁 Open Folder</a>
+            <button onclick="window.copyClientPortalLink('${client.id}')" style="padding:4px 10px;background:rgba(76,175,130,0.1);border:1px solid rgba(76,175,130,0.25);border-radius:6px;color:var(--success);font-size:9px;letter-spacing:1px;text-transform:uppercase;cursor:pointer;font-family:'Montserrat',sans-serif;">🔗 Portal Link</button>
+            <a class="client-folder-link" href="#" onclick="window.openStaffClientFolder('${client.id}','${client.name}');return false;">📁 Open Folder</a>
             <span class="doc-status-pill ${allDone?'pill-reviewed':'pill-pending'}" id="badge-${client.id}">${allDone ? 'All Reviewed' : pendingCount + ' Pending'}</span>
           </div>
         </div>
         ${requiredDocs.map(doc => `
-        <div class="staff-doc-row" id="staffrow-${client.id}-${doc.id}">
+        <div class="staff-doc-row" id="staffrow-${client.id}-${doc.id}" style="cursor:pointer;"
+          onclick="window.openDocPreview('${doc.name}','${doc.name} - ${client.name}.pdf','${doc.icon}',${client.driveFolderId ? "'https://drive.google.com/drive/folders/'+client.driveFolderId" : 'null'},'${client.name}')">
           <div class="staff-doc-icon">${doc.icon}</div>
           <div class="staff-doc-name">
             <div>${doc.name}</div>
@@ -3804,8 +4926,8 @@
           <div class="staff-doc-date" style="font-size:10px;color:var(--white-dim);flex-shrink:0;">${doc.uploaded ? 'Uploaded' : '—'}</div>
           <div class="staff-assignee-pill">${getStaffName(doc.assignee)}</div>
           ${doc.uploaded
-            ? `<button class="review-btn" onclick="markReviewed(this,'badge-${client.id}')">Mark Reviewed</button>
-               <button class="reject-btn" onclick="openRejectModal(this,'badge-${client.id}','${doc.name}','${client.name}')">Return</button>`
+            ? `<button class="review-btn" onclick="window.markReviewed(this,'badge-${client.id}')">Mark Reviewed</button>
+               <button class="reject-btn" onclick="window.openRejectModal(this,'badge-${client.id}','${doc.name}','${client.name}')">Return</button>`
             : `<span style="font-size:10px;color:rgba(255,255,255,0.25);font-style:italic;">Awaiting upload</span>`
           }
         </div>`).join('')}`;
@@ -3814,7 +4936,7 @@
   }
 
   // ─── Open New Client Modal ────────────────────────
-  function openNewClientModal() {
+  window.openNewClientModal = function openNewClientModal() {
     // Populate adviser dropdown
     const advSel = document.getElementById('newClientAdviser');
     advSel.innerHTML = staffMembers.map(s => `<option value="${s.id}">${s.name} — ${s.email}</option>`).join('');
@@ -3846,7 +4968,7 @@
 
   let lastCreatedClient = null;
 
-  function saveNewClient() {
+  window.saveNewClient = function saveNewClient() {
     const name    = document.getElementById('newClientName').value.trim();
     const id      = document.getElementById('newClientId').value.trim();
     const email   = document.getElementById('newClientEmail').value.trim();
@@ -3887,18 +5009,18 @@
     showToast('✅ ' + name + ' added! Portal link ready to copy.');
   }
 
-  function generatePortalUrl(clientId, clientName) {
+  window.generatePortalUrl = function generatePortalUrl(clientId, clientName) {
     const base = window.location.href.split('?')[0];
     const params = new URLSearchParams({ client: clientId, name: clientName });
     return base + '?' + params.toString();
   }
 
-  function copyPortalLink() {
+  window.copyPortalLink = function copyPortalLink() {
     const url = document.getElementById('newClientPortalUrl').textContent;
     navigator.clipboard.writeText(url).then(() => showToast('✅ Portal link copied to clipboard!'));
   }
 
-  function copyClientPortalLink(clientId) {
+  window.copyClientPortalLink = function copyClientPortalLink(clientId) {
     const client = clients.find(c => c.id === clientId);
     if (!client) return;
     const url = generatePortalUrl(clientId, client.name);
@@ -3922,7 +5044,7 @@
   };
 
   // ── Scan filename + docType select to guess the doc ──────────────────────────
-  function detectDocFromFile(file) {
+  window.detectDocFromFile = function detectDocFromFile(file) {
     const name    = (file.name || '').toLowerCase().replace(/[_\-\.]/g,' ');
     const docType = (document.getElementById('docTypeSelect')?.value || '').toLowerCase();
     const combined = name + ' ' + docType;
@@ -3948,7 +5070,7 @@
   }
 
   // ── Main function: scan and show smart UI ───────────────────────────────────
-  function runSmartDetection() {
+  window.runSmartDetection = function runSmartDetection() {
     const section = document.getElementById('smartDetectSection');
     if (!section) return;
     section.style.display = 'block';
@@ -3977,7 +5099,7 @@
     }
   }
 
-  function confirmSuggestion() {
+  window.confirmSuggestion = function confirmSuggestion() {
     selectedChecklistDocId = currentSuggestedDocId;
     // Visually confirm
     const banner = document.getElementById('smartSuggestionBanner');
@@ -3990,19 +5112,19 @@
     if (declineBtn) declineBtn.style.display = 'none';
   }
 
-  function declineSuggestion() {
+  window.declineSuggestion = function declineSuggestion() {
     currentSuggestedDocId = null;
     selectedChecklistDocId = null;
     document.getElementById('smartSuggestionBanner').style.display = 'none';
     showFullPicker();
   }
 
-  function showFullPicker() {
+  window.showFullPicker = function showFullPicker() {
     renderChecklistPicker();
     document.getElementById('fullPickerSection').style.display = 'block';
   }
 
-  function renderChecklistPicker() {
+  window.renderChecklistPicker = function renderChecklistPicker() {
     const grid = document.getElementById('checklistPickGrid');
     if (!grid) return;
     selectedChecklistDocId = null;
@@ -4025,7 +5147,7 @@
       </div>`).join('');
   }
 
-  function selectChecklistDoc(docId) {
+  window.selectChecklistDoc = function selectChecklistDoc(docId) {
     document.querySelectorAll('.checklist-pick-item').forEach(el => el.classList.remove('selected'));
     selectedChecklistDocId = docId;
     const el = document.getElementById('cpick-' + docId);
@@ -4049,7 +5171,7 @@
     uploadHint:       'Files are encrypted and securely stored',
     eyebrow:          'Secure Document Submission',
     pageTitle:        'Upload Your Documents',
-    pageSub:          'Please upload all required documents below. Our team will review and confirm each one. You'll be notified once your documents have been checked.',
+    pageSub:          'Please upload all required documents below. Our team will review and confirm each one. You\'ll be notified once your documents have been checked.',
     uploadModalSub:   'Fill in the details below so this document is filed correctly. The file will be renamed automatically.',
     senderName:       'Walk With You Capital Portal',
     replyTo:          'portal@walkwithyoucapital.com.au',
@@ -4060,7 +5182,7 @@
 
   let portalSettings = { ...defaultSettings };
 
-  function loadSettings() {
+  window.loadSettings = function loadSettings() {
     try {
       const saved = localStorage.getItem(SETTINGS_KEY);
       if (saved) portalSettings = { ...defaultSettings, ...JSON.parse(saved) };
@@ -4068,7 +5190,7 @@
     applySettings();
   }
 
-  function applySettings() {
+  window.applySettings = function applySettings() {
     const s = portalSettings;
 
     // Branding
@@ -4110,7 +5232,7 @@
     // These are read from portalSettings at call time by the Drive helpers
   }
 
-  function populateMaintenanceForm() {
+  window.populateMaintenanceForm = function populateMaintenanceForm() {
     const s = portalSettings;
     const set = (id, val) => { const el = document.getElementById(id); if (el) el.value = val || ''; };
     set('cfg-companyName',    s.companyName);
@@ -4150,7 +5272,7 @@
     }
   }
 
-  function saveSettings() {
+  window.saveSettings = function saveSettings() {
     const get = id => { const el = document.getElementById(id); return el ? el.value.trim() : ''; };
     portalSettings = {
       companyName:      get('cfg-companyName')    || defaultSettings.companyName,
@@ -4190,7 +5312,7 @@
     showToast('✅ Settings saved and applied.');
   }
 
-  function resetSettings() {
+  window.resetSettings = function resetSettings() {
     if (!confirm('Reset all settings to defaults? This cannot be undone.')) return;
     localStorage.removeItem(SETTINGS_KEY);
     portalSettings = { ...defaultSettings };
@@ -4201,11 +5323,11 @@
 
   // Override DRIVE_CLIENT_ID and DRIVE_ROOT_FOLDER to read from portalSettings
   // (The Drive functions already use the const variables; we patch them here)
-  function getDriveClientId()  { return portalSettings.driveClientId  || DRIVE_CLIENT_ID;  }
-  function getDriveFolderId()  { return portalSettings.driveFolderId  || DRIVE_ROOT_FOLDER; }
+  window.getDriveClientId = function getDriveClientId()  { return portalSettings.driveClientId  || DRIVE_CLIENT_ID;  }
+  window.getDriveFolderId = function getDriveFolderId()  { return portalSettings.driveFolderId  || DRIVE_ROOT_FOLDER; }
 
   // Also generate client IDs using settings prefix/format
-  function generateClientId() {
+  window.generateClientId = function generateClientId() {
     const prefix = portalSettings.clientIdPrefix || 'IC';
     const fmt    = portalSettings.clientIdFormat || 'PREFIX-YYYY-NNNN';
     const ids    = clients.map(c => parseInt((c.id.match(/\d+$/) || ['0'])[0]));
@@ -4225,63 +5347,62 @@
 
   const PW_KEY          = 'ic_staff_pw';
   const DEFAULT_PW      = 'wwyc2025';
-  let   staffUnlocked   = false;
+  window.staffUnlocked = false; var staffUnlocked = false;
   let   pendingView     = null;   // which view to go to after auth
 
-  function getStoredPassword() {
+  window.getStoredPassword = function getStoredPassword() {
     try { return localStorage.getItem(PW_KEY) || DEFAULT_PW; }
     catch(e) { return DEFAULT_PW; }
   }
 
-  function openPwModal(targetView) {
+  window.openPwModal = function openPwModal(targetView) {
     pendingView = targetView;
-    document.getElementById('pwInput').value = '';
-    document.getElementById('pwInput').classList.remove('error');
-    document.getElementById('pwError').classList.remove('show');
-    document.getElementById('pwInput').type = 'password';
-    document.getElementById('pwToggleBtn').textContent = '👁';
+    var inp = document.getElementById('pwInput');
+    var err = document.getElementById('pwError');
+    var overlay = document.getElementById('pwOverlay');
+    var sub = document.getElementById('pwSubText');
+    var submitBtn = document.getElementById('pwSubmit');
+    var toggleBtn = document.getElementById('pwToggleBtn');
 
-    // Update sub text based on target
-    const label = targetView === 'maintenance' ? 'Maintenance settings.' : 'Staff dashboard.';
-    document.getElementById('pwSubText').textContent = 'Enter the staff password to access the ' + label;
-    document.getElementById('pwSubmit') && (document.getElementById('pwSubmit').textContent =
-      targetView === 'maintenance' ? 'Unlock Maintenance' : 'Unlock Staff View');
+    if (!overlay) { console.error('pwOverlay not found'); return; }
 
-    document.getElementById('pwOverlay').classList.add('open');
-    setTimeout(() => document.getElementById('pwInput').focus(), 100);
+    if (inp)       { inp.value = ''; inp.classList.remove('error'); inp.type = 'password'; }
+    if (err)       { err.classList.remove('show'); }
+    if (toggleBtn) { toggleBtn.textContent = '👁'; }
+    if (sub)       { sub.textContent = 'Enter the staff password to access the ' + (targetView === 'maintenance' ? 'Maintenance settings.' : 'Staff dashboard.'); }
+    if (submitBtn) { submitBtn.textContent = targetView === 'maintenance' ? 'Unlock Maintenance' : 'Unlock Staff View'; }
+
+    // Use both class and inline style to guarantee visibility
+    overlay.classList.add('open');
+    overlay.style.display = 'flex';
+
+    setTimeout(function() { if (inp) inp.focus(); }, 150);
   }
 
-  function closePwModal() {
-    document.getElementById('pwOverlay').classList.remove('open');
+  window.closePwModal = function closePwModal() {
+    var overlay = document.getElementById('pwOverlay');
+    if (overlay) { overlay.classList.remove('open'); overlay.style.display = 'none'; }
     pendingView = null;
     // Re-highlight client button as active since we cancelled
-    document.querySelectorAll('.toggle-btn').forEach((b, i) => {
+    document.querySelectorAll('.toggle-btn').forEach(function(b, i) {
       b.classList.toggle('active', i === 0);
     });
   }
 
   // Close pw modal if clicking the backdrop
-  document.addEventListener('DOMContentLoaded', () => {
-    const overlay = document.getElementById('pwOverlay');
-    if (overlay) {
-      overlay.addEventListener('click', e => {
-        if (e.target === overlay) closePwModal();
-      });
-    }
-  });
 
-  function submitPassword() {
+
+  window.submitPassword = function submitPassword() {
     const entered = document.getElementById('pwInput').value;
     const correct = getStoredPassword();
     if (entered === correct) {
-      staffUnlocked = true;
-      document.getElementById('pwOverlay').classList.remove('open');
+      staffUnlocked = true; window.staffUnlocked = true;
+      var ov = document.getElementById('pwOverlay');
+      if (ov) { ov.classList.remove('open'); ov.style.display = 'none'; }
       updateLockButtons();
-      if (pendingView) {
-        const pv = pendingView;
-        pendingView = null;
-        setViewDirect(pv);
-      }
+      var target = pendingView || window._pendingView || 'staff';
+      pendingView = null; window._pendingView = null;
+      setViewDirect(target);
     } else {
       document.getElementById('pwInput').classList.add('error');
       document.getElementById('pwError').classList.add('show');
@@ -4296,14 +5417,14 @@
     }
   }
 
-  function togglePwVisibility() {
+  window.togglePwVisibility = function togglePwVisibility() {
     const inp = document.getElementById('pwInput');
     const btn = document.getElementById('pwToggleBtn');
     if (inp.type === 'password') { inp.type = 'text'; btn.textContent = '🙈'; }
     else { inp.type = 'password'; btn.textContent = '👁'; }
   }
 
-  function updateLockButtons() {
+  window.updateLockButtons = function updateLockButtons() {
     document.querySelectorAll('.toggle-btn').forEach((b, i) => {
       if (i === 0) { b.classList.remove('locked','unlocked'); return; } // client view
       b.classList.remove('locked','unlocked');
@@ -4311,15 +5432,15 @@
     });
   }
 
-  function lockStaff() {
-    staffUnlocked = false;
+  window.lockStaff = function lockStaff() {
+    staffUnlocked = false; window.staffUnlocked = false;
     updateLockButtons();
     setViewDirect('client');
     showToast('🔒 Staff view locked.');
   }
 
   // Save new password from Maintenance
-  function savePasswordFromMaintenance() {
+  window.savePasswordFromMaintenance = function savePasswordFromMaintenance() {
     const current  = document.getElementById('cfg-pwCurrent').value;
     const newPw    = document.getElementById('cfg-pwNew').value;
     const confirm  = document.getElementById('cfg-pwConfirm').value;
@@ -4342,24 +5463,847 @@
     return true;
   }
 
-  function showStaffToggle() {
-    const toggle = document.querySelector('.view-toggle');
-    if (toggle) {
-      toggle.style.display = toggle.style.display === 'none' ? 'flex' : 'flex';
-      toggle.style.display = 'flex';
-    }
-    // Hide landing, show client view shell
+  window.showStaffToggle = function showStaffToggle() {
+    // Show the view toggle
+    const toggle = document.getElementById('viewToggle');
+    if (toggle) toggle.style.display = 'flex';
+    // Hide landing
     const landing = document.getElementById('landingView');
     if (landing) landing.style.display = 'none';
+    // Open password modal for staff view directly
+    openPwModal('staff');
   }
 
-  function formatSize(bytes) {
+
+  // ═══════════════════════════════════════════════════
+  // DOCUMENT PREVIEW
+  // ═══════════════════════════════════════════════════
+
+  var _previewZoomLevel = 1;
+  var _previewDriveUrl  = null;
+
+  window.openDocPreview = function(fileName, savedName, icon, driveUrl, clientName) {
+    _previewZoomLevel = 1;
+    _previewDriveUrl  = driveUrl || null;
+
+    document.getElementById('previewDocTitle').textContent    = savedName || fileName;
+    document.getElementById('previewDocSubtitle').textContent = clientName ? 'Client: ' + clientName : '';
+    document.getElementById('previewPlaceholderIcon').textContent = icon || '📄';
+    document.getElementById('previewPlaceholderName').textContent = savedName || fileName;
+    document.getElementById('previewZoomLabel').textContent   = '100%';
+    document.getElementById('previewInner').style.transform   = 'scale(1)';
+
+    var driveBtn = document.getElementById('previewDriveBtn');
+    if (driveBtn) driveBtn.style.display = driveUrl ? 'flex' : 'none';
+
+    // If it's an image file and we have a data URL, show it
+    var ext = (fileName || '').split('.').pop().toLowerCase();
+    var placeholder = document.getElementById('previewPlaceholder');
+    placeholder.style.display = 'flex';
+
+    document.getElementById('docPreviewOverlay').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  };
+
+  window.closeDocPreview = function() {
+    document.getElementById('docPreviewOverlay').classList.remove('open');
+    document.body.style.overflow = '';
+  };
+
+  window.previewZoom = function(delta) {
+    _previewZoomLevel = Math.min(3, Math.max(0.25, _previewZoomLevel + delta));
+    document.getElementById('previewInner').style.transform = 'scale(' + _previewZoomLevel + ')';
+    document.getElementById('previewZoomLabel').textContent = Math.round(_previewZoomLevel * 100) + '%';
+  };
+
+  window.previewZoomReset = function() {
+    _previewZoomLevel = 1;
+    document.getElementById('previewInner').style.transform = 'scale(1)';
+    document.getElementById('previewZoomLabel').textContent = '100%';
+  };
+
+  window.previewOpenInDrive = function() {
+    if (_previewDriveUrl) {
+      window.open(_previewDriveUrl, '_blank');
+    } else {
+      window.showToast && showToast('Connect Google Drive to open this file.', '⚠️');
+    }
+  };
+
+  // Close preview on Escape key
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+      var overlay = document.getElementById('docPreviewOverlay');
+      if (overlay && overlay.classList.contains('open')) window.closeDocPreview();
+    }
+  });
+
+
+  // ═══════════════════════════════════════════════════
+  // AUTOMATED REMINDERS
+  // ═══════════════════════════════════════════════════
+
+  var REMINDER_KEY = 'ic_reminder_settings';
+  var _reminderTimer = null;
+
+  var defaultReminderSettings = {
+    enabled:      false,
+    intervalNum:  7,
+    intervalUnit: 'weeks',
+    sendTime:     '09:00',
+    serviceId:    '',
+    templateId:   '',
+    publicKey:    '',
+    subject:      'Action Required — Outstanding Documents for Your Application',
+    body:         'Hi {{client_name}},\n\nThis is a friendly reminder that we are still waiting on {{outstanding_count}} outstanding document(s) for your application with {{company_name}}.\n\nPlease log in to your secure document portal and upload the following:\n\n{{outstanding_docs}}\n\nIf you have any questions or need help, please reach out to your adviser.\n\nKind regards,\n{{adviser_name}}\n{{company_name}}',
+    lastSent:     {},   // clientId -> ISO date string
+  };
+
+  var reminderSettings = Object.assign({}, defaultReminderSettings);
+
+  window.loadReminderSettings = function loadReminderSettings() {
+    try {
+      var saved = localStorage.getItem(REMINDER_KEY);
+      if (saved) reminderSettings = Object.assign({}, defaultReminderSettings, JSON.parse(saved));
+    } catch(e) {}
+    applyReminderSettings();
+    renderReminderClientTable();
+    scheduleReminders();
+  }
+
+  window.applyReminderSettings = function applyReminderSettings() {
+    var s = reminderSettings;
+    var el = function(id) { return document.getElementById(id); };
+    if (el('reminderEnabled'))     el('reminderEnabled').checked        = s.enabled;
+    if (el('reminderIntervalNum')) el('reminderIntervalNum').value      = s.intervalNum;
+    if (el('reminderIntervalUnit'))el('reminderIntervalUnit').value     = s.intervalUnit;
+    if (el('reminderTime'))        el('reminderTime').value             = s.sendTime;
+    if (el('reminderServiceId'))   el('reminderServiceId').value        = s.serviceId;
+    if (el('reminderTemplateId'))  el('reminderTemplateId').value       = s.templateId;
+    if (el('reminderPublicKey'))   el('reminderPublicKey').value        = s.publicKey;
+    if (el('reminderSubject'))     el('reminderSubject').value          = s.subject;
+    if (el('reminderBody'))        el('reminderBody').value             = s.body;
+    updateReminderStatus();
+  }
+
+  window.updateReminderStatus = function() {
+    var enabled = document.getElementById('reminderEnabled') && document.getElementById('reminderEnabled').checked;
+    var statusEl = document.getElementById('reminderToggleStatus');
+    var subEl    = document.getElementById('reminderStatusSub');
+    if (statusEl) {
+      statusEl.textContent = enabled ? 'Active' : 'Off';
+      statusEl.className   = 'toggle-status' + (enabled ? ' active' : '');
+    }
+    if (subEl) {
+      var num  = (document.getElementById('reminderIntervalNum')  || {value:'7'}).value;
+      var unit = (document.getElementById('reminderIntervalUnit') || {value:'weeks'}).value;
+      subEl.textContent = enabled
+        ? 'Sending every ' + num + ' ' + unit + ' to clients with outstanding documents'
+        : 'Set up automatic reminder emails for outstanding documents';
+    }
+  };
+
+  window.saveReminderSettings = function() {
+    reminderSettings = {
+      enabled:      document.getElementById('reminderEnabled').checked,
+      intervalNum:  parseInt(document.getElementById('reminderIntervalNum').value) || 7,
+      intervalUnit: document.getElementById('reminderIntervalUnit').value,
+      sendTime:     document.getElementById('reminderTime').value,
+      serviceId:    document.getElementById('reminderServiceId').value.trim(),
+      templateId:   document.getElementById('reminderTemplateId').value.trim(),
+      publicKey:    document.getElementById('reminderPublicKey').value.trim(),
+      subject:      document.getElementById('reminderSubject').value,
+      body:         document.getElementById('reminderBody').value,
+      lastSent:     reminderSettings.lastSent || {},
+    };
+    try { localStorage.setItem(REMINDER_KEY, JSON.stringify(reminderSettings)); } catch(e) {}
+    scheduleReminders();
+    renderReminderClientTable();
+    updateReminderStatus();
+    showToast('✅ Reminder settings saved.');
+  };
+
+  window.toggleRemindersSection = function() {
+    var sec = document.getElementById('remindersSection');
+    if (sec) {
+      sec.classList.toggle('open');
+      if (sec.classList.contains('open')) {
+        applyReminderSettings();
+        renderReminderClientTable();
+      }
+    }
+  };
+
+  window.insertReminderVar = function(fieldId, variable) {
+    var el = document.getElementById(fieldId);
+    if (!el) return;
+    var start = el.selectionStart;
+    var end   = el.selectionEnd;
+    var val   = el.value;
+    el.value  = val.slice(0, start) + variable + val.slice(end);
+    el.selectionStart = el.selectionEnd = start + variable.length;
+    el.focus();
+  };
+
+  // ── Build outstanding docs list for a client ──────────────────────────────
+  window.getOutstandingDocs = function getOutstandingDocs(client) {
+    if (!client || !client.docs) return [];
+    return client.docs
+      .map(function(id) { return docLibrary.find(function(d) { return d.id === id; }); })
+      .filter(function(d) { return d && !d.uploaded; });
+  }
+
+  // ── Render the client status table ───────────────────────────────────────
+  window.renderReminderClientTable = function renderReminderClientTable() {
+    var tbody = document.getElementById('reminderClientBody');
+    if (!tbody) return;
+    tbody.innerHTML = '';
+
+    clients.forEach(function(client) {
+      var outstanding = getOutstandingDocs(client);
+      var lastSent    = reminderSettings.lastSent[client.id];
+      var allDone     = outstanding.length === 0;
+      var adviser     = staffMembers.find(function(s) { return s.id === client.adviser; });
+
+      var statusBadge = allDone
+        ? '<span class="reminder-status-badge badge-complete">✓ Complete</span>'
+        : (reminderSettings.enabled
+            ? '<span class="reminder-status-badge badge-pending">⏰ Scheduled</span>'
+            : '<span class="reminder-status-badge badge-paused">⏸ Paused</span>');
+
+      var lastSentStr = lastSent
+        ? new Date(lastSent).toLocaleDateString('en-AU', {day:'numeric',month:'short',year:'numeric'})
+        : '—';
+
+      var sendBtn = allDone ? '' :
+        '<button class="reminder-send-now-btn" onclick="window.sendReminderNow(\'' + client.id + '\')">Send Now</button>';
+
+      var tr = document.createElement('tr');
+      tr.innerHTML =
+        '<td><strong>' + client.name + '</strong><br><span style="font-size:10px;color:var(--text-sub);">' + client.id + '</span></td>' +
+        '<td style="font-size:11px;color:var(--text-sub);">' + (client.email || '—') + '</td>' +
+        '<td>' +
+          (outstanding.length === 0
+            ? '<span style="color:var(--success);font-size:12px;">✓ All submitted</span>'
+            : '<span style="color:var(--crimson);font-weight:700;">' + outstanding.length + ' doc' + (outstanding.length !== 1 ? 's' : '') + '</span>' +
+              '<div style="font-size:10px;color:var(--text-sub);margin-top:2px;">' +
+              outstanding.slice(0,3).map(function(d){return d.name;}).join(', ') +
+              (outstanding.length > 3 ? '…' : '') + '</div>') +
+        '</td>' +
+        '<td style="font-size:11px;color:var(--text-sub);">' + lastSentStr + '</td>' +
+        '<td>' + statusBadge + '</td>' +
+        '<td>' + sendBtn + '</td>';
+      tbody.appendChild(tr);
+    });
+  }
+
+  // ── Build and send a reminder email via EmailJS ───────────────────────────
+  window.buildEmailParams = function buildEmailParams(client) {
+    var outstanding  = getOutstandingDocs(client);
+    var adviser      = staffMembers.find(function(s) { return s.id === client.adviser; }) || staffMembers[0] || {};
+    var portalUrl    = window.generatePortalUrl ? generatePortalUrl(client.id, client.name) : window.location.href;
+    var outstandingList = outstanding.map(function(d, i) { return (i+1) + '. ' + d.name; }).join('\n');
+    var companyName  = (reminderSettings.subject || '').includes('{{company_name}}') ? (portalSettings.companyName || 'Walk With You Capital') : (portalSettings.companyName || 'Walk With You Capital');
+
+    function fill(template) {
+      return template
+        .replace(/{{client_name}}/g,      client.name)
+        .replace(/{{company_name}}/g,     companyName)
+        .replace(/{{outstanding_count}}/g, outstanding.length)
+        .replace(/{{outstanding_docs}}/g,  outstandingList)
+        .replace(/{{adviser_name}}/g,      adviser.name || 'Your Adviser')
+        .replace(/{{portal_link}}/g,       portalUrl);
+    }
+
+    return {
+      to_email:    client.email,
+      to_name:     client.name,
+      subject:     fill(reminderSettings.subject),
+      message:     fill(reminderSettings.body),
+      reply_to:    adviser.email || portalSettings.replyTo || '',
+      from_name:   portalSettings.companyName || 'Walk With You Capital',
+    };
+  }
+
+  window.sendReminderNow = function(clientId) {
+    var client = clients.find(function(c) { return c.id === clientId; });
+    if (!client) return;
+    if (!client.email) { showToast('No email address for ' + client.name, '⚠️'); return; }
+    if (!reminderSettings.serviceId || !reminderSettings.templateId || !reminderSettings.publicKey) {
+      showToast('Please enter your EmailJS credentials in the reminders section first.', '⚠️');
+      return;
+    }
+    var outstanding = getOutstandingDocs(client);
+    if (outstanding.length === 0) { showToast(client.name + ' has no outstanding documents.', '⚠️'); return; }
+
+    showToast('📧 Sending reminder to ' + client.name + '…');
+
+    try {
+      emailjs.init(reminderSettings.publicKey);
+      emailjs.send(reminderSettings.serviceId, reminderSettings.templateId, buildEmailParams(client))
+        .then(function() {
+          reminderSettings.lastSent[client.id] = new Date().toISOString();
+          try { localStorage.setItem(REMINDER_KEY, JSON.stringify(reminderSettings)); } catch(e) {}
+          renderReminderClientTable();
+          showToast('✅ Reminder sent to ' + client.name + ' (' + client.email + ')');
+        })
+        .catch(function(err) {
+          showToast('Failed to send: ' + (err.text || err), '⚠️');
+        });
+    } catch(e) {
+      showToast('EmailJS error: ' + e.message, '⚠️');
+    }
+  };
+
+  window.sendTestReminder = function() {
+    if (!reminderSettings.serviceId || !reminderSettings.templateId || !reminderSettings.publicKey) {
+      showToast('Enter your EmailJS Service ID, Template ID and Public Key first.', '⚠️');
+      return;
+    }
+    var testClient = clients[0];
+    if (!testClient) { showToast('No clients to test with.', '⚠️'); return; }
+
+    showToast('📧 Sending test email…');
+    try {
+      emailjs.init(reminderSettings.publicKey);
+      var params = buildEmailParams(testClient);
+      params.subject = '[TEST] ' + params.subject;
+      emailjs.send(reminderSettings.serviceId, reminderSettings.templateId, params)
+        .then(function() { showToast('✅ Test email sent to ' + (testClient.email || 'client')); })
+        .catch(function(err) { showToast('Test failed: ' + (err.text || err), '⚠️'); });
+    } catch(e) {
+      showToast('EmailJS error: ' + e.message, '⚠️');
+    }
+  };
+
+  // ── Scheduler — checks if reminders are due ───────────────────────────────
+  window.scheduleReminders = function scheduleReminders() {
+    if (_reminderTimer) clearInterval(_reminderTimer);
+    if (!reminderSettings.enabled) return;
+
+    // Check every minute if it's time to send
+    _reminderTimer = setInterval(function() {
+      if (!reminderSettings.enabled) return;
+      var now = new Date();
+      var timeParts = (reminderSettings.sendTime || '09:00').split(':');
+      var sendHour = parseInt(timeParts[0]);
+      var sendMin  = parseInt(timeParts[1]);
+      if (now.getHours() !== sendHour || now.getMinutes() !== sendMin) return;
+
+      clients.forEach(function(client) {
+        if (!client.email) return;
+        var outstanding = getOutstandingDocs(client);
+        if (outstanding.length === 0) return;
+
+        // Check if enough time has passed since last send
+        var lastSent = reminderSettings.lastSent[client.id];
+        if (lastSent) {
+          var last     = new Date(lastSent);
+          var unit     = reminderSettings.intervalUnit;
+          var num      = reminderSettings.intervalNum;
+          var msPerDay = 86400000;
+          var msDiff   = now - last;
+          var daysRequired = unit === 'days'   ? num
+                           : unit === 'weeks'  ? num * 7
+                           : num * 30;
+          if (msDiff < daysRequired * msPerDay) return;
+        }
+
+        // Send!
+        window.sendReminderNow(client.id);
+      });
+    }, 60000); // check every minute
+  }
+
+
+  // ─── EDIT CLIENT ───
+  window.openEditClientModal = function openEditClientModal(clientId) {
+    var client = clients.find(function(c) { return c.id === clientId; });
+    if (!client) return;
+    document.getElementById('editClientId').value    = clientId;
+    document.getElementById('editClientName').value  = client.name  || '';
+    document.getElementById('editClientEmail').value = client.email || '';
+    document.getElementById('editClientPhone').value = client.phone || '';
+    document.getElementById('editClientStep').value  = client.step  || '';
+    var advSel = document.getElementById('editClientAdviser');
+    advSel.innerHTML = staffMembers.map(function(s) {
+      return '<option value="' + s.id + '"' + (s.id === client.adviser ? ' selected' : '') + '>' + s.name + '</option>';
+    }).join('');
+    document.getElementById('editClientModal').classList.add('open');
+  };
+
+  window.saveEditClient = function saveEditClient() {
+    var clientId = document.getElementById('editClientId').value;
+    var client   = clients.find(function(c) { return c.id === clientId; });
+    if (!client) return;
+    client.name    = document.getElementById('editClientName').value.trim()  || client.name;
+    client.email   = document.getElementById('editClientEmail').value.trim() || client.email;
+    client.phone   = document.getElementById('editClientPhone').value.trim() || client.phone;
+    client.step    = document.getElementById('editClientStep').value.trim()  || client.step;
+    client.adviser = document.getElementById('editClientAdviser').value      || client.adviser;
+    window.closeModal('editClientModal');
+    window.renderClientGroups();
+    window.renderReminderClientTable();
+    showToast('✅ ' + client.name + ' updated.');
+  };
+
+
+  // ═══════════════════════════════════════════════════
+  // INFORMATION REQUESTS
+  // ═══════════════════════════════════════════════════
+
+  var activeInfoRequests = [];   // ids of selected library items
+  var customInfoRequests = [];   // staff-created custom ones
+
+  window.openRemindersModal = function openRemindersModal() {
+    window.applyReminderSettings();
+    window.renderReminderClientTable();
+    document.getElementById('remindersModal').classList.add('open');
+  };
+
+  window.openInfoRequestsModal = function openInfoRequestsModal() {
+    window.switchInfoTab('library');
+    document.getElementById('infoRequestsModal').classList.add('open');
+  };
+
+  window.switchInfoTab = function switchInfoTab(tab) {
+    ['library','active','custom'].forEach(function(t) {
+      var btn   = document.getElementById('infoTab' + t.charAt(0).toUpperCase() + t.slice(1));
+      var panel = document.getElementById('infoTabPanel' + t.charAt(0).toUpperCase() + t.slice(1));
+      if (btn)   btn.classList.toggle('active', t === tab);
+      if (panel) panel.style.display = t === tab ? 'block' : 'none';
+    });
+    var libActions = document.getElementById('infoReqLibraryActions');
+    if (libActions) libActions.style.display = tab === 'library' ? 'flex' : 'none';
+    if (tab === 'active') window.renderActiveInfoRequests();
+  };
+
+  window.toggleInfoReq = function toggleInfoReq(id) {
+    var card    = document.getElementById('ireq-' + id);
+    var check   = document.getElementById('icheck-' + id);
+    var fields  = document.getElementById('ifields-' + id);
+    if (!card) return;
+    var isActive = card.classList.toggle('active-req');
+    if (check) check.textContent = isActive ? '✓' : '';
+    if (fields) fields.style.display = isActive ? 'flex' : 'none';
+    if (isActive) {
+      if (activeInfoRequests.indexOf(id) === -1) activeInfoRequests.push(id);
+    } else {
+      activeInfoRequests = activeInfoRequests.filter(function(x) { return x !== id; });
+    }
+  };
+
+  window.activateSelectedInfoReqs = function activateSelectedInfoReqs() {
+    if (activeInfoRequests.length === 0) {
+      showToast('Select at least one request from the library first.', '⚠️');
+      return;
+    }
+    window.renderActiveInfoRequests();
+    window.renderClientInfoForms();
+    window.switchInfoTab('active');
+    showToast('✅ ' + activeInfoRequests.length + ' information request' + (activeInfoRequests.length !== 1 ? 's' : '') + ' activated.');
+  };
+
+  var infoReqLabels = {
+    'current-res':          'Current Residence',
+    'prev-res':             'Previous Residence',
+    'credit-enquiry':       'Credit Enquiry Status',
+    'liabilities':          'Existing Liabilities',
+    'employment-history':   'Employment History',
+    'dependants':           'Dependants',
+    'property-details':     'Property Being Purchased',
+  };
+
+  window.renderActiveInfoRequests = function renderActiveInfoRequests() {
+    var container = document.getElementById('activeInfoRequestsList');
+    if (!container) return;
+    if (activeInfoRequests.length === 0 && customInfoRequests.length === 0) {
+      container.innerHTML = '<div style="text-align:center;padding:32px;color:var(--text-sub);font-size:13px;font-weight:500;">No information requests activated yet.<br>Select items from the Library tab.</div>';
+      return;
+    }
+    container.innerHTML = '';
+    activeInfoRequests.forEach(function(id) {
+      var label = infoReqLabels[id] || id;
+      var div = document.createElement('div');
+      div.className = 'info-req-card active-req';
+      div.style.cursor = 'default';
+      var sendBtn = document.createElement('button');
+      sendBtn.className = 'staff-settings-btn';
+      sendBtn.style.cssText = 'font-size:10px;padding:5px 12px;';
+      sendBtn.textContent = 'Send to Client';
+      sendBtn.onclick = function() { window.sendInfoRequest(id); };
+      var removeBtn = document.createElement('button');
+      removeBtn.style.cssText = 'background:none;border:none;color:var(--crimson);font-size:18px;cursor:pointer;padding:0 4px 0 8px;';
+      removeBtn.title = 'Remove'; removeBtn.textContent = '×';
+      removeBtn.onclick = function(e) { e.stopPropagation(); window.removeInfoReq(id); };
+      div.innerHTML = '<div class="info-req-check" style="background:#20ABA4;border-color:#20ABA4;color:white;font-weight:800;">✓</div><div class="info-req-body"><div class="info-req-title">' + label + '</div><div id="srbtn-' + id + '" style="display:flex;gap:8px;margin-top:8px;"></div></div>';
+      div.querySelector('#srbtn-' + id).appendChild(sendBtn);
+      div.appendChild(removeBtn);
+      container.appendChild(div);
+    });
+    customInfoRequests.forEach(function(r) {
+      var div = document.createElement('div');
+      div.className = 'info-req-card active-req';
+      div.style.cursor = 'default';
+      var sendBtn = document.createElement('button');
+      sendBtn.className = 'staff-settings-btn';
+      sendBtn.style.cssText = 'font-size:10px;padding:5px 12px;';
+      sendBtn.textContent = 'Send to Client';
+      sendBtn.onclick = function() { window.sendInfoRequest('custom-' + r.id); };
+      var removeBtn = document.createElement('button');
+      removeBtn.style.cssText = 'background:none;border:none;color:var(--crimson);font-size:18px;cursor:pointer;padding:0 4px 0 8px;';
+      removeBtn.title = 'Remove'; removeBtn.textContent = '×';
+      removeBtn.onclick = function(e) { e.stopPropagation(); window.removeCustomInfoReq(r.id); };
+      div.innerHTML = '<div class="info-req-check" style="background:#20ABA4;border-color:#20ABA4;color:white;font-weight:800;">✓</div><div class="info-req-body"><div class="info-req-title">' + r.title + ' <span style="font-size:10px;background:#F3F4F6;border-radius:4px;padding:2px 6px;color:var(--text-sub);font-weight:600;">Custom</span></div><div class="info-req-desc">' + r.desc + '</div><div id="srbtn-c' + r.id + '" style="display:flex;gap:8px;margin-top:8px;"></div></div>';
+      div.querySelector('#srbtn-c' + r.id).appendChild(sendBtn);
+      div.appendChild(removeBtn);
+      container.appendChild(div);
+    });
+  }
+
+  window.removeInfoReq = function removeInfoReq(id) {
+    activeInfoRequests = activeInfoRequests.filter(function(x) { return x !== id; });
+    var card  = document.getElementById('ireq-' + id);
+    var check = document.getElementById('icheck-' + id);
+    var fields = document.getElementById('ifields-' + id);
+    if (card)  card.classList.remove('active-req');
+    if (check) check.textContent = '';
+    if (fields) fields.style.display = 'none';
+    window.renderActiveInfoRequests();
+  };
+
+  window.removeCustomInfoReq = function removeCustomInfoReq(id) {
+    customInfoRequests = customInfoRequests.filter(function(r) { return r.id !== id; });
+    window.renderActiveInfoRequests();
+  };
+
+  window.sendInfoRequest = function sendInfoRequest(id) {
+    showToast('📧 Information request sent to client.');
+  };
+
+  // Custom request builder
+  var customFieldCounter = 0;
+
+  window.addCustomField = function addCustomField() {
+    customFieldCounter++;
+    var list = document.getElementById('customFieldsList');
+    if (!list) return;
+    var row = document.createElement('div');
+    row.style.cssText = 'display:flex;gap:8px;align-items:center;';
+    var inp = document.createElement('input');
+    inp.className = 'modal-input';
+    inp.placeholder = 'Field label (e.g. Date of birth)';
+    inp.style.cssText = 'flex:1;margin-bottom:0;';
+    var sel = document.createElement('select');
+    sel.className = 'modal-input';
+    sel.style.cssText = 'width:120px;flex-shrink:0;margin-bottom:0;';
+    ['Text','Date','Number','Currency','Yes / No','Select'].forEach(function(o) {
+      var opt = document.createElement('option'); opt.textContent = o; sel.appendChild(opt);
+    });
+    var btn = document.createElement('button');
+    btn.style.cssText = 'background:none;border:none;color:var(--crimson);font-size:18px;cursor:pointer;padding:0 4px;';
+    btn.textContent = '×';
+    btn.onclick = function() { row.remove(); };
+    row.appendChild(inp); row.appendChild(sel); row.appendChild(btn);
+    list.appendChild(row);
+  };
+
+  window.saveCustomRequest = function saveCustomRequest() {
+    var title = (document.getElementById('customReqTitle') || {}).value.trim();
+    var desc  = (document.getElementById('customReqDesc')  || {}).value.trim();
+    if (!title) { showToast('Please enter a title for the request.', '⚠️'); return; }
+    var id = Date.now();
+    customInfoRequests.push({ id: id, title: title, desc: desc });
+    document.getElementById('customReqTitle').value = '';
+    document.getElementById('customReqDesc').value  = '';
+    document.getElementById('customFieldsList').innerHTML = '';
+    showToast('✅ "' + title + '" added to active requests.');
+    window.switchInfoTab('active');
+    window.renderActiveInfoRequests();
+  };
+
+
+  // ═══════════════════════════════════════════════════
+  // INFO REQUEST FORMS — CLIENT SIDE + DOCX GENERATION
+  // ═══════════════════════════════════════════════════
+
+  // Field definitions for each request type
+  var infoReqFieldDefs = {
+    'current-res': [
+      { label: 'Current address',                               type: 'text',   placeholder: 'e.g. 12 Smith Street, Sydney NSW 2000' },
+      { label: 'Move-in date',                                  type: 'date',   placeholder: '' },
+      { label: 'Ownership status',                              type: 'select', options: ['Renting','Own outright','Mortgage','Boarding','Other'] },
+    ],
+    'prev-res': [
+      { label: 'Previous address',                              type: 'text',   placeholder: 'e.g. 5 Jones Ave, Melbourne VIC 3000' },
+      { label: 'Move-in date',                                  type: 'date',   placeholder: '' },
+      { label: 'Move-out date',                                 type: 'date',   placeholder: '' },
+    ],
+    'credit-enquiry': [
+      { label: 'Any credit enquiries in the last 12 months?',  type: 'select', options: ['No','Yes'] },
+      { label: 'Lender name (if applicable)',                   type: 'text',   placeholder: 'e.g. Commonwealth Bank' },
+      { label: 'Purpose of enquiry',                            type: 'text',   placeholder: 'e.g. Personal loan application' },
+      { label: 'Any defaults or judgements on record?',         type: 'select', options: ['No','Yes'] },
+    ],
+    'liabilities': [
+      { label: 'Type of liability',                             type: 'select', options: ['Home loan','Personal loan','Car loan','Credit card','HECS/HELP','Buy now pay later','Other'] },
+      { label: 'Lender / provider',                             type: 'text',   placeholder: 'e.g. ANZ' },
+      { label: 'Outstanding balance ($)',                       type: 'text',   placeholder: 'e.g. 15,000' },
+      { label: 'Monthly repayment ($)',                         type: 'text',   placeholder: 'e.g. 450' },
+    ],
+    'employment-history': [
+      { label: 'Current employer name',                         type: 'text',   placeholder: 'e.g. Telstra' },
+      { label: 'Employment start date',                         type: 'date',   placeholder: '' },
+      { label: 'Employment type',                               type: 'select', options: ['Full-time','Part-time','Casual','Contract','Self-employed'] },
+      { label: 'Annual salary before tax ($)',                  type: 'text',   placeholder: 'e.g. 85,000' },
+    ],
+    'dependants': [
+      { label: 'Number of dependants',                          type: 'text',   placeholder: 'e.g. 2' },
+      { label: 'Ages of dependants',                            type: 'text',   placeholder: 'e.g. 4, 8' },
+    ],
+    'property-details': [
+      { label: 'Property address',                              type: 'text',   placeholder: 'e.g. 22 Oak Road, Brisbane QLD 4000' },
+      { label: 'Purchase price ($)',                            type: 'text',   placeholder: 'e.g. 750,000' },
+      { label: 'Property type',                                 type: 'select', options: ['House','Unit / Apartment','Townhouse','Land','Rural','Other'] },
+      { label: 'Intended use',                                  type: 'select', options: ['Owner-occupied','Investment'] },
+    ],
+  };
+
+  // Render info request forms in the client view
+  window.renderClientInfoForms = function renderClientInfoForms() {
+    var container = document.getElementById('clientInfoFormsSection');
+    if (!container) return;
+    container.innerHTML = '';
+
+    var allRequests = activeInfoRequests.slice();
+    // Add custom requests
+    customInfoRequests.forEach(function(r) { allRequests.push('custom-' + r.id); });
+
+    if (allRequests.length === 0) return;
+
+    allRequests.forEach(function(id) {
+      var isCustom = id.startsWith('custom-');
+      var customId = isCustom ? parseInt(id.replace('custom-','')) : null;
+      var customReq = isCustom ? customInfoRequests.find(function(r) { return r.id === customId; }) : null;
+      var label  = isCustom ? (customReq ? customReq.title : id) : (infoReqLabels[id] || id);
+      var fields = isCustom ? [] : (infoReqFieldDefs[id] || []);
+
+      var section = document.createElement('div');
+      section.className = 'info-form-section';
+      section.id = 'client-info-form-' + id;
+
+      // Header
+      var header = document.createElement('div');
+      header.className = 'info-form-header';
+      header.innerHTML =
+        '<div class="info-form-header-icon">📋</div>' +
+        '<div><div class="info-form-header-title">' + label + '</div>' +
+        '<div class="info-form-header-sub">Please fill in the details below and click Submit</div></div>';
+      section.appendChild(header);
+
+      // Body with fields
+      var body = document.createElement('div');
+      body.className = 'info-form-body';
+      body.id = 'info-form-body-' + id;
+
+      fields.forEach(function(field, i) {
+        var fieldDiv = document.createElement('div');
+        fieldDiv.className = 'info-form-field';
+        var lbl = document.createElement('label');
+        lbl.className = 'info-form-label';
+        lbl.textContent = field.label;
+        fieldDiv.appendChild(lbl);
+
+        var inp;
+        if (field.type === 'select') {
+          inp = document.createElement('select');
+          inp.className = 'info-form-select';
+          field.options.forEach(function(opt) {
+            var o = document.createElement('option');
+            o.value = opt; o.textContent = opt;
+            inp.appendChild(o);
+          });
+        } else {
+          inp = document.createElement('input');
+          inp.className = 'info-form-input';
+          inp.type = field.type === 'date' ? 'date' : 'text';
+          inp.placeholder = field.placeholder || '';
+        }
+        inp.dataset.fieldLabel = field.label;
+        inp.id = 'iform-' + id + '-' + i;
+        fieldDiv.appendChild(inp);
+        body.appendChild(fieldDiv);
+      });
+
+      if (fields.length === 0 && isCustom) {
+        body.innerHTML = '<div style="font-size:13px;color:var(--text-sub);font-weight:500;">Please provide the requested information in the text area below.</div>' +
+          '<textarea class="info-form-input" style="min-height:100px;resize:vertical;" id="iform-' + id + '-0" data-field-label="Information provided"></textarea>';
+      }
+
+      section.appendChild(body);
+
+      // Footer with submit button
+      var footer = document.createElement('div');
+      footer.className = 'info-form-footer';
+      footer.id = 'info-form-footer-' + id;
+      var submitBtn = document.createElement('button');
+      submitBtn.className = 'info-form-submit';
+      submitBtn.textContent = '✓ Submit & Save as Document';
+      submitBtn.onclick = function() { window.submitInfoForm(id, label, fields); };
+      footer.appendChild(submitBtn);
+      section.appendChild(footer);
+
+      container.appendChild(section);
+    });
+  };
+
+  // Submit handler — collects values, generates Word doc, uploads to Drive
+  window.submitInfoForm = function submitInfoForm(id, label, fields) {
+    var formBody = document.getElementById('info-form-body-' + id);
+    if (!formBody) return;
+
+    // Collect all field values
+    var inputs = formBody.querySelectorAll('[data-field-label]');
+    var collected = [];
+    inputs.forEach(function(inp) {
+      collected.push({ label: inp.dataset.fieldLabel, value: inp.value || '—' });
+    });
+
+    if (collected.every(function(c) { return !c.value || c.value === '—'; })) {
+      showToast('Please fill in at least one field before submitting.', '⚠️');
+      return;
+    }
+
+    var client = getActiveClient();
+    var clientName = client ? client.name : 'Client';
+    var fileName = 'Portal Information - ' + label;
+
+    // Generate Word doc
+    window.generateInfoDocx(fileName, label, clientName, collected, function(blob) {
+      // 1. Download to device
+      var url = URL.createObjectURL(blob);
+      var a   = document.createElement('a');
+      a.href  = url;
+      a.download = fileName + '.docx';
+      a.click();
+      URL.revokeObjectURL(url);
+
+      // 2. Upload to Google Drive if connected
+      if (driveConnected) {
+        var file = new File([blob], fileName + '.docx', { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
+        uploadFileToDrive(file, fileName + '.docx', client.id, clientName).then(function() {
+          showToast('✅ Saved to Google Drive: ' + fileName + '.docx');
+        });
+      }
+
+      // 3. Mark form as submitted
+      var footer = document.getElementById('info-form-footer-' + id);
+      if (footer) {
+        footer.className = 'info-form-submitted';
+        footer.innerHTML =
+          '<div class="info-form-submitted-icon">✅</div>' +
+          '<div><div class="info-form-submitted-title">Submitted & saved!</div>' +
+          '<div class="info-form-submitted-sub">' + fileName + '.docx has been downloaded and sent to your adviser.</div></div>';
+      }
+
+      if (!driveConnected) showToast('✅ ' + fileName + '.docx downloaded.');
+    });
+  };
+
+  // Generate a Word .docx file using the docx library
+  window.generateInfoDocx = function generateInfoDocx(fileName, title, clientName, fields, callback) {
+    try {
+      var d = window.docx;
+      if (!d) { showToast('Document library not loaded yet — please try again.', '⚠️'); return; }
+
+      var NAVY   = '1C4475';
+      var TEAL   = '20ABA4';
+      var BORDER = 'E5E7EB';
+
+      var today = new Date().toLocaleDateString('en-AU', { day:'numeric', month:'long', year:'numeric' });
+
+      var rows = fields.map(function(f) {
+        return new d.TableRow({
+          children: [
+            new d.TableCell({
+              width: { size: 3500, type: d.WidthType.DXA },
+              shading: { fill: 'F0F6FF', type: d.ShadingType.CLEAR },
+              borders: { top: { style: d.BorderStyle.SINGLE, size: 1, color: BORDER }, bottom: { style: d.BorderStyle.SINGLE, size: 1, color: BORDER }, left: { style: d.BorderStyle.SINGLE, size: 1, color: BORDER }, right: { style: d.BorderStyle.SINGLE, size: 1, color: BORDER } },
+              margins: { top: 80, bottom: 80, left: 120, right: 80 },
+              children: [new d.Paragraph({ children: [new d.TextRun({ text: f.label, bold: true, size: 20, font: 'Arial', color: NAVY })] })]
+            }),
+            new d.TableCell({
+              width: { size: 5860, type: d.WidthType.DXA },
+              borders: { top: { style: d.BorderStyle.SINGLE, size: 1, color: BORDER }, bottom: { style: d.BorderStyle.SINGLE, size: 1, color: BORDER }, left: { style: d.BorderStyle.SINGLE, size: 1, color: BORDER }, right: { style: d.BorderStyle.SINGLE, size: 1, color: BORDER } },
+              margins: { top: 80, bottom: 80, left: 120, right: 120 },
+              children: [new d.Paragraph({ children: [new d.TextRun({ text: f.value, size: 20, font: 'Arial', color: '1A1A1A' })] })]
+            })
+          ]
+        });
+      });
+
+      var doc = new d.Document({
+        sections: [{
+          properties: {
+            page: { size: { width: 12240, height: 15840 }, margin: { top: 1080, right: 1260, bottom: 1080, left: 1260 } }
+          },
+          children: [
+            // Header bar paragraph
+            new d.Paragraph({
+              spacing: { before: 0, after: 200 },
+              border: { bottom: { style: d.BorderStyle.SINGLE, size: 8, color: TEAL, space: 8 } },
+              children: [
+                new d.TextRun({ text: 'Walk With You Capital', bold: true, size: 28, font: 'Arial', color: NAVY }),
+                new d.TextRun({ text: '   |   Portal Information', size: 20, font: 'Arial', color: '6B7280' }),
+              ]
+            }),
+            // Title
+            new d.Paragraph({
+              spacing: { before: 240, after: 80 },
+              children: [new d.TextRun({ text: title, bold: true, size: 36, font: 'Arial', color: NAVY })]
+            }),
+            // Meta
+            new d.Paragraph({
+              spacing: { before: 0, after: 40 },
+              children: [new d.TextRun({ text: 'Client: ', bold: true, size: 20, font: 'Arial', color: '6B7280' }), new d.TextRun({ text: clientName, size: 20, font: 'Arial', color: '1A1A1A' })]
+            }),
+            new d.Paragraph({
+              spacing: { before: 0, after: 240 },
+              children: [new d.TextRun({ text: 'Date submitted: ', bold: true, size: 20, font: 'Arial', color: '6B7280' }), new d.TextRun({ text: today, size: 20, font: 'Arial', color: '1A1A1A' })]
+            }),
+            // Table
+            new d.Table({
+              width: { size: 9360, type: d.WidthType.DXA },
+              columnWidths: [3500, 5860],
+              rows: rows.length > 0 ? rows : [new d.TableRow({ children: [
+                new d.TableCell({ children: [new d.Paragraph({ children: [new d.TextRun('No data')] })] })
+              ]})]
+            }),
+            // Footer note
+            new d.Paragraph({
+              spacing: { before: 320, after: 0 },
+              children: [new d.TextRun({ text: 'This document was generated via the Walk With You Capital client portal and contains information submitted by the client.', size: 16, font: 'Arial', color: '9CA3AF', italics: true })]
+            }),
+          ]
+        }]
+      });
+
+      d.Packer.toBlob(doc).then(callback).catch(function(e) {
+        showToast('Could not generate document: ' + e.message, '⚠️');
+      });
+
+    } catch(e) {
+      showToast('Document library error: ' + e.message, '⚠️');
+    }
+  };
+
+  window.formatSize = function formatSize(bytes) {
     if (!bytes || bytes === 0) return '—';
     if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(0) + 'KB';
     return (bytes / (1024 * 1024)).toFixed(1) + 'MB';
   }
 
-  function showToast(msg, icon = '✅') {
+  window.showToast = function showToast(msg, icon = '✅') {
     const t = document.getElementById('toast');
     document.getElementById('toastMsg').textContent = msg;
     document.getElementById('toastIcon').textContent = icon;
