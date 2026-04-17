@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <!-- WWYC Portal v2.0 - 2024-fixed -->
 <html lang="en">
@@ -2636,37 +2635,16 @@
       <div class="page-sub">Please upload all required documents below. Our team will review and confirm each one. You'll be notified once your documents have been checked.</div>
     </div>
 
-    <!-- Progress -->
-    <div class="progress-bar-wrap">
-      <div class="progress-label"><strong id="progressCount">2</strong> of <strong>6</strong> required documents submitted</div>
-      <div class="progress-track">
-        <div class="progress-fill" id="progressFill" style="width: 33%;"></div>
-      </div>
-      <div class="progress-label" id="progressPct" style="color:var(--gold);">33%</div>
-    </div>
-
-    <!-- Client Folder Link -->
-    <!-- folder banner removed — clients do not need Drive access -->
-      <div class="folder-arrow">→</div>
-    
+    <!-- Progress bar removed -->
 
 
     <!-- Information Request Forms (shown when staff have activated requests) -->
     <div id="clientInfoFormsSection"></div>
 
-    <!-- Required Documents Picker -->
+    <!-- Required Documents -->
     <div class="required-section">
       <div class="section-label" style="margin-bottom:12px;">Required Documents</div>
-      <div class="req-tabs">
-        <button class="req-tab active" onclick="window.switchReqTab('individual',this)">📄 Individual Documents</button>
-        <button class="req-tab" onclick="window.switchReqTab('folders',this)">📂 Step Folders</button>
-      </div>
-      <div id="tabIndividual" class="req-tab-panel">
-        <div class="req-individual-list" id="reqIndividualList"></div>
-      </div>
-      <div id="tabFolders" class="req-tab-panel" style="display:none;">
-        <div id="stepFoldersList"></div>
-      </div>
+      <div class="req-individual-list" id="reqIndividualList"></div>
     </div>
 
     <!-- Upload Zone -->
@@ -3752,7 +3730,7 @@ Kind regards,
     document.querySelectorAll('.req-tab').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
     document.getElementById('tabIndividual').style.display = tab === 'individual' ? 'block' : 'none';
-    document.getElementById('tabFolders').style.display    = tab === 'folders'    ? 'block' : 'none';
+    var tf = document.getElementById('tabFolders'); if(tf) tf.style.display = tab === 'folders' ? 'block' : 'none';
   }
 
   // ─── RENDER INDIVIDUAL DOC LIST ───
@@ -3788,7 +3766,7 @@ Kind regards,
 
   // ─── RENDER STEP FOLDERS ───
   window.renderStepFolders = function renderStepFolders() {
-    const container = document.getElementById('stepFoldersList');
+    const container = document.getElementById('stepFoldersList'); if (!container) return;
     if (!container) return;
     container.innerHTML = '';
 
