@@ -1,7 +1,11 @@
 <!DOCTYPE html>
+<!-- WWYC Portal v2.0 - 2024-fixed -->
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Walk With You Capital | Document Upload</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -673,7 +677,7 @@
   .staff-section { display: none; }
   .staff-section.active { display: block; }
   .client-section { display: none; }
-  .client-section.hidden { display: none !important; }
+  .client-section.hidden { display: none; }
   #clientView { display: none; }
   #staffView { display: none; }
   #maintenanceView { display: none; }
@@ -2921,45 +2925,43 @@
 
   <!-- Footer -->
   <div style="text-align:center;padding:40px 0 20px;">
-    <span style="font-size:11px;color:#D1D5DB;user-select:none;">© Walk With You Capital</span>
+    <span style="font-size:11px;color:#D1D5DB;user-select:none;">© Walk With You Capital · v2.0</span>
   </div>
 
 
 <script>
 (function() {
   function showView(view) {
-    var views = {
-      client:      document.getElementById('clientView'),
-      staff:       document.getElementById('staffView'),
-      maintenance: document.getElementById('maintenanceView'),
-      landing:     document.getElementById('landingView')
-    };
-    var btns = {
-      client: document.getElementById('btn-client'),
-      staff:  document.getElementById('btn-staff'),
-      maint:  document.getElementById('btn-maint')
-    };
-
-    // Hide all views
-    Object.keys(views).forEach(function(k) {
-      if (views[k]) views[k].style.display = 'none';
+    // Force-clear ALL views by removing any inline styles and hiding
+    var allIds = ['clientView','staffView','maintenanceView','landingView'];
+    allIds.forEach(function(id) {
+      var el = document.getElementById(id);
+      if (!el) return;
+      el.removeAttribute('style');   // clear ALL inline styles including !important
+      el.style.display = 'none';     // then set display:none cleanly
     });
 
-    // Remove active from all buttons
-    Object.keys(btns).forEach(function(k) {
-      if (btns[k]) btns[k].classList.remove('active');
+    var btns = ['btn-client','btn-staff','btn-maint'];
+    btns.forEach(function(id) {
+      var b = document.getElementById(id);
+      if (b) b.classList.remove('active');
     });
 
-    // Show the requested view
-    if (view === 'client' && views.client) {
-      views.client.style.display = 'block';
-      if (btns.client) btns.client.classList.add('active');
-    } else if (view === 'staff' && views.staff) {
-      views.staff.style.display = 'block';
-      if (btns.staff) btns.staff.classList.add('active');
-    } else if (view === 'maintenance' && views.maintenance) {
-      views.maintenance.style.display = 'block';
-      if (btns.maint) btns.maint.classList.add('active');
+    if (view === 'client') {
+      var cv = document.getElementById('clientView');
+      if (cv) cv.style.display = 'block';
+      var bc = document.getElementById('btn-client');
+      if (bc) bc.classList.add('active');
+    } else if (view === 'staff') {
+      var sv = document.getElementById('staffView');
+      if (sv) sv.style.display = 'block';
+      var bs = document.getElementById('btn-staff');
+      if (bs) bs.classList.add('active');
+    } else if (view === 'maintenance') {
+      var mv = document.getElementById('maintenanceView');
+      if (mv) mv.style.display = 'block';
+      var bm = document.getElementById('btn-maint');
+      if (bm) bm.classList.add('active');
       if (window.populateMaintenanceForm) window.populateMaintenanceForm();
     }
   }
@@ -3324,6 +3326,8 @@ document.getElementById('pwDoSubmit').addEventListener('click', function() {
   var tog = document.getElementById('viewToggle'); if(tog) tog.style.display = 'flex';
   var tv = window._pendingView || 'staff';
   window._pendingView = null;
+  // Re-render clients in case new ones were added
+  if (window.renderClientGroups) window.renderClientGroups();
   if (window._showView) {
     window._showView(tv);
   } else {
@@ -4193,15 +4197,17 @@ Kind regards,
       window.renderStepFolders();
       window.renderClientInfoForms();
       // Clear and reload this client's uploaded docs
-      var uploadList = document.getElementById('uploadedDocsList');
-      if (uploadList) {
-        uploadList.innerHTML = '';
+      var docsList = document.getElementById('docsList');
+      if (docsList) {
+        docsList.innerHTML = '';
         var saved = window.loadClientUploads(urlClientId);
-        saved.forEach(function(u) { window.addUploadedCard(u.name, u.icon, u.date, u.size, u.type); });
+        saved.forEach(function(u) { window.addUploadedCard(u.name, u.icon, u.date, u.size, u.type, true); });
+        var emptyState = document.getElementById('emptyState');
+        if (emptyState) emptyState.style.display = saved.length === 0 ? 'block' : 'none';
       }
 
       // Show client view, hide landing
-      document.getElementById('clientView').style.cssText = 'display:block !important';
+      if (window._showView) { window._showView('client'); } else { document.getElementById('clientView').style.display = 'block'; }
       document.getElementById('landingView').style.display = 'none';
 
     } else {
@@ -4288,45 +4294,13 @@ Kind regards,
   // ─── VIEW TOGGLE ───
   // Direct view switch (no password check — used after auth)
   window.setViewDirect = function setViewDirect(view) {
-    // Always make sure toggle is visible once staff is in
-    const toggle = document.getElementById('viewToggle');
-    if (toggle) toggle.style.display = 'flex';
-    document.querySelectorAll('.toggle-btn').forEach((b, i) => {
-      b.classList.toggle('active',
-        (view === 'client'      && i === 0) ||
-        (view === 'staff'       && i === 1) ||
-        (view === 'maintenance' && i === 2)
-      );
-    });
-    document.getElementById('clientView').classList.toggle('hidden', view !== 'client');
-    document.getElementById('staffView').classList.toggle('active', view === 'staff');
-    const mv = document.getElementById('maintenanceView');
-    if (mv) {
-      mv.classList.toggle('active', view === 'maintenance');
-      mv.style.display = view === 'maintenance' ? 'block' : 'none';
-    }
-    // Also explicitly hide/show staff view
-    const sv = document.getElementById('staffView');
-    if (sv) {
-      sv.classList.toggle('active', view === 'staff');
-      sv.style.display = view === 'staff' ? 'block' : 'none';
-    }
-    if (view === 'maintenance') window.populateMaintenanceForm();
+    var tog = document.getElementById('viewToggle');
+    if (tog) tog.style.display = 'flex';
+    if (window._showView) window._showView(view);
   }
 
-  // Gated view switch — requires password for staff/maintenance
+  // Gated view switch — now just delegates to showView via setViewDirect
   window.setView = function setView(view) {
-    var unlocked = window._staffIsUnlocked === true || window.staffUnlocked === true;
-    if ((view === 'staff' || view === 'maintenance') && !unlocked) {
-      window._pendingView = view;
-      var o = document.getElementById('pwOverlay');
-      var i = document.getElementById('pwInput');
-      var e = document.getElementById('pwErrorMsg');
-      if (o) o.style.display = 'flex';
-      if (i) { i.value = ''; i.type = 'password'; i.style.borderColor = '#E5E7EB'; setTimeout(function(){ i.focus(); }, 100); }
-      if (e) e.style.display = 'none';
-      return;
-    }
     window.setViewDirect(view);
   }
 
@@ -4405,7 +4379,7 @@ Kind regards,
     var otherDesc     = document.getElementById('otherDescInput') ? document.getElementById('otherDescInput').value.trim() : '';
     const docType     = (rawDocType === 'Other' && otherDesc) ? otherDesc : rawDocType;
     const institution = document.getElementById('institutionInput').value.trim();
-    const clientName  = 'Sarah Johnson';
+    const clientName  = (function(){ var p=new URLSearchParams(window.location.search); return p.get('name')||'Client'; })();
     const dateStr     = buildDateString();
     const parts = [docType];
     if (institution) parts.push(institution);
@@ -4637,7 +4611,6 @@ Kind regards,
         driveConnected   = true;
         setDriveStatus(true);
         showToast('✅ Google Drive connected! Client folders will be created automatically.');
-        ensureClientFolder('IC-2024-0082', 'Sarah Johnson');
       }
     });
     client.requestAccessToken();
@@ -4738,14 +4711,13 @@ Kind regards,
   }
 
   window.openClientFolder = function openClientFolder() {
-    const folder = clientFolderCache['IC-2024-0082'];
+    const ac = window.getActiveClient ? window.getActiveClient() : null;
+    const folder = ac ? clientFolderCache[ac.id] : null;
     if (folder && folder.webViewLink) {
       window.open(folder.webViewLink, '_blank');
     } else if (driveConnected) {
       showToast('📁 Creating your folder in Google Drive...', '⏳');
-      ensureClientFolder('IC-2024-0082', 'Sarah Johnson').then(f => {
-        if (f && f.webViewLink) window.open(f.webViewLink, '_blank');
-      });
+
     } else {
       showToast('Connect Google Drive first (Staff View → Connect Google Drive)', '⚠️');
     }
@@ -4800,11 +4772,7 @@ Kind regards,
   // ═══════════════════════════════════════════════════
 
   // Dynamic clients (staff-created)
-  let clients = [
-    { id:'IC-2024-0082', name:'Sarah Johnson', email:'sarah.johnson@email.com', phone:'0411 222 333', step:'Step 5 — Financial Adviser',   adviser:'s1', docs:['payslip','id','bank','super','tax','employment'], driveFolderId:null },
-    { id:'IC-2024-0091', name:'Daniel Tran',   email:'daniel.tran@email.com',   phone:'0422 333 444', step:'Step 2 — Wealth Consultation', adviser:'s2', docs:['payslip','id','bank'],                                driveFolderId:null },
-    { id:'IC-2024-0075', name:'Priya Nair',    email:'priya.nair@email.com',     phone:'0433 444 555', step:'Step 9 — Choosing Home',       adviser:'s3', docs:['employment','tax'],                                     driveFolderId:null },
-  ];
+  let clients = [];  // populated from localStorage by loadPersistedData()
 
   // ── PERSISTENCE ────────────────────────────────────────────────
   var IC_CLIENTS_KEY     = 'ic_clients_v2';
@@ -4823,8 +4791,28 @@ Kind regards,
   window.loadPersistedData = function loadPersistedData() {
     try {
       var sc = localStorage.getItem(IC_CLIENTS_KEY);
-      if (sc) { var parsed = JSON.parse(sc); if (Array.isArray(parsed) && parsed.length > 0) clients = parsed; }
+      if (sc) {
+        var parsed = JSON.parse(sc);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          // Filter out old demo clients that were hardcoded in earlier versions
+          var demoIds = ['IC-2024-0082','IC-2024-0091','IC-2024-0075'];
+          var real = parsed.filter(function(c) { return demoIds.indexOf(c.id) === -1; });
+          // If ALL stored clients are demo clients, clear them
+          if (real.length === 0 && parsed.length > 0) {
+            // Only demo clients stored — wipe them
+            localStorage.removeItem(IC_CLIENTS_KEY);
+          } else {
+            clients = real;
+            if (clients.length > 0) activeClientId = clients[0].id;
+          }
+        }
+      }
     } catch(e) {}
+    // Clear demo client upload data
+    ['IC-2024-0082','IC-2024-0091','IC-2024-0075'].forEach(function(id) {
+      try { localStorage.removeItem(IC_UPLOADS_KEY + '_' + id); } catch(e) {}
+    });
+
     try {
       var sa = localStorage.getItem(IC_ASSIGNMENTS_KEY);
       if (sa) { var pa = JSON.parse(sa); Object.assign(staffAssignments, pa); }
@@ -4854,8 +4842,8 @@ Kind regards,
   };
 
   // Current active client (shown in client view)
-  let activeClientId = 'IC-2024-0082';
-  window.getActiveClient = function getActiveClient() { return clients.find(c => c.id === activeClientId) || clients[0]; }
+  let activeClientId = null;
+  window.getActiveClient = function getActiveClient() { return clients.find(function(c){ return c.id === activeClientId; }) || clients[0] || null; }
 
   // ─── Render dynamic client groups in staff view ───
   window.renderClientGroups = function renderClientGroups() {
@@ -6348,5 +6336,31 @@ Kind regards,
     setTimeout(() => t.classList.remove('show'), 5000);
   }
 </script>
+
+<div id="debugBar" style="position:fixed;bottom:40px;left:0;right:0;background:#1C4475;color:white;font-family:monospace;font-size:11px;padding:6px 12px;z-index:99999;display:flex;gap:16px;align-items:center;flex-wrap:wrap;">
+  <span style="font-weight:bold;">DEBUG:</span>
+  <span id="dbViews">views: ?</span>
+  <span id="dbUnlocked">unlocked: ?</span>
+  <span id="dbClients">clients: ?</span>
+  <span id="dbShowView">showView: ?</span>
+  <button onclick="document.getElementById('debugBar').style.display='none'" style="background:rgba(255,255,255,0.2);border:none;color:white;cursor:pointer;padding:2px 8px;margin-left:auto;">✕</button>
+</div>
+<script>
+setInterval(function() {
+  var cv = document.getElementById('clientView');
+  var sv = document.getElementById('staffView');
+  var mv = document.getElementById('maintenanceView');
+  var getDisplay = function(el) { return el ? (el.style.display || '[css]') : 'missing'; };
+  document.getElementById('dbViews').textContent = 
+    'client:' + getDisplay(cv) + ' staff:' + getDisplay(sv) + ' maint:' + getDisplay(mv);
+  document.getElementById('dbUnlocked').textContent = 
+    'unlocked: _staff=' + window._staffIsUnlocked + ' staffUL=' + window.staffUnlocked;
+  document.getElementById('dbClients').textContent = 
+    'clients:' + (typeof clients !== 'undefined' ? clients.length : 'undefined');
+  document.getElementById('dbShowView').textContent = 
+    '_showView:' + (typeof window._showView);
+}, 500);
+</script>
+
 </body>
 </html>
