@@ -3657,7 +3657,9 @@ Kind regards,
   let rejectContext = { btn: null, badgeId: null, filename: null, clientName: null };
 
   // ─── STAFF MEMBERS (name + email, editable) ───
-  let staffMembers = [
+  let staffMembers = [];  // loaded from localStorage by loadPersistedData()
+  // Default staff added only if none exist in localStorage
+  var DEFAULT_STAFF = [
     { id:'s1', name:'Emily Chen',     email:'emily.chen@walkwithyoucapital.com.au'     },
     { id:'s2', name:'Marcus Webb',    email:'marcus.webb@walkwithyoucapital.com.au'    },
     { id:'s3', name:'James Holloway', email:'james.holloway@walkwithyoucapital.com.au' },
@@ -4636,8 +4638,13 @@ Kind regards,
   };
 
   window.initiateDriveAuth = function initiateDriveAuth() {
-    if (typeof google === 'undefined') {
-      showToast('Google Sign-In script not yet loaded — please wait a moment and try again.', '⚠️');
+    if (typeof google === 'undefined' || !google.accounts || !google.accounts.oauth2) {
+      showToast('Google Sign-In not ready. Please wait a few seconds and try again.', '⚠️');
+      return;
+    }
+    var clientId = getDriveClientId();
+    if (!clientId || clientId.indexOf('xxxx') !== -1) {
+      showToast('Please enter your Google Drive Client ID in Maintenance first.', '⚠️');
       return;
     }
     const client = google.accounts.oauth2.initTokenClient({
@@ -4864,8 +4871,14 @@ Kind regards,
     } catch(e) {}
     try {
       var ss = localStorage.getItem(IC_STAFF_KEY);
-      if (ss) { var ps = JSON.parse(ss); if (Array.isArray(ps) && ps.length > 0) staffMembers = ps; }
-    } catch(e) {}
+      if (ss) {
+        var ps = JSON.parse(ss);
+        if (Array.isArray(ps) && ps.length > 0) staffMembers = ps;
+        else staffMembers = DEFAULT_STAFF.slice();
+      } else {
+        staffMembers = DEFAULT_STAFF.slice();
+      }
+    } catch(e) { staffMembers = DEFAULT_STAFF.slice(); }
     // Sync docLibrary assignees from staffAssignments
     docLibrary.forEach(function(doc) {
       if (staffAssignments[doc.id]) doc.assignee = staffAssignments[doc.id];
