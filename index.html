@@ -4180,7 +4180,14 @@ Kind regards,
       if (docsList) {
         docsList.innerHTML = '';
         var saved = window.loadClientUploads(urlClientId);
-        saved.forEach(function(u) { window.addUploadedCard(u.name, u.icon, u.date, u.size, u.type, true); });
+        // Restore uploaded flags in docLibrary
+        saved.forEach(function(u) {
+          if (u.matchKey) {
+            var d = docLibrary.find(function(d) { return d.id === u.matchKey; });
+            if (d) d.uploaded = true;
+          }
+          window.addUploadedCard(u.name, u.icon, u.date, u.size, u.type, true);
+        });
         var emptyState = document.getElementById('emptyState');
         if (emptyState) emptyState.style.display = saved.length === 0 ? 'block' : 'none';
       }
@@ -4436,7 +4443,35 @@ Kind regards,
     });
 
     updateProgress();
-    showToast(`📧 ${savedNames.length} file${savedNames.length !== 1 ? 's' : ''} uploaded — email sent to ${staffName} for review.`);
+
+    // Mark matching docs as uploaded in docLibrary and persist
+    filesToProcess.forEach((file, i) => {
+      const savedName = savedNames[i];
+      const ext = file.name.split('.').pop().toLowerCase();
+      const icon = ext === 'pdf' ? '📄' : ['jpg','jpeg','png'].includes(ext) ? '🖼️' : '📝';
+      // Find matching doc by type
+      const matchKey = docTypeToAssignKey[docType] || null;
+      if (matchKey) {
+        var matchedDoc = docLibrary.find(function(d) { return d.id === matchKey; });
+        if (matchedDoc) matchedDoc.uploaded = true;
+      }
+      // Save to localStorage for this client
+      var ac = window.getActiveClient();
+      if (ac) {
+        window.saveClientUpload(ac.id, {
+          name: savedName,
+          icon: icon,
+          date: displayDate,
+          size: formatSize(file.size),
+          type: ext.toUpperCase(),
+          docType: docType,
+          matchKey: matchKey
+        });
+      }
+    });
+
+    window.persistAll();
+    showToast('📧 ' + savedNames.length + ' file' + (savedNames.length !== 1 ? 's' : '') + ' uploaded — sent to ' + staffName + ' for review.');
     pendingFiles = [];
   }
 
