@@ -3447,7 +3447,11 @@
     <div id="newClientPortalLink" class="portal-link-box" style="display:none;">
       <div class="portal-link-label">✓ Client Portal Link</div>
       <div class="portal-link-url" id="newClientPortalUrl"></div>
-      <button class="portal-link-copy" onclick="window.copyPortalLink()">Copy Link</button>
+      <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;">
+        <button class="portal-link-copy" onclick="window.copyPortalLink()">📋 Copy Link</button>
+        <button class="portal-link-copy" onclick="window.sendWelcomeEmail()" style="background:linear-gradient(135deg,#20ABA4,#167A75);color:white;border-color:#20ABA4;">📧 Send Welcome Email</button>
+      </div>
+      <div id="welcomeEmailStatus" style="font-size:11px;color:#10B981;font-weight:700;margin-top:6px;display:none;"></div>
     </div>
 
     <div class="modal-actions" style="margin-top:20px;">
@@ -5145,7 +5149,7 @@ Kind regards,
     document.getElementById('newClientPortalUrl').textContent = portalUrl;
     document.getElementById('newClientPortalLink').style.display = 'block';
     document.getElementById('newClientSaveBtn').textContent = 'Done';
-    document.getElementById('newClientSaveBtn').onclick = () => closeModal('newClientModal');
+    document.getElementById('newClientSaveBtn').onclick = function() { window.closeModal('newClientModal'); };
 
     // Create Drive folder
     if (driveConnected) {
@@ -5158,6 +5162,58 @@ Kind regards,
     renderClientGroups();
     showToast('✅ ' + name + ' added! Portal link ready to copy.');
   }
+
+
+  // ─── SEND WELCOME EMAIL ───────────────────────────────────────────
+  window.sendWelcomeEmail = function sendWelcomeEmail() {
+    if (!lastCreatedClient) { showToast('No client to send to.', '⚠️'); return; }
+
+    var s = reminderSettings;
+    if (!s.serviceId || !s.templateId || !s.publicKey) {
+      showToast('Please set up your EmailJS credentials in Reminders first.', '⚠️');
+      return;
+    }
+    if (!lastCreatedClient.email) {
+      showToast('This client has no email address.', '⚠️');
+      return;
+    }
+
+    var portalUrl = window.generatePortalUrl(lastCreatedClient.id, lastCreatedClient.name);
+    var adviser   = staffMembers.find(function(s) { return s.id === lastCreatedClient.adviser; }) || staffMembers[0] || {};
+    var company   = portalSettings.companyName || 'Walk With You Capital';
+
+    var subject = 'Welcome to ' + company + ' — Your Secure Document Portal';
+    var body    = 'Hi ' + lastCreatedClient.name + ',\n\n' +
+      'Welcome to ' + company + '. We have set up your secure document portal where you can safely upload the documents we need for your application.\n\n' +
+      'Your personal portal link:\n' + portalUrl + '\n\n' +
+      'Simply click the link above to access your portal at any time. You can upload documents, track their review status, and respond to any information requests from our team.\n\n' +
+      'If you have any questions, please don\'t hesitate to reach out.\n\n' +
+      'Kind regards,\n' + (adviser.name || 'Your Adviser') + '\n' + company;
+
+    var statusEl = document.getElementById('welcomeEmailStatus');
+    if (statusEl) { statusEl.style.display = 'block'; statusEl.textContent = 'Sending...'; statusEl.style.color = '#6B7280'; }
+
+    try {
+      emailjs.init(s.publicKey);
+      emailjs.send(s.serviceId, s.templateId, {
+        to_email:  lastCreatedClient.email,
+        to_name:   lastCreatedClient.name,
+        from_name: company,
+        reply_to:  adviser.email || s.replyTo || '',
+        subject:   subject,
+        message:   body,
+      }).then(function() {
+        if (statusEl) { statusEl.textContent = '✓ Welcome email sent to ' + lastCreatedClient.email; statusEl.style.color = '#10B981'; }
+        showToast('✅ Welcome email sent to ' + lastCreatedClient.name + '!');
+      }).catch(function(err) {
+        if (statusEl) { statusEl.textContent = 'Failed: ' + (err.text || err); statusEl.style.color = '#8C0404'; }
+        showToast('Email failed: ' + (err.text || err), '⚠️');
+      });
+    } catch(e) {
+      if (statusEl) { statusEl.textContent = 'Error: ' + e.message; statusEl.style.color = '#8C0404'; }
+      showToast('EmailJS error: ' + e.message, '⚠️');
+    }
+  };
 
   window.generatePortalUrl = function generatePortalUrl(clientId, clientName) {
     const base = window.location.href.split('?')[0];
