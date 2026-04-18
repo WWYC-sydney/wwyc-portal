@@ -3650,6 +3650,14 @@ Kind regards,
 </div>
 
 <script>
+
+  window.showToast = function showToast(msg, icon = '✅') {
+    const t = document.getElementById('toast');
+    document.getElementById('toastMsg').textContent = msg;
+    document.getElementById('toastIcon').textContent = icon;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 5000);
+  }
   // Staff login handled via addEventListener on #pwDoSubmit
 
   // ── Global call dispatcher — defers until all functions are loaded ──────────
@@ -4141,149 +4149,6 @@ Kind regards,
   }
 
   // ─── INIT ───
-  document.addEventListener('DOMContentLoaded', () => {
-    window.loadSettings();
-    window.loadPersistedData();
-    window.renderIndividualDocs();
-    renderStepFolders();
-    renderClientGroups();
-    updateLockButtons();
-    setDriveStatus(false);
-    loadReminderSettings();
-
-    // Wire Drive connect button
-    var driveBtn = document.getElementById('driveConnectBtn');
-    if (driveBtn) {
-      driveBtn.addEventListener('click', function() {
-        if (window.initiateDriveAuth) window.initiateDriveAuth();
-        else showToast('Drive auth not ready — please refresh.', '⚠️');
-      });
-    }
-
-    // Global action dispatcher — handles all data-action buttons
-    document.body.addEventListener('click', function(e) {
-      var btn = e.target.closest('[data-action]');
-      if (!btn) return;
-      var action = btn.dataset.action;
-      var fnMap = {
-        openAssignModal:        function(){ window.openAssignModal && window.openAssignModal(); },
-        openExplanationManager: function(){ window.openExplanationManager && window.openExplanationManager(); },
-        openDocLibraryModal:    function(){ window.openDocLibraryModal && window.openDocLibraryModal(); },
-        openStepFoldersModal:   function(){ window.openStepFoldersModal && window.openStepFoldersModal(); },
-        openManageStaffModal:   function(){ window.openManageStaffModal && window.openManageStaffModal(); },
-        lockStaff:              function(){ window.lockStaff && window.lockStaff(); },
-        openRemindersModal:     function(){ window.openRemindersModal && window.openRemindersModal(); },
-        openInfoRequestsModal:  function(){ window.openInfoRequestsModal && window.openInfoRequestsModal(); },
-        openNewClientModal:     function(){ window.openNewClientModal && window.openNewClientModal(); },
-        initiateDriveAuth:      function(){ window.initiateDriveAuth && window.initiateDriveAuth(); },
-        resetSettings:          function(){ window.resetSettings && window.resetSettings(); },
-        saveSettings:           function(){ window.saveSettings && window.saveSettings(); },
-        submitUpload:           function(){ window.submitUpload && window.submitUpload(); },
-        submitReject:           function(){ window.submitReject && window.submitReject(); },
-        saveAssignments:        function(){ window.saveAssignments && window.saveAssignments(); },
-        saveExplanations:       function(){ window.saveExplanations && window.saveExplanations(); },
-        addDocToLibrary:        function(){ window.addDocToLibrary && window.addDocToLibrary(); },
-        saveDocLibrary:         function(){ window.saveDocLibrary && window.saveDocLibrary(); },
-        addStepFolder:          function(){ window.addStepFolder && window.addStepFolder(); },
-        saveStepFolders:        function(){ window.saveStepFolders && window.saveStepFolders(); },
-        addStaffMember:         function(){ window.addStaffMember && window.addStaffMember(); },
-        saveStaffMembers:       function(){ window.saveStaffMembers && window.saveStaffMembers(); },
-        copyPortalLink:         function(){ window.copyPortalLink && window.copyPortalLink(); },
-        sendWelcomeEmail:       function(){ window.sendWelcomeEmail && window.sendWelcomeEmail(); },
-        saveNewClient:          function(){ window.saveNewClient && window.saveNewClient(); },
-        previewZoomOut:         function(){ window.previewZoom && window.previewZoom(-0.25); },
-        previewZoomIn:          function(){ window.previewZoom && window.previewZoom(+0.25); },
-        previewZoomReset:       function(){ window.previewZoomReset && window.previewZoomReset(); },
-        previewOpenInDrive:     function(){ window.previewOpenInDrive && window.previewOpenInDrive(); },
-        closeDocPreview:        function(){ window.closeDocPreview && window.closeDocPreview(); },
-        saveReminderSettings:   function(){ window.saveReminderSettings && window.saveReminderSettings(); window.closeModal && window.closeModal('remindersModal'); },
-        sendTestReminder:       function(){ window.sendTestReminder && window.sendTestReminder(); },
-        activateSelectedInfoReqs: function(){ window.activateSelectedInfoReqs && window.activateSelectedInfoReqs(); },
-        saveCustomRequest:      function(){ window.saveCustomRequest && window.saveCustomRequest(); },
-        addCustomField:         function(){ window.addCustomField && window.addCustomField(); },
-        exportData:             function(){ window.exportData && window.exportData(); },
-        importData:             function(){ window.importData && window.importData(); },
-      };
-      if (fnMap[action]) {
-        e.stopPropagation();
-        fnMap[action]();
-      }
-    });
-
-    // pw overlay click-outside to close
-    const pwOv = document.getElementById('pwOverlay');
-    if (pwOv) pwOv.addEventListener('click', e => { if (e.target === pwOv) closePwModal(); });
-
-    // ── Read URL params to identify client ──────────────────────────────────
-    const params = new URLSearchParams(window.location.search);
-    const urlClientId   = params.get('client');
-    const urlClientName = params.get('name');
-
-    if (urlClientId) {
-      // Find existing client or create minimal entry from URL
-      let found = clients.find(c => c.id === urlClientId);
-      if (!found) {
-        found = {
-          id: urlClientId,
-          name: urlClientName || urlClientId,
-          email: '', phone: '', step: '', adviser: staffMembers[0]?.id || 's1',
-          docs: docLibrary.map(d => d.id),
-          driveFolderId: null
-        };
-        clients.push(found);
-      }
-      activeClientId = found.id;
-      window._currentClientId = found.id;
-
-      // Update header pill with real client name
-      const displayName = found.name || urlClientName || urlClientId;
-      const nameEl = document.getElementById('clientNameDisplay');
-      const idEl   = document.getElementById('clientIdDisplay');
-      const avatarEl = document.getElementById('clientAvatar');
-      const headerRight = document.getElementById('headerRight');
-      if (nameEl) nameEl.textContent = displayName;
-      if (idEl)   idEl.textContent   = urlClientId;
-      if (avatarEl) avatarEl.textContent = displayName.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
-      if (headerRight) headerRight.style.display = 'flex';
-
-      // Update folder path
-      const pathEl = document.getElementById('clientFolderPath');
-      if (pathEl)  pathEl.textContent = urlClientId + ' — ' + displayName + ' / All Documents';
-
-      // Re-render with correct client
-      window.renderIndividualDocs();
-      window.renderStepFolders();
-      window.renderClientInfoForms();
-      // Clear and reload this client's uploaded docs
-      var docsList = document.getElementById('docsList');
-      if (docsList) {
-        docsList.innerHTML = '';
-        window._currentClientId = urlClientId;
-        var saved = window.loadClientUploads(urlClientId);
-        // Restore uploaded flags in docLibrary
-        saved.forEach(function(u) {
-          if (u.matchKey) {
-            var d = docLibrary.find(function(d) { return d.id === u.matchKey; });
-            if (d) d.uploaded = true;
-          }
-          window.addUploadedCard(u.name, u.icon, u.date, u.size, u.type, true);
-        });
-        var emptyState = document.getElementById('emptyState');
-        if (emptyState) emptyState.style.display = saved.length === 0 ? 'block' : 'none';
-      }
-
-      // Show client view, hide landing
-      if (window._showView) { window._showView('client'); } else { document.getElementById('clientView').style.display = 'block'; }
-      document.getElementById('landingView').style.display = 'none';
-
-    } else {
-      // No client param — show landing page only
-      document.getElementById('clientView').style.display = 'none';
-      document.getElementById('clientView').classList.add('hidden');
-      document.getElementById('landingView').style.display = 'flex';
-      // View toggle stays hidden (staff access via double-click footer)
-    }
-  });
 
 
   // ─── MANAGE STAFF ───
@@ -4746,10 +4611,10 @@ Kind regards,
       }
     });
     client.requestAccessToken();
-  }
+  };
 
   // Try silent reconnect once GSI is available
-  (function tryAutoReconnect() {
+  ;(function tryAutoReconnect() {
     if (typeof google !== 'undefined' && google.accounts) {
       setTimeout(function() { if (window.autoReconnectDrive) window.autoReconnectDrive(); }, 1000);
     } else {
@@ -6556,7 +6421,7 @@ Kind regards,
     document.getElementById('importFileInput').click();
   };
 
-  document.addEventListener('DOMContentLoaded', function() {
+  window._setupImport = function() {
     var importInput = document.getElementById('importFileInput');
     if (importInput) {
       importInput.addEventListener('change', function(e) {
@@ -6583,7 +6448,7 @@ Kind regards,
         importInput.value = '';
       });
     }
-  });
+  };
 
   window.formatSize = function formatSize(bytes) {
     if (!bytes || bytes === 0) return '—';
@@ -6591,13 +6456,154 @@ Kind regards,
     return (bytes / (1024 * 1024)).toFixed(1) + 'MB';
   }
 
-  window.showToast = function showToast(msg, icon = '✅') {
-    const t = document.getElementById('toast');
-    document.getElementById('toastMsg').textContent = msg;
-    document.getElementById('toastIcon').textContent = icon;
-    t.classList.add('show');
-    setTimeout(() => t.classList.remove('show'), 5000);
-  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    try { window.loadSettings(); } catch(e) { console.error('loadSettings:', e); }
+    try { window.loadPersistedData(); } catch(e) { console.error('loadPersistedData:', e); }
+    try { window.renderIndividualDocs(); } catch(e) { console.error('renderIndividualDocs:', e); }
+    try { renderStepFolders(); } catch(e) { console.error('renderStepFolders:', e); }
+    try { renderClientGroups(); } catch(e) { console.error('renderClientGroups:', e); }
+    try { updateLockButtons(); } catch(e) { console.error('updateLockButtons:', e); }
+    try { setDriveStatus(false); } catch(e) { console.error('setDriveStatus:', e); }
+    try { loadReminderSettings(); } catch(e) { console.error('loadReminderSettings:', e); }
+
+    // Setup import handler
+    if (window._setupImport) window._setupImport();
+
+    // Wire Drive connect button
+    var driveBtn = document.getElementById('driveConnectBtn');
+    if (driveBtn) {
+      driveBtn.addEventListener('click', function() {
+        if (window.initiateDriveAuth) window.initiateDriveAuth();
+        else showToast('Drive auth not ready — please refresh.', '⚠️');
+      });
+    }
+
+    // Global action dispatcher — handles all data-action buttons
+    document.body.addEventListener('click', function(e) {
+      var btn = e.target.closest('[data-action]');
+      if (!btn) return;
+      var action = btn.dataset.action;
+      var fnMap = {
+        openAssignModal:        function(){ window.openAssignModal && window.openAssignModal(); },
+        openExplanationManager: function(){ window.openExplanationManager && window.openExplanationManager(); },
+        openDocLibraryModal:    function(){ window.openDocLibraryModal && window.openDocLibraryModal(); },
+        openStepFoldersModal:   function(){ window.openStepFoldersModal && window.openStepFoldersModal(); },
+        openManageStaffModal:   function(){ window.openManageStaffModal && window.openManageStaffModal(); },
+        lockStaff:              function(){ window.lockStaff && window.lockStaff(); },
+        openRemindersModal:     function(){ window.openRemindersModal && window.openRemindersModal(); },
+        openInfoRequestsModal:  function(){ window.openInfoRequestsModal && window.openInfoRequestsModal(); },
+        openNewClientModal:     function(){ window.openNewClientModal && window.openNewClientModal(); },
+        initiateDriveAuth:      function(){ window.initiateDriveAuth && window.initiateDriveAuth(); },
+        resetSettings:          function(){ window.resetSettings && window.resetSettings(); },
+        saveSettings:           function(){ window.saveSettings && window.saveSettings(); },
+        submitUpload:           function(){ window.submitUpload && window.submitUpload(); },
+        submitReject:           function(){ window.submitReject && window.submitReject(); },
+        saveAssignments:        function(){ window.saveAssignments && window.saveAssignments(); },
+        saveExplanations:       function(){ window.saveExplanations && window.saveExplanations(); },
+        addDocToLibrary:        function(){ window.addDocToLibrary && window.addDocToLibrary(); },
+        saveDocLibrary:         function(){ window.saveDocLibrary && window.saveDocLibrary(); },
+        addStepFolder:          function(){ window.addStepFolder && window.addStepFolder(); },
+        saveStepFolders:        function(){ window.saveStepFolders && window.saveStepFolders(); },
+        addStaffMember:         function(){ window.addStaffMember && window.addStaffMember(); },
+        saveStaffMembers:       function(){ window.saveStaffMembers && window.saveStaffMembers(); },
+        copyPortalLink:         function(){ window.copyPortalLink && window.copyPortalLink(); },
+        sendWelcomeEmail:       function(){ window.sendWelcomeEmail && window.sendWelcomeEmail(); },
+        saveNewClient:          function(){ window.saveNewClient && window.saveNewClient(); },
+        previewZoomOut:         function(){ window.previewZoom && window.previewZoom(-0.25); },
+        previewZoomIn:          function(){ window.previewZoom && window.previewZoom(+0.25); },
+        previewZoomReset:       function(){ window.previewZoomReset && window.previewZoomReset(); },
+        previewOpenInDrive:     function(){ window.previewOpenInDrive && window.previewOpenInDrive(); },
+        closeDocPreview:        function(){ window.closeDocPreview && window.closeDocPreview(); },
+        saveReminderSettings:   function(){ window.saveReminderSettings && window.saveReminderSettings(); window.closeModal && window.closeModal('remindersModal'); },
+        sendTestReminder:       function(){ window.sendTestReminder && window.sendTestReminder(); },
+        activateSelectedInfoReqs: function(){ window.activateSelectedInfoReqs && window.activateSelectedInfoReqs(); },
+        saveCustomRequest:      function(){ window.saveCustomRequest && window.saveCustomRequest(); },
+        addCustomField:         function(){ window.addCustomField && window.addCustomField(); },
+        exportData:             function(){ window.exportData && window.exportData(); },
+        importData:             function(){ window.importData && window.importData(); },
+      };
+      if (fnMap[action]) {
+        fnMap[action]();
+      }
+    });
+
+    // pw overlay click-outside to close
+    const pwOv = document.getElementById('pwOverlay');
+    if (pwOv) pwOv.addEventListener('click', e => { if (e.target === pwOv) closePwModal(); });
+
+    // ── Read URL params to identify client ──────────────────────────────────
+    try {
+    const params = new URLSearchParams(window.location.search);
+    const urlClientId   = params.get('client');
+    const urlClientName = params.get('name');
+
+    if (urlClientId) {
+      // Find existing client or create minimal entry from URL
+      let found = clients.find(c => c.id === urlClientId);
+      if (!found) {
+        found = {
+          id: urlClientId,
+          name: urlClientName || urlClientId,
+          email: '', phone: '', step: '', adviser: staffMembers[0]?.id || 's1',
+          docs: docLibrary.map(d => d.id),
+          driveFolderId: null
+        };
+        clients.push(found);
+      }
+      activeClientId = found.id;
+      window._currentClientId = found.id;
+
+      // Update header pill with real client name
+      const displayName = found.name || urlClientName || urlClientId;
+      const nameEl = document.getElementById('clientNameDisplay');
+      const idEl   = document.getElementById('clientIdDisplay');
+      const avatarEl = document.getElementById('clientAvatar');
+      const headerRight = document.getElementById('headerRight');
+      if (nameEl) nameEl.textContent = displayName;
+      if (idEl)   idEl.textContent   = urlClientId;
+      if (avatarEl) avatarEl.textContent = displayName.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+      if (headerRight) headerRight.style.display = 'flex';
+
+      // Update folder path
+      const pathEl = document.getElementById('clientFolderPath');
+      if (pathEl)  pathEl.textContent = urlClientId + ' — ' + displayName + ' / All Documents';
+
+      // Re-render with correct client
+      window.renderIndividualDocs();
+      window.renderStepFolders();
+      window.renderClientInfoForms();
+      // Clear and reload this client's uploaded docs
+      var docsList = document.getElementById('docsList');
+      if (docsList) {
+        docsList.innerHTML = '';
+        window._currentClientId = urlClientId;
+        var saved = window.loadClientUploads(urlClientId);
+        // Restore uploaded flags in docLibrary
+        saved.forEach(function(u) {
+          if (u.matchKey) {
+            var d = docLibrary.find(function(d) { return d.id === u.matchKey; });
+            if (d) d.uploaded = true;
+          }
+          window.addUploadedCard(u.name, u.icon, u.date, u.size, u.type, true);
+        });
+        var emptyState = document.getElementById('emptyState');
+        if (emptyState) emptyState.style.display = saved.length === 0 ? 'block' : 'none';
+      }
+
+      // Show client view, hide landing
+      if (window._showView) { window._showView('client'); } else { document.getElementById('clientView').style.display = 'block'; }
+      document.getElementById('landingView').style.display = 'none';
+
+    } else {
+      // No client param — show landing page only
+      document.getElementById('clientView').style.display = 'none';
+      document.getElementById('clientView').classList.add('hidden');
+      document.getElementById('landingView').style.display = 'flex';
+    }
+    } catch(urlErr) { console.error('URL param error:', urlErr); }
+  });
+
 </script>
 
 <!-- debug bar removed -->
