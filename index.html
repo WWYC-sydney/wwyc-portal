@@ -3769,6 +3769,13 @@ Kind regards,
       const div = document.createElement('div');
       div.className = 'req-doc-item' + (doc.uploaded ? ' uploaded' : '');
       div.dataset.id = doc.id;
+      if (!doc.uploaded) {
+        div.style.cursor = 'pointer';
+        div.addEventListener('click', function(e) {
+          if (e.target.closest('.info-btn')) return; // don't trigger on tooltip
+          window.openUploadForDoc(doc.id, doc.name);
+        });
+      }
       div.innerHTML = `
         <div class="req-doc-icon">${doc.icon}</div>
         <div class="req-doc-body">
@@ -4412,7 +4419,16 @@ Kind regards,
         if (matchedDoc) matchedDoc.uploaded = true;
       }
       // Save to localStorage for this client
-      var clientId = window._currentClientId || (window.getActiveClient() && window.getActiveClient().id);
+      // Try multiple sources to get the client ID
+      var clientId = window._currentClientId;
+      if (!clientId) {
+        var params2 = new URLSearchParams(window.location.search);
+        clientId = params2.get('client');
+      }
+      if (!clientId) {
+        var ac2 = window.getActiveClient && window.getActiveClient();
+        if (ac2) clientId = ac2.id;
+      }
       if (clientId) {
         window.saveClientUpload(clientId, {
           name: savedName,
@@ -4427,8 +4443,11 @@ Kind regards,
     });
 
     window.persistAll();
+    // Re-render doc cards so uploaded ones show green tick
+    if (window.renderIndividualDocs) window.renderIndividualDocs();
     showToast('📧 ' + savedNames.length + ' file' + (savedNames.length !== 1 ? 's' : '') + ' uploaded — sent to ' + staffName + ' for review.');
     pendingFiles = [];
+    selectedChecklistDocId = null;
   }
 
   window.removeDoc = function removeDoc(btn, id) {
@@ -5094,8 +5113,30 @@ Kind regards,
   };
 
   window.generatePortalUrl = function generatePortalUrl(clientId, clientName) {
-    const base = window.location.href.split('?')[0];
-    const params = new URLSearchParams({ client: clientId, name: clientName });
+    const base   = window.location.href.split('?')[0];
+    const client = clients.find(function(c){ return c.id === clientId; });
+    
+    // Build a compact assignments map: docId -> staff name
+    var assignMap = {};
+    docLibrary.forEach(function(doc) {
+      var staffId = staffAssignments[doc.id] || doc.assignee;
+      var staff   = staffMembers.find(function(s){ return s.id === staffId; });
+      if (staff) assignMap[doc.id] = staff.name;
+    });
+
+    // Include adviser name from client record
+    var adviserName = '';
+    if (client) {
+      var adv = staffMembers.find(function(s){ return s.id === client.adviser; });
+      if (adv) adviserName = adv.name;
+    }
+
+    var params = new URLSearchParams({
+      client:  clientId,
+      name:    clientName,
+      adviser: adviserName,
+      assign:  btoa(JSON.stringify(assignMap))
+    });
     return base + '?' + params.toString();
   }
 
@@ -6450,6 +6491,46 @@ Kind regards,
     }
   };
 
+
+  window.openUploadForDoc = function openUploadForDoc(docId, docName) {
+    // Set the selected checklist doc so upload links to this doc
+    selectedChecklistDocId = docId;
+    
+    // Pre-select the matching doc type in the dropdown
+    var sel = document.getElementById('docTypeSelect');
+    if (sel) {
+      // Find matching option by doc name
+      var matched = false;
+      for (var i = 0; i < sel.options.length; i++) {
+        if (sel.options[i].value.toLowerCase().indexOf(docName.split(' ')[0].toLowerCase()) !== -1) {
+          sel.selectedIndex = i;
+          matched = true;
+          break;
+        }
+      }
+      if (!matched) sel.selectedIndex = 0;
+      // Trigger preview update
+      if (window.updateSavedNamePreview) window.updateSavedNamePreview();
+    }
+
+    // Clear pending files and open modal
+    pendingFiles = [];
+    var modal = document.getElementById('uploadModal');
+    if (!modal) return;
+    
+    // Update modal title to show which doc we're uploading
+    var titleEl = modal.querySelector('.modal-title');
+    if (titleEl) titleEl.textContent = 'Upload: ' + docName;
+    
+    modal.classList.add('open');
+    
+    // Trigger file picker immediately
+    setTimeout(function() {
+      var fileInput = document.getElementById('fileInput');
+      if (fileInput) fileInput.click();
+    }, 200);
+  };
+
   window.formatSize = function formatSize(bytes) {
     if (!bytes || bytes === 0) return '—';
     if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(0) + 'KB';
@@ -6537,6 +6618,29 @@ Kind regards,
     const params = new URLSearchParams(window.location.search);
     const urlClientId   = params.get('client');
     const urlClientName = params.get('name');
+    const urlAdviser    = params.get('adviser');
+    const urlAssign     = params.get('assign');
+
+    // If URL has assignment data, apply it to docLibrary and staffMembers
+    if (urlAssign) {
+      try {
+        const assignMap = JSON.parse(atob(urlAssign));
+        // Apply staff names from URL to docLibrary for display
+        docLibrary.forEach(function(doc) {
+          if (assignMap[doc.id]) {
+            // Find or create a staff member entry for this name
+            var staffName = assignMap[doc.id];
+            var existing = staffMembers.find(function(s){ return s.name === staffName; });
+            if (!existing) {
+              staffMembers.push({ id: 'url_' + doc.id, name: staffName, email: '' });
+              existing = staffMembers[staffMembers.length - 1];
+            }
+            staffAssignments[doc.id] = existing.id;
+            doc.assignee = existing.id;
+          }
+        });
+      } catch(e) {}
+    }
 
     if (urlClientId) {
       // Find existing client or create minimal entry from URL
