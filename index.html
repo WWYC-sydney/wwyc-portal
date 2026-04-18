@@ -2692,6 +2692,8 @@
       <button class="staff-settings-btn" data-action="openStepFoldersModal">📂 Manage Step Folders</button>
       <button class="staff-settings-btn" data-action="openManageStaffModal" style="background:rgba(107,79,160,0.1);border-color:rgba(107,79,160,0.3);color:#a88fd4;">👤 Manage Staff</button>
       <button class="staff-settings-btn" data-action="lockStaff" style="margin-left:auto;background:rgba(140,4,4,0.08);border-color:rgba(140,4,4,0.25);color:var(--crimson);">🔒 Lock &amp; Exit</button>
+      <button class="staff-settings-btn" data-action="exportData" style="background:rgba(32,171,164,0.1);border-color:rgba(32,171,164,0.3);color:#167A75;">⬇ Export Data</button>
+      <button class="staff-settings-btn" data-action="importData" style="background:rgba(32,171,164,0.1);border-color:rgba(32,171,164,0.3);color:#167A75;">⬆ Import Data</button>
       <div id="driveConnectWrap" style="display:flex;align-items:center;gap:8px;margin-left:auto;">
         <div id="driveStatusDot" style="width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,0.2);flex-shrink:0;"></div>
         <span id="driveStatusLabel" style="font-size:10px;color:var(--white-dim);">Google Drive not connected</span>
@@ -4430,7 +4432,7 @@ Kind regards,
         if (ac2) clientId = ac2.id;
       }
       if (clientId) {
-        window.saveClientUpload(clientId, {
+        var uploadRecord = {
           name: savedName,
           icon: icon,
           date: displayDate,
@@ -4438,7 +4440,15 @@ Kind regards,
           type: ext.toUpperCase(),
           docType: docType,
           matchKey: matchKey
-        });
+        };
+        window.saveClientUpload(clientId, uploadRecord);
+        // Also store in the clients array so export/import carries upload data
+        var clientRecord = clients.find(function(c){ return c.id === clientId; });
+        if (clientRecord) {
+          if (!clientRecord.uploads) clientRecord.uploads = [];
+          clientRecord.uploads.push(uploadRecord);
+          window.persistAll();
+        }
       }
     });
 
@@ -4886,7 +4896,11 @@ Kind regards,
 
     clients.forEach(function(client) {
       var initials      = client.name.split(' ').map(function(w){ return w[0]||''; }).join('').slice(0,2).toUpperCase();
+      // Load uploads from localStorage OR from the client record (if synced via export/import)
       var clientUploads = window.loadClientUploads(client.id);
+      if (clientUploads.length === 0 && client.uploads && client.uploads.length > 0) {
+        clientUploads = client.uploads;
+      }
       var uploadedKeys  = clientUploads.map(function(u){ return u.matchKey; }).filter(Boolean);
 
       var requiredDocs = client.docs.map(function(id) {
@@ -4976,7 +4990,7 @@ Kind regards,
           rtb.addEventListener('click', function(e){ e.stopPropagation(); window.openRejectModal(rtb, 'badge-' + client.id, doc.name, client.name); });
           row.appendChild(rb); row.appendChild(rtb);
         } else {
-          var aw = document.createElement('span'); aw.style.cssText = 'font-size:10px;color:rgba(255,255,255,0.25);font-style:italic;'; aw.textContent = 'Awaiting upload';
+          var aw = document.createElement('span'); aw.style.cssText = 'font-size:10px;color:rgba(255,255,255,0.25);font-style:italic;'; aw.textContent = 'Awaiting upload — check Drive folder';
           row.appendChild(aw);
         }
         group.appendChild(row);
@@ -6693,6 +6707,8 @@ Kind regards,
         });
         var emptyState = document.getElementById('emptyState');
         if (emptyState) emptyState.style.display = saved.length === 0 ? 'block' : 'none';
+        // Re-render doc cards with correct uploaded flags
+        if (saved.length > 0) window.renderIndividualDocs();
       }
 
       // Show client view, hide landing
