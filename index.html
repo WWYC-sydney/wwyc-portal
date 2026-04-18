@@ -2686,12 +2686,12 @@
     </div>
 
     <div class="staff-settings-row">
-      <button class="staff-settings-btn" onclick="window.openAssignModal()">⚙ Manage Assignments</button>
-      <button class="staff-settings-btn" onclick="window.openExplanationManager()">✏ Edit Explanations</button>
-      <button class="staff-settings-btn" onclick="window.openDocLibraryModal()">📋 Manage Doc Library</button>
-      <button class="staff-settings-btn" onclick="window.openStepFoldersModal()">📂 Manage Step Folders</button>
-      <button class="staff-settings-btn" onclick="window.openManageStaffModal()" style="background:rgba(107,79,160,0.1);border-color:rgba(107,79,160,0.3);color:#a88fd4;">👤 Manage Staff</button>
-      <button class="staff-settings-btn" onclick="window.lockStaff()" style="margin-left:auto;background:rgba(140,4,4,0.08);border-color:rgba(140,4,4,0.25);color:var(--crimson);">🔒 Lock &amp; Exit</button>
+      <button class="staff-settings-btn" data-action="openAssignModal">⚙ Manage Assignments</button>
+      <button class="staff-settings-btn" data-action="openExplanationManager">✏ Edit Explanations</button>
+      <button class="staff-settings-btn" data-action="openDocLibraryModal">📋 Manage Doc Library</button>
+      <button class="staff-settings-btn" data-action="openStepFoldersModal">📂 Manage Step Folders</button>
+      <button class="staff-settings-btn" data-action="openManageStaffModal" style="background:rgba(107,79,160,0.1);border-color:rgba(107,79,160,0.3);color:#a88fd4;">👤 Manage Staff</button>
+      <button class="staff-settings-btn" data-action="lockStaff" style="margin-left:auto;background:rgba(140,4,4,0.08);border-color:rgba(140,4,4,0.25);color:var(--crimson);">🔒 Lock &amp; Exit</button>
       <div id="driveConnectWrap" style="display:flex;align-items:center;gap:8px;margin-left:auto;">
         <div id="driveStatusDot" style="width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,0.2);flex-shrink:0;"></div>
         <span id="driveStatusLabel" style="font-size:10px;color:var(--white-dim);">Google Drive not connected</span>
@@ -2704,12 +2704,12 @@
 
     <!-- ── REMINDERS + INFO REQUESTS (compact buttons) ── -->
     <div style="display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;">
-      <button class="staff-settings-btn" onclick="window.openRemindersModal()" style="background:rgba(32,171,164,0.1);border-color:rgba(32,171,164,0.3);color:#167A75;">🔔 Reminders</button>
-      <button class="staff-settings-btn" onclick="window.openInfoRequestsModal()" style="background:rgba(28,68,117,0.08);border-color:rgba(28,68,117,0.2);color:var(--navy);">📋 Information Requests</button>
+      <button class="staff-settings-btn" data-action="openRemindersModal" style="background:rgba(32,171,164,0.1);border-color:rgba(32,171,164,0.3);color:#167A75;">🔔 Reminders</button>
+      <button class="staff-settings-btn" data-action="openInfoRequestsModal" style="background:rgba(28,68,117,0.08);border-color:rgba(28,68,117,0.2);color:var(--navy);">📋 Information Requests</button>
     </div>
 
         <!-- New Client Button -->
-    <button class="new-client-btn" onclick="window.openNewClientModal()">＋ New Client</button>
+    <button class="new-client-btn" data-action="openNewClientModal">＋ New Client</button>
 
     <!-- Dynamic clients rendered here -->
     <div id="dynamicClientsList"></div>
@@ -2835,7 +2835,7 @@
       <div class="maint-drive-status" id="maintDriveStatus">
         <div class="maint-drive-dot" id="maintDriveDot"></div>
         <span id="maintDriveLabel">Not connected</span>
-        <button class="maint-drive-btn" onclick="window.initiateDriveAuth()">Connect Now</button>
+        <button class="maint-drive-btn" data-action="initiateDriveAuth">Connect Now</button>
       </div>
     </div>
 
@@ -2893,11 +2893,28 @@
       </div>
     </div>
 
+    <!-- ── DATA BACKUP ── -->
+    <div class="maint-card">
+      <div class="maint-card-header">
+        <div class="maint-card-icon">💾</div>
+        <div>
+          <div class="maint-card-title">Data Backup</div>
+          <div class="maint-card-sub">Export your clients and staff so you never lose them. Import after any update.</div>
+        </div>
+      </div>
+      <div style="padding:18px 24px;display:flex;gap:10px;flex-wrap:wrap;">
+        <button class="maint-save-btn" data-action="exportData" style="background:linear-gradient(135deg,#20ABA4,#167A75);">⬇ Export All Data</button>
+        <button class="maint-reset-btn" data-action="importData">⬆ Import Data</button>
+        <input type="file" id="importFileInput" accept=".json" style="display:none;">
+        <div style="font-size:11px;color:var(--text-sub);align-self:center;font-weight:500;">Export before updating the portal file. Import after uploading to restore your data.</div>
+      </div>
+    </div>
+
     <!-- ── SAVE BAR ── -->
     <div class="maint-save-bar">
       <div class="maint-save-status" id="maintSaveStatus"></div>
-      <button class="maint-reset-btn" onclick="window.resetSettings()">↺ Reset to Defaults</button>
-      <button class="maint-save-btn" onclick="window.saveSettings()">💾 Save All Settings</button>
+      <button class="maint-reset-btn" data-action="resetSettings">↺ Reset to Defaults</button>
+      <button class="maint-save-btn" data-action="saveSettings">💾 Save All Settings</button>
     </div>
 
   </div>
@@ -3092,7 +3109,7 @@
 
     <div class="modal-actions">
       <button class="btn-secondary" onclick="window.closeModal('uploadModal')">Cancel</button>
-      <button class="btn-primary" onclick="window.submitUpload()">Upload Files</button>
+      <button class="btn-primary" data-action="submitUpload">Upload Files</button>
     </div>
   </div>
 </div>
@@ -3107,7 +3124,7 @@
     <textarea class="modal-textarea" id="rejectReason" placeholder="e.g. The statement only covers one month. Please provide the last 3 months in a single PDF covering Oct–Dec 2023."></textarea>
     <div class="modal-actions">
       <button class="btn-secondary" onclick="window.closeModal('rejectModal')">Cancel</button>
-      <button class="btn-danger" onclick="window.submitReject()">Return to Client</button>
+      <button class="btn-danger" data-action="submitReject">Return to Client</button>
     </div>
   </div>
 </div>
@@ -3123,7 +3140,7 @@
 
     <div class="modal-actions">
       <button class="btn-secondary" onclick="window.closeModal('assignModal')">Cancel</button>
-      <button class="btn-primary" onclick="window.saveAssignments()">Save Assignments</button>
+      <button class="btn-primary" data-action="saveAssignments">Save Assignments</button>
     </div>
   </div>
 </div>
@@ -3164,7 +3181,7 @@
 
     <div class="modal-actions">
       <button class="btn-secondary" onclick="window.closeModal('explanationModal')">Cancel</button>
-      <button class="btn-primary" onclick="window.saveExplanations()">Save Explanations</button>
+      <button class="btn-primary" data-action="saveExplanations">Save Explanations</button>
     </div>
   </div>
 </div>
@@ -3177,10 +3194,10 @@
     <div class="modal-title">Document Library</div>
     <div class="modal-sub">Add, edit or remove document types from the library. These appear as individual documents clients can select.</div>
     <div id="docLibraryList" style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px;max-height:340px;overflow-y:auto;"></div>
-    <button class="staff-settings-btn" onclick="window.addDocToLibrary()" style="margin-bottom:16px;">+ Add New Document Type</button>
+    <button class="staff-settings-btn" data-action="addDocToLibrary" style="margin-bottom:16px;">+ Add New Document Type</button>
     <div class="modal-actions">
       <button class="btn-secondary" onclick="window.closeModal('docLibraryModal')">Cancel</button>
-      <button class="btn-primary" onclick="window.saveDocLibrary()">Save Library</button>
+      <button class="btn-primary" data-action="saveDocLibrary">Save Library</button>
     </div>
   </div>
 </div>
@@ -3192,10 +3209,10 @@
     <div class="modal-title">Step Folders</div>
     <div class="modal-sub">Create folders for each step of the process. Each folder holds a set of required documents. Clients can select all or pick individually.</div>
     <div id="stepFoldersEditorList" style="display:flex;flex-direction:column;gap:12px;margin-bottom:16px;max-height:400px;overflow-y:auto;"></div>
-    <button class="staff-settings-btn" onclick="window.addStepFolder()" style="margin-bottom:16px;">+ Add New Step Folder</button>
+    <button class="staff-settings-btn" data-action="addStepFolder" style="margin-bottom:16px;">+ Add New Step Folder</button>
     <div class="modal-actions">
       <button class="btn-secondary" onclick="window.closeModal('stepFoldersModal')">Cancel</button>
-      <button class="btn-primary" onclick="window.saveStepFolders()">Save Folders</button>
+      <button class="btn-primary" data-action="saveStepFolders">Save Folders</button>
     </div>
   </div>
 </div>
@@ -3208,10 +3225,10 @@
     <div class="modal-title">Manage Staff</div>
     <div class="modal-sub">Add or edit staff members. Their names and email addresses appear in all document assignment dropdowns throughout the portal.</div>
     <div id="staffMemberList" style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px;max-height:380px;overflow-y:auto;"></div>
-    <button class="staff-settings-btn" onclick="window.addStaffMember()" style="margin-bottom:16px;">+ Add Staff Member</button>
+    <button class="staff-settings-btn" data-action="addStaffMember" style="margin-bottom:16px;">+ Add Staff Member</button>
     <div class="modal-actions">
       <button class="btn-secondary" onclick="window.closeModal('manageStaffModal')">Cancel</button>
-      <button class="btn-primary" onclick="window.saveStaffMembers()">Save Staff</button>
+      <button class="btn-primary" data-action="saveStaffMembers">Save Staff</button>
     </div>
   </div>
 </div>
@@ -3249,15 +3266,15 @@
       <div class="portal-link-label">✓ Client Portal Link</div>
       <div class="portal-link-url" id="newClientPortalUrl"></div>
       <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;">
-        <button class="portal-link-copy" onclick="window.copyPortalLink()">📋 Copy Link</button>
-        <button class="portal-link-copy" onclick="window.sendWelcomeEmail()" style="background:linear-gradient(135deg,#20ABA4,#167A75);color:white;border-color:#20ABA4;">📧 Send Welcome Email</button>
+        <button class="portal-link-copy" data-action="copyPortalLink">📋 Copy Link</button>
+        <button class="portal-link-copy" data-action="sendWelcomeEmail" style="background:linear-gradient(135deg,#20ABA4,#167A75);color:white;border-color:#20ABA4;">📧 Send Welcome Email</button>
       </div>
       <div id="welcomeEmailStatus" style="font-size:11px;color:#10B981;font-weight:700;margin-top:6px;display:none;"></div>
     </div>
 
     <div class="modal-actions" style="margin-top:20px;">
       <button class="btn-secondary" onclick="window.closeModal('newClientModal')">Cancel</button>
-      <button class="btn-primary" id="newClientSaveBtn" onclick="window.saveNewClient()">Create Client</button>
+      <button class="btn-primary" id="newClientSaveBtn" data-action="saveNewClient">Create Client</button>
     </div>
   </div>
 </div>
@@ -3327,12 +3344,12 @@ document.getElementById('pwDoSubmit').addEventListener('click', function() {
       <div class="doc-preview-subtitle" id="previewDocSubtitle"></div>
     </div>
     <div class="doc-preview-controls">
-      <button class="preview-ctrl-btn" onclick="window.previewZoom(-0.25)" title="Zoom out">−</button>
+      <button class="preview-ctrl-btn" data-action="previewZoomOut" title="Zoom out">−</button>
       <span class="preview-zoom-label" id="previewZoomLabel">100%</span>
-      <button class="preview-ctrl-btn" onclick="window.previewZoom(+0.25)" title="Zoom in">+</button>
-      <button class="preview-ctrl-btn" onclick="window.previewZoomReset()" title="Reset zoom" style="font-size:12px;">⊡</button>
-      <button class="preview-open-drive-btn" id="previewDriveBtn" onclick="window.previewOpenInDrive()" style="display:none;">📁 Open in Drive</button>
-      <button class="preview-close-btn" onclick="window.closeDocPreview()" title="Close">✕</button>
+      <button class="preview-ctrl-btn" data-action="previewZoomIn" title="Zoom in">+</button>
+      <button class="preview-ctrl-btn" data-action="previewZoomReset" title="Reset zoom" style="font-size:12px;">⊡</button>
+      <button class="preview-open-drive-btn" id="previewDriveBtn" data-action="previewOpenInDrive" style="display:none;">📁 Open in Drive</button>
+      <button class="preview-close-btn" data-action="closeDocPreview" title="Close">✕</button>
     </div>
   </div>
   <div class="doc-preview-body" id="previewBody">
@@ -3341,7 +3358,7 @@ document.getElementById('pwDoSubmit').addEventListener('click', function() {
         <div class="doc-preview-placeholder-icon" id="previewPlaceholderIcon">📄</div>
         <div class="doc-preview-placeholder-name" id="previewPlaceholderName"></div>
         <div class="doc-preview-placeholder-sub">This document is stored in Google Drive. Connect Google Drive and open the client's folder to view and download the file.</div>
-        <button class="doc-preview-drive-cta" onclick="window.previewOpenInDrive()">📁 Open in Google Drive</button>
+        <button class="doc-preview-drive-cta" data-action="previewOpenInDrive">📁 Open in Google Drive</button>
       </div>
     </div>
   </div>
@@ -3472,8 +3489,8 @@ Kind regards,
     </table>
 
     <div class="modal-actions" style="margin-top:16px;">
-      <button class="reminder-test-btn" onclick="window.sendTestReminder()">📧 Test Email</button>
-      <button class="reminder-save-btn" onclick="window.saveReminderSettings();window.closeModal('remindersModal');">💾 Save</button>
+      <button class="reminder-test-btn" data-action="sendTestReminder">📧 Test Email</button>
+      <button class="reminder-save-btn" data-action="saveReminderSettings">💾 Save</button>
     </div>
   </div>
 </div>
@@ -3612,16 +3629,16 @@ Kind regards,
       <input class="modal-input" id="customReqDesc" placeholder="Short description of what you need" style="margin-bottom:12px;">
       <div class="modal-label" style="margin-top:0;">Fields required</div>
       <div id="customFieldsList" style="display:flex;flex-direction:column;gap:8px;margin-bottom:10px;"></div>
-      <button class="info-req-add-btn" onclick="window.addCustomField()">＋ Add Field</button>
+      <button class="info-req-add-btn" data-action="addCustomField">＋ Add Field</button>
       <div class="modal-actions" style="margin-top:20px;">
         <button class="btn-secondary" onclick="window.closeModal('infoRequestsModal')">Cancel</button>
-        <button class="btn-primary" onclick="window.saveCustomRequest()">Add to Library</button>
+        <button class="btn-primary" data-action="saveCustomRequest">Add to Library</button>
       </div>
     </div>
 
     <div class="modal-actions" id="infoReqLibraryActions" style="margin-top:16px;">
       <button class="btn-secondary" onclick="window.closeModal('infoRequestsModal')">Close</button>
-      <button class="btn-primary" onclick="window.activateSelectedInfoReqs()">Activate Selected →</button>
+      <button class="btn-primary" data-action="activateSelectedInfoReqs">Activate Selected →</button>
     </div>
   </div>
 </div>
@@ -4142,6 +4159,56 @@ Kind regards,
         else showToast('Drive auth not ready — please refresh.', '⚠️');
       });
     }
+
+    // Global action dispatcher — handles all data-action buttons
+    document.body.addEventListener('click', function(e) {
+      var btn = e.target.closest('[data-action]');
+      if (!btn) return;
+      var action = btn.dataset.action;
+      var fnMap = {
+        openAssignModal:        function(){ window.openAssignModal && window.openAssignModal(); },
+        openExplanationManager: function(){ window.openExplanationManager && window.openExplanationManager(); },
+        openDocLibraryModal:    function(){ window.openDocLibraryModal && window.openDocLibraryModal(); },
+        openStepFoldersModal:   function(){ window.openStepFoldersModal && window.openStepFoldersModal(); },
+        openManageStaffModal:   function(){ window.openManageStaffModal && window.openManageStaffModal(); },
+        lockStaff:              function(){ window.lockStaff && window.lockStaff(); },
+        openRemindersModal:     function(){ window.openRemindersModal && window.openRemindersModal(); },
+        openInfoRequestsModal:  function(){ window.openInfoRequestsModal && window.openInfoRequestsModal(); },
+        openNewClientModal:     function(){ window.openNewClientModal && window.openNewClientModal(); },
+        initiateDriveAuth:      function(){ window.initiateDriveAuth && window.initiateDriveAuth(); },
+        resetSettings:          function(){ window.resetSettings && window.resetSettings(); },
+        saveSettings:           function(){ window.saveSettings && window.saveSettings(); },
+        submitUpload:           function(){ window.submitUpload && window.submitUpload(); },
+        submitReject:           function(){ window.submitReject && window.submitReject(); },
+        saveAssignments:        function(){ window.saveAssignments && window.saveAssignments(); },
+        saveExplanations:       function(){ window.saveExplanations && window.saveExplanations(); },
+        addDocToLibrary:        function(){ window.addDocToLibrary && window.addDocToLibrary(); },
+        saveDocLibrary:         function(){ window.saveDocLibrary && window.saveDocLibrary(); },
+        addStepFolder:          function(){ window.addStepFolder && window.addStepFolder(); },
+        saveStepFolders:        function(){ window.saveStepFolders && window.saveStepFolders(); },
+        addStaffMember:         function(){ window.addStaffMember && window.addStaffMember(); },
+        saveStaffMembers:       function(){ window.saveStaffMembers && window.saveStaffMembers(); },
+        copyPortalLink:         function(){ window.copyPortalLink && window.copyPortalLink(); },
+        sendWelcomeEmail:       function(){ window.sendWelcomeEmail && window.sendWelcomeEmail(); },
+        saveNewClient:          function(){ window.saveNewClient && window.saveNewClient(); },
+        previewZoomOut:         function(){ window.previewZoom && window.previewZoom(-0.25); },
+        previewZoomIn:          function(){ window.previewZoom && window.previewZoom(+0.25); },
+        previewZoomReset:       function(){ window.previewZoomReset && window.previewZoomReset(); },
+        previewOpenInDrive:     function(){ window.previewOpenInDrive && window.previewOpenInDrive(); },
+        closeDocPreview:        function(){ window.closeDocPreview && window.closeDocPreview(); },
+        saveReminderSettings:   function(){ window.saveReminderSettings && window.saveReminderSettings(); window.closeModal && window.closeModal('remindersModal'); },
+        sendTestReminder:       function(){ window.sendTestReminder && window.sendTestReminder(); },
+        activateSelectedInfoReqs: function(){ window.activateSelectedInfoReqs && window.activateSelectedInfoReqs(); },
+        saveCustomRequest:      function(){ window.saveCustomRequest && window.saveCustomRequest(); },
+        addCustomField:         function(){ window.addCustomField && window.addCustomField(); },
+        exportData:             function(){ window.exportData && window.exportData(); },
+        importData:             function(){ window.importData && window.importData(); },
+      };
+      if (fnMap[action]) {
+        e.stopPropagation();
+        fnMap[action]();
+      }
+    });
 
     // pw overlay click-outside to close
     const pwOv = document.getElementById('pwOverlay');
@@ -6462,6 +6529,61 @@ Kind regards,
     window.renderReminderClientTable();
     showToast('🗑 ' + clientName + ' deleted.');
   };
+
+
+  // ── DATA EXPORT / IMPORT ─────────────────────────────────────────────────
+  window.exportData = function exportData() {
+    var data = {
+      version: '1.0',
+      exported: new Date().toISOString(),
+      clients:     clients,
+      staffMembers: staffMembers,
+      staffAssignments: staffAssignments,
+      settings: portalSettings
+    };
+    var json = JSON.stringify(data, null, 2);
+    var blob = new Blob([json], { type: 'application/json' });
+    var url  = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = 'wwyc-portal-data-' + new Date().toISOString().slice(0,10) + '.json';
+    a.click();
+    URL.revokeObjectURL(url);
+    showToast('✅ Data exported! Keep this file safe.');
+  };
+
+  window.importData = function importData() {
+    document.getElementById('importFileInput').click();
+  };
+
+  document.addEventListener('DOMContentLoaded', function() {
+    var importInput = document.getElementById('importFileInput');
+    if (importInput) {
+      importInput.addEventListener('change', function(e) {
+        var file = e.target.files[0];
+        if (!file) return;
+        var reader = new FileReader();
+        reader.onload = function(ev) {
+          try {
+            var data = JSON.parse(ev.target.result);
+            if (data.clients)          { clients = data.clients; }
+            if (data.staffMembers)     { staffMembers = data.staffMembers; }
+            if (data.staffAssignments) { Object.assign(staffAssignments, data.staffAssignments); }
+            if (data.settings)         { portalSettings = Object.assign({}, portalSettings, data.settings); }
+            window.persistAll();
+            window.applySettings();
+            window.renderClientGroups();
+            window.renderReminderClientTable && window.renderReminderClientTable();
+            showToast('✅ Data imported! ' + clients.length + ' clients, ' + staffMembers.length + ' staff restored.');
+          } catch(err) {
+            showToast('Import failed — invalid file.', '⚠️');
+          }
+        };
+        reader.readAsText(file);
+        importInput.value = '';
+      });
+    }
+  });
 
   window.formatSize = function formatSize(bytes) {
     if (!bytes || bytes === 0) return '—';
