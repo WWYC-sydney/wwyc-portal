@@ -5061,19 +5061,40 @@ Kind regards,
   };
 
   window.saveClientUpload = function saveClientUpload(clientId, uploadObj) {
+    if (window._dbg) window._dbg('Saving upload for client: ' + clientId + ' doc: ' + (uploadObj.matchKey||'?'));
     // Save to localStorage
     try {
       var key = IC_UPLOADS_KEY + '_' + clientId;
       var existing = window.loadClientUploads(clientId);
       existing.push(uploadObj);
       localStorage.setItem(key, JSON.stringify(existing));
-    } catch(e) {}
-    // Save to Supabase
-    window.dbSaveUpload(clientId, uploadObj).then(function(r) {
-      if (window._dbg) window._dbg('Upload saved to Supabase for ' + clientId + ': ' + uploadObj.name, '#6EE7B7');
+    } catch(e) { if (window._dbg) window._dbg('localStorage save failed: ' + e.message, 'orange'); }
+    // Save to Supabase directly via fetch
+    var payload = {
+      client_id: clientId, name: uploadObj.name, icon: uploadObj.icon||'',
+      date: uploadObj.date||'', size: uploadObj.size||'', type: uploadObj.type||'',
+      doc_type: uploadObj.docType||'', match_key: uploadObj.matchKey||''
+    };
+    if (window._dbg) window._dbg('POST to Supabase: ' + JSON.stringify(payload).slice(0,80));
+    fetch(SUPABASE_URL + '/rest/v1/uploads', {
+      method: 'POST',
+      headers: {
+        'apikey': SUPABASE_KEY,
+        'Authorization': 'Bearer ' + SUPABASE_KEY,
+        'Content-Type': 'application/json',
+        'Prefer': 'return=minimal'
+      },
+      body: JSON.stringify(payload)
+    }).then(function(r) {
+      if (r.ok) {
+        if (window._dbg) window._dbg('✓ Upload saved to Supabase: ' + uploadObj.name, '#6EE7B7');
+      } else {
+        r.text().then(function(t) {
+          if (window._dbg) window._dbg('✗ Upload save failed ' + r.status + ': ' + t, 'red');
+        });
+      }
     }).catch(function(e) {
-      if (window._dbg) window._dbg('Upload FAILED for ' + clientId + ': ' + JSON.stringify(e), 'red');
-      console.warn('Cloud upload save failed:', e);
+      if (window._dbg) window._dbg('✗ Upload fetch error: ' + e.message, 'red');
     });
   };
 
