@@ -2581,99 +2581,151 @@
   <script src="https://cdn.jsdelivr.net/npm/docx@8.5.0/build/index.umd.min.js"></script>
   <script src="https://apis.google.com/js/api.js" async defer></script>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js" onload="window._initSupabase()"></script>
+<!-- Supabase JS library not needed - using REST API directly -->
 <script>
   const SUPABASE_URL = 'https://lxdvholorvrfyarzclws.supabase.co';
   const SUPABASE_KEY = 'sb_publishable_77yDu3UaCtUPFb-u1DDTpg_n6iFtpco';
   var _sb = null;
 
+  window._sbLoadError = function() {
+    if (window._dbg) window._dbg('Supabase script failed to load from unpkg - trying fetch API fallback', 'orange');
+    // Use raw fetch as fallback - no library needed
+    window._useFetchFallback = true;
+    window._sbReady = true;
+  };
+
   window._initSupabase = function() {
     try {
-      var sc = window.supabase || (window.Supabase && window.Supabase.createClient ? window.Supabase : null);
+      // Try different global names the UMD bundle might use
+      var sc = window.supabase || window.Supabase || window.SupabaseJs;
       if (sc && sc.createClient) {
         _sb = sc.createClient(SUPABASE_URL, SUPABASE_KEY);
+        window._sbReady = true;
         if (window._dbg) window._dbg('Supabase initialised OK', '#6EE7B7');
       } else {
-        if (window._dbg) window._dbg('Supabase global not found after load', 'red');
+        if (window._dbg) window._dbg('Supabase UMD loaded but no createClient found - using fetch fallback', 'orange');
+        window._useFetchFallback = true;
+        window._sbReady = true;
       }
     } catch(e) {
-      if (window._dbg) window._dbg('Supabase init error: ' + e.message, 'red');
+      if (window._dbg) window._dbg('Supabase init error: ' + e.message + ' - using fetch fallback', 'orange');
+      window._useFetchFallback = true;
+      window._sbReady = true;
     }
   };
 
   // ── Cloud DB helpers ────────────────────────────────────────────────────
+  // Raw fetch helpers - work without the Supabase JS library
+  var _headers = {
+    'apikey': SUPABASE_KEY,
+    'Authorization': 'Bearer ' + SUPABASE_KEY,
+    'Content-Type': 'application/json',
+    'Prefer': 'return=representation'
+  };
+
+  async function _sbGet(table, params) {
+    var url = SUPABASE_URL + '/rest/v1/' + table + '?select=*' + (params||'');
+    var r = await fetch(url, { headers: _headers });
+    if (!r.ok) { var e = await r.text(); throw new Error(table + ': ' + e); }
+    return r.json();
+  }
+
+  async function _sbPost(table, body) {
+    var url = SUPABASE_URL + '/rest/v1/' + table;
+    var r = await fetch(url, { method:'POST', headers: _headers, body: JSON.stringify(body) });
+    if (!r.ok) { var e = await r.text(); throw new Error(table + ' insert: ' + e); }
+    return r.json();
+  }
+
+  async function _sbPatch(table, body, match) {
+    var url = SUPABASE_URL + '/rest/v1/' + table + '?' + match;
+    var r = await fetch(url, { method:'PATCH', headers: Object.assign({}, _headers, {'Prefer':'return=minimal'}), body: JSON.stringify(body) });
+    if (!r.ok) { var e = await r.text(); throw new Error(table + ' update: ' + e); }
+  }
+
+  async function _sbDelete(table, match) {
+    var url = SUPABASE_URL + '/rest/v1/' + table + '?' + match;
+    var r = await fetch(url, { method:'DELETE', headers: _headers });
+    if (!r.ok) { var e = await r.text(); throw new Error(table + ' delete: ' + e); }
+  }
+
+  async function _sbUpsert(table, body) {
+    var url = SUPABASE_URL + '/rest/v1/' + table;
+    var h = Object.assign({}, _headers, {'Prefer': 'resolution=merge-duplicates,return=minimal'});
+    var r = await fetch(url, { method:'POST', headers: h, body: JSON.stringify(body) });
+    if (!r.ok) { var e = await r.text(); throw new Error(table + ' upsert: ' + e); }
+  }
+
   window.dbLoad = async function dbLoad() {
-    if (!_sb) { console.warn('Supabase not ready'); return null; }
     try {
-      const [{data:cl}, {data:st}, {data:as}, {data:up}] = await Promise.all([
-        _sb.from('clients').select('*').order('created_at'),
-        _sb.from('staff').select('*').order('created_at'),
-        _sb.from('assignments').select('*'),
-        _sb.from('uploads').select('*'),
+      var [cl, st, as, up] = await Promise.all([
+        _sbGet('clients', '&order=created_at'),
+        _sbGet('staff', '&order=created_at'),
+        _sbGet('assignments'),
+        _sbGet('uploads', '&order=created_at'),
       ]);
+      if (window._dbg) window._dbg('dbLoad: ' + cl.length + ' clients, ' + st.length + ' staff, ' + up.length + ' uploads', '#6EE7B7');
       return { clients: cl||[], staff: st||[], assignments: as||[], uploads: up||[] };
-    } catch(e) { console.error('dbLoad error:', e); return null; }
-  };
-
-  window.dbSaveClient = async function dbSaveClient(client) {
-    if (!_sb) return;
-    await _sb.from('clients').upsert({
-      id: client.id,
-      name: client.name,
-      email: client.email,
-      phone: client.phone || '',
-      step: client.step || '',
-      adviser: client.adviser || '',
-      docs: JSON.stringify(client.docs || []),
-      drive_folder_id: client.driveFolderId || null,
-      uploads: JSON.stringify(client.uploads || [])
-    });
-  };
-
-  window.dbDeleteClient = async function dbDeleteClient(clientId) {
-    if (!_sb) return;
-    await _sb.from('clients').delete().eq('id', clientId);
-    await _sb.from('uploads').delete().eq('client_id', clientId);
-  };
-
-  window.dbSaveStaff = async function dbSaveStaff(staffList) {
-    if (!_sb) return;
-    await _sb.from('staff').delete().neq('id', '');
-    if (staffList.length > 0) {
-      await _sb.from('staff').insert(staffList.map(s => ({
-        id: s.id, name: s.name, email: s.email
-      })));
+    } catch(e) { 
+      if (window._dbg) window._dbg('dbLoad error: ' + e.message, 'red');
+      return null; 
     }
   };
 
+  window.dbSaveClient = async function dbSaveClient(client) {
+    try {
+      await _sbUpsert('clients', {
+        id: client.id, name: client.name, email: client.email,
+        phone: client.phone||'', step: client.step||'', adviser: client.adviser||'',
+        docs: JSON.stringify(client.docs||[]),
+        drive_folder_id: client.driveFolderId||null,
+        uploads: JSON.stringify(client.uploads||[])
+      });
+    } catch(e) { console.warn('dbSaveClient:', e.message); }
+  };
+
+  window.dbDeleteClient = async function dbDeleteClient(clientId) {
+    try {
+      await _sbDelete('clients', 'id=eq.' + clientId);
+      await _sbDelete('uploads', 'client_id=eq.' + clientId);
+    } catch(e) { console.warn('dbDeleteClient:', e.message); }
+  };
+
+  window.dbSaveStaff = async function dbSaveStaff(staffList) {
+    try {
+      await _sbDelete('staff', 'id=neq.NONE');
+      if (staffList.length > 0) {
+        await _sbPost('staff', staffList.map(function(s){ return {id:s.id, name:s.name, email:s.email}; }));
+      }
+    } catch(e) { console.warn('dbSaveStaff:', e.message); }
+  };
+
   window.dbSaveAssignments = async function dbSaveAssignments(assignments) {
-    if (!_sb) return;
-    const rows = Object.keys(assignments).map(k => ({ doc_key: k, staff_id: assignments[k] }));
-    await _sb.from('assignments').delete().neq('doc_key', '');
-    if (rows.length > 0) await _sb.from('assignments').insert(rows);
+    try {
+      var rows = Object.keys(assignments).map(function(k){ return {doc_key:k, staff_id:assignments[k]}; });
+      await _sbDelete('assignments', 'doc_key=neq.NONE');
+      if (rows.length > 0) await _sbPost('assignments', rows);
+    } catch(e) { console.warn('dbSaveAssignments:', e.message); }
   };
 
   window.dbSaveUpload = async function dbSaveUpload(clientId, uploadObj) {
-    if (!_sb) return;
-    await _sb.from('uploads').insert({
-      client_id: clientId,
-      name: uploadObj.name,
-      icon: uploadObj.icon,
-      date: uploadObj.date,
-      size: uploadObj.size,
-      type: uploadObj.type,
-      doc_type: uploadObj.docType || '',
-      match_key: uploadObj.matchKey || ''
-    });
+    try {
+      await _sbPost('uploads', {
+        client_id: clientId, name: uploadObj.name, icon: uploadObj.icon,
+        date: uploadObj.date, size: uploadObj.size, type: uploadObj.type,
+        doc_type: uploadObj.docType||'', match_key: uploadObj.matchKey||''
+      });
+    } catch(e) { console.warn('dbSaveUpload:', e.message); }
   };
 
   window.dbLoadUploads = async function dbLoadUploads(clientId) {
-    if (!_sb) return [];
-    const {data} = await _sb.from('uploads').select('*').eq('client_id', clientId);
-    return (data||[]).map(u => ({
-      name: u.name, icon: u.icon, date: u.date,
-      size: u.size, type: u.type, docType: u.doc_type, matchKey: u.match_key
-    }));
+    try {
+      var data = await _sbGet('uploads', '&client_id=eq.' + encodeURIComponent(clientId));
+      return (data||[]).map(function(u){ return {
+        name: u.name, icon: u.icon, date: u.date,
+        size: u.size, type: u.type, docType: u.doc_type, matchKey: u.match_key
+      }; });
+    } catch(e) { console.warn('dbLoadUploads:', e.message); return []; }
   };
 </script>
 </head>
@@ -6932,24 +6984,19 @@ Kind regards,
   window._dbg = showDebug;
 
   // Test Supabase connection - retry until ready
-  function _testSupabase(attempts) {
-    if (!window._sb) {
-      if (attempts > 10) { showDebug('ERROR: Supabase failed to load after 5s', 'red'); return; }
-      setTimeout(function(){ _testSupabase(attempts+1); }, 500);
-      return;
-    }
-    showDebug('Testing Supabase connection...');
-    _sb.from('clients').select('count').then(function(r) {
-      if (r.error) showDebug('DB ERROR: ' + JSON.stringify(r.error), 'red');
-      else showDebug('DB OK - clients accessible', '#6EE7B7');
-    });
-    _sb.from('uploads').select('count').then(function(r) {
-      if (r.error) showDebug('UPLOADS ERROR: ' + JSON.stringify(r.error), 'red');
-      else showDebug('DB OK - uploads accessible', '#6EE7B7');
-    });
-  }
   document.addEventListener('DOMContentLoaded', function() {
-    setTimeout(function(){ _testSupabase(0); }, 1000);
+    setTimeout(function() {
+      showDebug('Testing Supabase REST API...');
+      fetch(SUPABASE_URL + '/rest/v1/clients?select=count', {
+        headers: {
+          'apikey': SUPABASE_KEY,
+          'Authorization': 'Bearer ' + SUPABASE_KEY
+        }
+      }).then(function(r) {
+        if (r.ok) { showDebug('DB OK - REST API working', '#6EE7B7'); }
+        else { r.text().then(function(t){ showDebug('DB ERROR: ' + r.status + ' ' + t, 'red'); }); }
+      }).catch(function(e){ showDebug('FETCH ERROR: ' + e.message, 'red'); });
+    }, 1000);
   });
 })();
 </script>
