@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <!-- WWYC Portal v2.0 - 2024-fixed -->
 <html lang="en">
@@ -5011,14 +5012,33 @@ Kind regards,
     if (!container) return;
     container.innerHTML = '';
 
+    // Load all uploads from Supabase for all clients, then render
+    window.dbLoad().then(function(data) {
+      var allUploads = (data && data.uploads) ? data.uploads : [];
+      _renderClientGroupsWithUploads(allUploads);
+    }).catch(function() {
+      _renderClientGroupsWithUploads([]);
+    });
+  };
+
+  window._renderClientGroupsWithUploads = function _renderClientGroupsWithUploads(allUploads) {
+    var container = document.getElementById('dynamicClientsList');
+    if (!container) return;
+    container.innerHTML = '';
+
     clients.forEach(function(client) {
       var initials      = client.name.split(' ').map(function(w){ return w[0]||''; }).join('').slice(0,2).toUpperCase();
-      // Load uploads from localStorage OR from the client record (if synced via export/import)
-      var clientUploads = window.loadClientUploads(client.id);
-      if (clientUploads.length === 0 && client.uploads && client.uploads.length > 0) {
-        clientUploads = client.uploads;
+      // Get uploads for this client from cloud data
+      var clientUploads = allUploads.filter(function(u){ return u.client_id === client.id; });
+      // Map to matchKey format
+      if (clientUploads.length === 0) {
+        // Fall back to localStorage or client record
+        clientUploads = window.loadClientUploads(client.id);
+        if (clientUploads.length === 0 && client.uploads && client.uploads.length > 0) {
+          clientUploads = client.uploads;
+        }
       }
-      var uploadedKeys  = clientUploads.map(function(u){ return u.matchKey; }).filter(Boolean);
+      var uploadedKeys = clientUploads.map(function(u){ return u.match_key || u.matchKey; }).filter(Boolean);
 
       var requiredDocs = client.docs.map(function(id) {
         var doc = docLibrary.find(function(d){ return d.id === id; });
@@ -6809,24 +6829,43 @@ Kind regards,
       window.renderIndividualDocs();
       window.renderStepFolders();
       window.renderClientInfoForms();
-      // Clear and reload this client's uploaded docs
+      // Clear and reload this client's uploaded docs from Supabase
       var docsList = document.getElementById('docsList');
       if (docsList) {
         docsList.innerHTML = '';
         window._currentClientId = urlClientId;
-        var saved = window.loadClientUploads(urlClientId);
-        // Restore uploaded flags in docLibrary
-        saved.forEach(function(u) {
-          if (u.matchKey) {
-            var d = docLibrary.find(function(d) { return d.id === u.matchKey; });
-            if (d) d.uploaded = true;
+
+        function applyUploads(saved) {
+          docsList.innerHTML = '';
+          saved.forEach(function(u) {
+            if (u.matchKey) {
+              var d = docLibrary.find(function(d) { return d.id === u.matchKey; });
+              if (d) d.uploaded = true;
+            }
+            window.addUploadedCard(u.name, u.icon, u.date, u.size, u.type, true);
+          });
+          var emptyState = document.getElementById('emptyState');
+          if (emptyState) emptyState.style.display = saved.length === 0 ? 'block' : 'none';
+          if (saved.length > 0) window.renderIndividualDocs();
+        }
+
+        // Try Supabase first, fall back to localStorage
+        window.dbLoadUploads(urlClientId).then(function(cloudUploads) {
+          if (cloudUploads && cloudUploads.length > 0) {
+            // Also cache in localStorage for offline use
+            try {
+              localStorage.setItem(IC_UPLOADS_KEY + '_' + urlClientId, JSON.stringify(cloudUploads));
+            } catch(e) {}
+            applyUploads(cloudUploads);
+          } else {
+            // Fall back to localStorage
+            var saved = window.loadClientUploads(urlClientId);
+            applyUploads(saved);
           }
-          window.addUploadedCard(u.name, u.icon, u.date, u.size, u.type, true);
+        }).catch(function() {
+          var saved = window.loadClientUploads(urlClientId);
+          applyUploads(saved);
         });
-        var emptyState = document.getElementById('emptyState');
-        if (emptyState) emptyState.style.display = saved.length === 0 ? 'block' : 'none';
-        // Re-render doc cards with correct uploaded flags
-        if (saved.length > 0) window.renderIndividualDocs();
       }
 
       // Show client view, hide landing
