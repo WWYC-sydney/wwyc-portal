@@ -2581,14 +2581,29 @@
   <script src="https://cdn.jsdelivr.net/npm/docx@8.5.0/build/index.umd.min.js"></script>
   <script src="https://apis.google.com/js/api.js" async defer></script>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js" onload="window._initSupabase()"></script>
 <script>
   const SUPABASE_URL = 'https://lxdvholorvrfyarzclws.supabase.co';
   const SUPABASE_KEY = 'sb_publishable_77yDu3UaCtUPFb-u1DDTpg_n6iFtpco';
-  const _sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+  var _sb = null;
+
+  window._initSupabase = function() {
+    try {
+      var sc = window.supabase || (window.Supabase && window.Supabase.createClient ? window.Supabase : null);
+      if (sc && sc.createClient) {
+        _sb = sc.createClient(SUPABASE_URL, SUPABASE_KEY);
+        if (window._dbg) window._dbg('Supabase initialised OK', '#6EE7B7');
+      } else {
+        if (window._dbg) window._dbg('Supabase global not found after load', 'red');
+      }
+    } catch(e) {
+      if (window._dbg) window._dbg('Supabase init error: ' + e.message, 'red');
+    }
+  };
 
   // ── Cloud DB helpers ────────────────────────────────────────────────────
   window.dbLoad = async function dbLoad() {
+    if (!_sb) { console.warn('Supabase not ready'); return null; }
     try {
       const [{data:cl}, {data:st}, {data:as}, {data:up}] = await Promise.all([
         _sb.from('clients').select('*').order('created_at'),
@@ -2601,6 +2616,7 @@
   };
 
   window.dbSaveClient = async function dbSaveClient(client) {
+    if (!_sb) return;
     await _sb.from('clients').upsert({
       id: client.id,
       name: client.name,
@@ -2615,11 +2631,13 @@
   };
 
   window.dbDeleteClient = async function dbDeleteClient(clientId) {
+    if (!_sb) return;
     await _sb.from('clients').delete().eq('id', clientId);
     await _sb.from('uploads').delete().eq('client_id', clientId);
   };
 
   window.dbSaveStaff = async function dbSaveStaff(staffList) {
+    if (!_sb) return;
     await _sb.from('staff').delete().neq('id', '');
     if (staffList.length > 0) {
       await _sb.from('staff').insert(staffList.map(s => ({
@@ -2629,12 +2647,14 @@
   };
 
   window.dbSaveAssignments = async function dbSaveAssignments(assignments) {
+    if (!_sb) return;
     const rows = Object.keys(assignments).map(k => ({ doc_key: k, staff_id: assignments[k] }));
     await _sb.from('assignments').delete().neq('doc_key', '');
     if (rows.length > 0) await _sb.from('assignments').insert(rows);
   };
 
   window.dbSaveUpload = async function dbSaveUpload(clientId, uploadObj) {
+    if (!_sb) return;
     await _sb.from('uploads').insert({
       client_id: clientId,
       name: uploadObj.name,
@@ -2648,6 +2668,7 @@
   };
 
   window.dbLoadUploads = async function dbLoadUploads(clientId) {
+    if (!_sb) return [];
     const {data} = await _sb.from('uploads').select('*').eq('client_id', clientId);
     return (data||[]).map(u => ({
       name: u.name, icon: u.icon, date: u.date,
@@ -6910,20 +6931,25 @@ Kind regards,
   }
   window._dbg = showDebug;
 
-  // Test Supabase connection on load
+  // Test Supabase connection - retry until ready
+  function _testSupabase(attempts) {
+    if (!window._sb) {
+      if (attempts > 10) { showDebug('ERROR: Supabase failed to load after 5s', 'red'); return; }
+      setTimeout(function(){ _testSupabase(attempts+1); }, 500);
+      return;
+    }
+    showDebug('Testing Supabase connection...');
+    _sb.from('clients').select('count').then(function(r) {
+      if (r.error) showDebug('DB ERROR: ' + JSON.stringify(r.error), 'red');
+      else showDebug('DB OK - clients accessible', '#6EE7B7');
+    });
+    _sb.from('uploads').select('count').then(function(r) {
+      if (r.error) showDebug('UPLOADS ERROR: ' + JSON.stringify(r.error), 'red');
+      else showDebug('DB OK - uploads accessible', '#6EE7B7');
+    });
+  }
   document.addEventListener('DOMContentLoaded', function() {
-    setTimeout(function() {
-      if (!window._sb) { showDebug('ERROR: Supabase not loaded', 'red'); return; }
-      showDebug('Testing Supabase connection...');
-      _sb.from('clients').select('count').then(function(r) {
-        if (r.error) showDebug('DB ERROR: ' + JSON.stringify(r.error), 'red');
-        else showDebug('DB OK - clients table accessible', '#6EE7B7');
-      });
-      _sb.from('uploads').select('count').then(function(r) {
-        if (r.error) showDebug('UPLOADS ERROR: ' + JSON.stringify(r.error), 'red');
-        else showDebug('DB OK - uploads table accessible', '#6EE7B7');
-      });
-    }, 2000);
+    setTimeout(function(){ _testSupabase(0); }, 1000);
   });
 })();
 </script>
