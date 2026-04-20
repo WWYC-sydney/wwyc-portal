@@ -4996,7 +4996,10 @@ Kind regards,
       localStorage.setItem(key, JSON.stringify(existing));
     } catch(e) {}
     // Save to Supabase
-    window.dbSaveUpload(clientId, uploadObj).catch(function(e) {
+    window.dbSaveUpload(clientId, uploadObj).then(function(r) {
+      if (window._dbg) window._dbg('Upload saved to Supabase for ' + clientId + ': ' + uploadObj.name, '#6EE7B7');
+    }).catch(function(e) {
+      if (window._dbg) window._dbg('Upload FAILED for ' + clientId + ': ' + JSON.stringify(e), 'red');
       console.warn('Cloud upload save failed:', e);
     });
   };
@@ -5014,8 +5017,10 @@ Kind regards,
     // Load all uploads from Supabase for all clients, then render
     window.dbLoad().then(function(data) {
       var allUploads = (data && data.uploads) ? data.uploads : [];
+      if (window._dbg) window._dbg('Staff view: loaded ' + allUploads.length + ' uploads from Supabase', '#6EE7B7');
       _renderClientGroupsWithUploads(allUploads);
-    }).catch(function() {
+    }).catch(function(e) {
+      if (window._dbg) window._dbg('Staff view load FAILED: ' + JSON.stringify(e), 'red');
       _renderClientGroupsWithUploads([]);
     });
   };
@@ -6849,19 +6854,21 @@ Kind regards,
         }
 
         // Try Supabase first, fall back to localStorage
+        if (window._dbg) window._dbg('Loading uploads for client: ' + urlClientId);
         window.dbLoadUploads(urlClientId).then(function(cloudUploads) {
+          if (window._dbg) window._dbg('Cloud uploads for client: ' + (cloudUploads ? cloudUploads.length : 0), cloudUploads && cloudUploads.length > 0 ? '#6EE7B7' : 'orange');
           if (cloudUploads && cloudUploads.length > 0) {
-            // Also cache in localStorage for offline use
             try {
               localStorage.setItem(IC_UPLOADS_KEY + '_' + urlClientId, JSON.stringify(cloudUploads));
             } catch(e) {}
             applyUploads(cloudUploads);
           } else {
-            // Fall back to localStorage
             var saved = window.loadClientUploads(urlClientId);
+            if (window._dbg) window._dbg('Fallback localStorage uploads: ' + saved.length, saved.length > 0 ? '#6EE7B7' : 'orange');
             applyUploads(saved);
           }
-        }).catch(function() {
+        }).catch(function(e) {
+          if (window._dbg) window._dbg('dbLoadUploads ERROR: ' + JSON.stringify(e), 'red');
           var saved = window.loadClientUploads(urlClientId);
           applyUploads(saved);
         });
@@ -6883,5 +6890,43 @@ Kind regards,
 </script>
 
 <!-- debug bar removed -->
+
+<script>
+// Debug overlay - shows Supabase status visibly on page
+(function() {
+  function showDebug(msg, color) {
+    var el = document.getElementById('_dbg');
+    if (!el) {
+      el = document.createElement('div');
+      el.id = '_dbg';
+      el.style.cssText = 'position:fixed;top:0;left:0;right:0;background:#1C4475;color:white;font-size:11px;font-family:monospace;padding:4px 8px;z-index:99999;white-space:pre-wrap;max-height:120px;overflow:auto;';
+      document.body.appendChild(el);
+    }
+    var line = document.createElement('div');
+    line.style.color = color || 'white';
+    line.textContent = new Date().toLocaleTimeString() + ' ' + msg;
+    el.appendChild(line);
+    el.scrollTop = el.scrollHeight;
+  }
+  window._dbg = showDebug;
+
+  // Test Supabase connection on load
+  document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(function() {
+      if (!window._sb) { showDebug('ERROR: Supabase not loaded', 'red'); return; }
+      showDebug('Testing Supabase connection...');
+      _sb.from('clients').select('count').then(function(r) {
+        if (r.error) showDebug('DB ERROR: ' + JSON.stringify(r.error), 'red');
+        else showDebug('DB OK - clients table accessible', '#6EE7B7');
+      });
+      _sb.from('uploads').select('count').then(function(r) {
+        if (r.error) showDebug('UPLOADS ERROR: ' + JSON.stringify(r.error), 'red');
+        else showDebug('DB OK - uploads table accessible', '#6EE7B7');
+      });
+    }, 2000);
+  });
+})();
+</script>
+
 </body>
 </html>
