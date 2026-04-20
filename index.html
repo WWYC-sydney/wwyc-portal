@@ -2580,6 +2580,81 @@
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/docx@8.5.0/build/index.umd.min.js"></script>
   <script src="https://apis.google.com/js/api.js" async defer></script>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  const SUPABASE_URL = 'https://lxdvholorvrfyarzclws.supabase.co';
+  const SUPABASE_KEY = 'sb_publishable_77yDu3UaCtUPFb-u1DDTpg_n6iFtpco';
+  const _sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+  // ── Cloud DB helpers ────────────────────────────────────────────────────
+  window.dbLoad = async function dbLoad() {
+    try {
+      const [{data:cl}, {data:st}, {data:as}, {data:up}] = await Promise.all([
+        _sb.from('clients').select('*').order('created_at'),
+        _sb.from('staff').select('*').order('created_at'),
+        _sb.from('assignments').select('*'),
+        _sb.from('uploads').select('*'),
+      ]);
+      return { clients: cl||[], staff: st||[], assignments: as||[], uploads: up||[] };
+    } catch(e) { console.error('dbLoad error:', e); return null; }
+  };
+
+  window.dbSaveClient = async function dbSaveClient(client) {
+    await _sb.from('clients').upsert({
+      id: client.id,
+      name: client.name,
+      email: client.email,
+      phone: client.phone || '',
+      step: client.step || '',
+      adviser: client.adviser || '',
+      docs: JSON.stringify(client.docs || []),
+      drive_folder_id: client.driveFolderId || null,
+      uploads: JSON.stringify(client.uploads || [])
+    });
+  };
+
+  window.dbDeleteClient = async function dbDeleteClient(clientId) {
+    await _sb.from('clients').delete().eq('id', clientId);
+    await _sb.from('uploads').delete().eq('client_id', clientId);
+  };
+
+  window.dbSaveStaff = async function dbSaveStaff(staffList) {
+    await _sb.from('staff').delete().neq('id', '');
+    if (staffList.length > 0) {
+      await _sb.from('staff').insert(staffList.map(s => ({
+        id: s.id, name: s.name, email: s.email
+      })));
+    }
+  };
+
+  window.dbSaveAssignments = async function dbSaveAssignments(assignments) {
+    const rows = Object.keys(assignments).map(k => ({ doc_key: k, staff_id: assignments[k] }));
+    await _sb.from('assignments').delete().neq('doc_key', '');
+    if (rows.length > 0) await _sb.from('assignments').insert(rows);
+  };
+
+  window.dbSaveUpload = async function dbSaveUpload(clientId, uploadObj) {
+    await _sb.from('uploads').insert({
+      client_id: clientId,
+      name: uploadObj.name,
+      icon: uploadObj.icon,
+      date: uploadObj.date,
+      size: uploadObj.size,
+      type: uploadObj.type,
+      doc_type: uploadObj.docType || '',
+      match_key: uploadObj.matchKey || ''
+    });
+  };
+
+  window.dbLoadUploads = async function dbLoadUploads(clientId) {
+    const {data} = await _sb.from('uploads').select('*').eq('client_id', clientId);
+    return (data||[]).map(u => ({
+      name: u.name, icon: u.icon, date: u.date,
+      size: u.size, type: u.type, docType: u.doc_type, matchKey: u.match_key
+    }));
+  };
+</script>
 </head>
 <body>
 
@@ -4816,36 +4891,77 @@ Kind regards,
   var IC_UPLOADS_KEY     = 'ic_uploads_v2';   // per-client uploaded docs
 
   window.persistAll = function persistAll() {
+    // Save to localStorage as cache
     try {
       localStorage.setItem(IC_CLIENTS_KEY,     JSON.stringify(clients));
       localStorage.setItem(IC_ASSIGNMENTS_KEY, JSON.stringify(staffAssignments));
       localStorage.setItem(IC_STAFF_KEY,       JSON.stringify(staffMembers));
-    } catch(e) { console.warn('localStorage full or unavailable'); }
+    } catch(e) {}
+    // Save to Supabase cloud
+    try {
+      clients.forEach(function(c) { window.dbSaveClient(c); });
+      window.dbSaveStaff(staffMembers);
+      window.dbSaveAssignments(staffAssignments);
+    } catch(e) { console.warn('Cloud save error:', e); }
   };
 
   window.loadPersistedData = function loadPersistedData() {
     var demoIds = ['IC-2024-0082','IC-2024-0091','IC-2024-0075'];
+
+    // Try loading from Supabase first, fall back to localStorage
+    window.dbLoad().then(function(data) {
+      if (data && (data.clients.length > 0 || data.staff.length > 0)) {
+        // Got cloud data — use it
+        var realClients = data.clients.filter(function(c) { return demoIds.indexOf(c.id) === -1; });
+        clients = realClients.map(function(c) {
+          return {
+            id: c.id, name: c.name, email: c.email, phone: c.phone,
+            step: c.step, adviser: c.adviser,
+            docs: typeof c.docs === 'string' ? JSON.parse(c.docs||'[]') : (c.docs||[]),
+            driveFolderId: c.drive_folder_id || null,
+            uploads: typeof c.uploads === 'string' ? JSON.parse(c.uploads||'[]') : (c.uploads||[])
+          };
+        });
+        if (data.staff.length > 0) staffMembers = data.staff;
+        else staffMembers = DEFAULT_STAFF.slice();
+        data.assignments.forEach(function(a) { staffAssignments[a.doc_key] = a.staff_id; });
+        if (clients.length > 0) activeClientId = clients[0].id;
+      } else {
+        // No cloud data — try localStorage
+        _loadFromLocalStorage(demoIds);
+      }
+      // Sync docLibrary
+      docLibrary.forEach(function(doc) {
+        if (staffAssignments[doc.id]) doc.assignee = staffAssignments[doc.id];
+      });
+      // Re-render after async load
+      renderClientGroups();
+      window.renderIndividualDocs();
+    }).catch(function() {
+      // Cloud failed — use localStorage
+      _loadFromLocalStorage(demoIds);
+      docLibrary.forEach(function(doc) {
+        if (staffAssignments[doc.id]) doc.assignee = staffAssignments[doc.id];
+      });
+    });
+  };
+
+  function _loadFromLocalStorage(demoIds) {
     try {
       var sc = localStorage.getItem(IC_CLIENTS_KEY);
       if (sc) {
         var parsed = JSON.parse(sc);
         if (Array.isArray(parsed)) {
-          // Remove any demo clients
           var real = parsed.filter(function(c) { return demoIds.indexOf(c.id) === -1; });
-          if (real.length !== parsed.length) {
-            // Had demo clients — save cleaned version back
-            localStorage.setItem(IC_CLIENTS_KEY, JSON.stringify(real));
-          }
+          if (real.length !== parsed.length) localStorage.setItem(IC_CLIENTS_KEY, JSON.stringify(real));
           clients = real;
           if (clients.length > 0) activeClientId = clients[0].id;
         }
       }
     } catch(e) {}
-    // Clear demo client upload data
     demoIds.forEach(function(id) {
       try { localStorage.removeItem(IC_UPLOADS_KEY + '_' + id); } catch(e) {}
     });
-
     try {
       var sa = localStorage.getItem(IC_ASSIGNMENTS_KEY);
       if (sa) { var pa = JSON.parse(sa); Object.assign(staffAssignments, pa); }
@@ -4860,11 +4976,7 @@ Kind regards,
         staffMembers = DEFAULT_STAFF.slice();
       }
     } catch(e) { staffMembers = DEFAULT_STAFF.slice(); }
-    // Sync docLibrary assignees from staffAssignments
-    docLibrary.forEach(function(doc) {
-      if (staffAssignments[doc.id]) doc.assignee = staffAssignments[doc.id];
-    });
-  };
+  }
 
   // Per-client uploaded docs (saved separately so they persist across sessions)
   window.loadClientUploads = function loadClientUploads(clientId) {
@@ -4876,12 +4988,17 @@ Kind regards,
   };
 
   window.saveClientUpload = function saveClientUpload(clientId, uploadObj) {
+    // Save to localStorage
     try {
       var key = IC_UPLOADS_KEY + '_' + clientId;
       var existing = window.loadClientUploads(clientId);
       existing.push(uploadObj);
       localStorage.setItem(key, JSON.stringify(existing));
     } catch(e) {}
+    // Save to Supabase
+    window.dbSaveUpload(clientId, uploadObj).catch(function(e) {
+      console.warn('Cloud upload save failed:', e);
+    });
   };
 
   // Current active client (shown in client view)
@@ -6444,6 +6561,7 @@ Kind regards,
   window.deleteClient = function deleteClient(clientId, clientName) {
     if (!confirm('Delete ' + clientName + '? This cannot be undone.')) return;
     clients = clients.filter(function(c) { return c.id !== clientId; });
+    window.dbDeleteClient(clientId).catch(function(){});
     window.persistAll();
     window.renderClientGroups();
     window.renderReminderClientTable();
