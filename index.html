@@ -4514,9 +4514,16 @@ Kind regards,
   };
 
   window.submitUpload = function submitUpload() {
+    if (window._dbg) window._dbg('submitUpload called, pendingFiles: ' + pendingFiles.length + ', folderUploadId: ' + folderUploadId);
     // If we're mid-folder-queue, route to folder confirm
     if (folderUploadId !== null) {
       confirmFolderDoc();
+      return;
+    }
+
+    if (pendingFiles.length === 0) {
+      if (window._dbg) window._dbg('WARNING: no pending files - upload skipped', 'orange');
+      showToast('Please select a file first.', '⚠️');
       return;
     }
 
@@ -4579,6 +4586,7 @@ Kind regards,
         var ac2 = window.getActiveClient && window.getActiveClient();
         if (ac2) clientId = ac2.id;
       }
+      if (window._dbg) window._dbg('clientId resolved: ' + (clientId||'NULL') + ', matchKey: ' + (matchKey||'none'));
       if (clientId) {
         var uploadRecord = {
           name: savedName,
