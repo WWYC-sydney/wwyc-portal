@@ -2864,6 +2864,7 @@
 
         <!-- New Client Button -->
     <button class="new-client-btn" data-action="openNewClientModal">＋ New Client</button>
+    <button class="new-client-btn" onclick="renderClientGroups(); showToast('✓ Refreshed');" style="background:rgba(32,171,164,0.15);border-color:rgba(32,171,164,0.4);color:#167A75;margin-left:8px;">↻ Refresh</button>
 
     <!-- Dynamic clients rendered here -->
     <div id="dynamicClientsList"></div>
@@ -7020,6 +7021,15 @@ Kind regards,
         fnMap[action]();
       }
     });
+
+    // Auto-refresh staff view every 30 seconds to pick up new client uploads
+    setInterval(function() {
+      if ((window._staffIsUnlocked || window.staffUnlocked) && 
+          document.getElementById('staffView') && 
+          document.getElementById('staffView').style.display === 'block') {
+        renderClientGroups();
+      }
+    }, 30000);
 
     // pw overlay click-outside to close
     const pwOv = document.getElementById('pwOverlay');
