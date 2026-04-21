@@ -3881,7 +3881,11 @@ Kind regards,
     const container = document.getElementById('reqIndividualList');
     if (!container) return;
     container.innerHTML = '';
-    docLibrary.forEach(doc => {
+    // Filter to only show docs assigned to this client
+    var activeClient = window.getActiveClient ? window.getActiveClient() : null;
+    var clientDocIds = activeClient && activeClient.docs ? activeClient.docs : docLibrary.map(function(d){ return d.id; });
+    var docsToShow = docLibrary.filter(function(d){ return clientDocIds.indexOf(d.id) !== -1; });
+    docsToShow.forEach(doc => {
       const div = document.createElement('div');
       div.className = 'req-doc-item' + (doc.uploaded ? ' uploaded' : '');
       div.dataset.id = doc.id;
@@ -7125,6 +7129,8 @@ Kind regards,
       }
       activeClientId = found.id;
       window._currentClientId = found.id;
+      // Re-render docs now we know which client this is
+      window.renderIndividualDocs();
 
       // Update header pill with real client name
       const displayName = found.name || urlClientName || urlClientId;
