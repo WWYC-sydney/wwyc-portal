@@ -4718,6 +4718,15 @@ Kind regards,
     if (rejectBtn) rejectBtn.remove();
     updateGroupBadge(badgeId);
     showToast('✅ Document marked as reviewed.');
+
+    // Save reviewed status to Supabase
+    var clientId = badgeId.replace('badge-', '');
+    var docId = row.id.replace('staffrow-' + clientId + '-', '');
+    fetch(SUPABASE_URL + '/rest/v1/uploads?client_id=eq.' + encodeURIComponent(clientId) + '&match_key=eq.' + encodeURIComponent(docId), {
+      method: 'PATCH',
+      headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+      body: JSON.stringify({ status: 'reviewed' })
+    }).catch(function(){});
   }
 
   window.updateGroupBadge = function updateGroupBadge(badgeId) {
@@ -5229,13 +5238,18 @@ Kind regards,
       var clientUploads = allUploads.filter(function(u){ return u.client_id === client.id; });
       // Map to matchKey format
       if (clientUploads.length === 0) {
-        // Fall back to localStorage or client record
         clientUploads = window.loadClientUploads(client.id);
         if (clientUploads.length === 0 && client.uploads && client.uploads.length > 0) {
           clientUploads = client.uploads;
         }
       }
       var uploadedKeys = clientUploads.map(function(u){ return u.match_key || u.matchKey; }).filter(Boolean);
+      // Build status map: matchKey -> {status, returnNote, returnedBy, driveUrl}
+      var uploadStatusMap = {};
+      clientUploads.forEach(function(u) {
+        var k = u.match_key || u.matchKey;
+        if (k) uploadStatusMap[k] = { status: u.status||'pending', returnNote: u.return_note||'', returnedBy: u.returned_by||'', driveUrl: u.drive_url||'' };
+      });
 
       var requiredDocs = client.docs.map(function(id) {
         var doc = docLibrary.find(function(d){ return d.id === id; });
@@ -5245,7 +5259,11 @@ Kind regards,
                  uploaded: uploadedKeys.indexOf(doc.id) !== -1 };
       }).filter(Boolean);
 
-      var pendingCount = requiredDocs.filter(function(d){ return !d.uploaded; }).length;
+      var pendingCount = requiredDocs.filter(function(d){ 
+        if (!d.uploaded) return true;
+        var s = (uploadStatusMap[d.id] || {}).status;
+        return s !== 'reviewed'; // reviewed docs don't count as pending
+      }).length;
       var allDone = pendingCount === 0;
 
       var group = document.createElement('div');
@@ -5325,11 +5343,23 @@ Kind regards,
         row.appendChild(iEl); row.appendChild(nEl); row.appendChild(dEl); row.appendChild(pEl);
 
         if (doc.uploaded) {
-          var rb = document.createElement('button'); rb.className = 'review-btn'; rb.textContent = 'Mark Reviewed';
-          rb.addEventListener('click', function(e){ e.stopPropagation(); window.markReviewed(rb, 'badge-' + client.id); });
-          var rtb = document.createElement('button'); rtb.className = 'reject-btn'; rtb.textContent = 'Return';
-          rtb.addEventListener('click', function(e){ e.stopPropagation(); window.openRejectModal(rtb, 'badge-' + client.id, doc.name, client.name); });
-          row.appendChild(rb); row.appendChild(rtb);
+          var docStatus = (uploadStatusMap[doc.id] || {}).status || 'pending';
+          if (docStatus === 'reviewed') {
+            var doneSpan = document.createElement('span'); doneSpan.style.cssText = 'font-size:10px;color:var(--success);font-weight:700;'; doneSpan.textContent = '✓ Reviewed';
+            row.appendChild(doneSpan);
+          } else if (docStatus === 'returned') {
+            var retSpan = document.createElement('span'); retSpan.style.cssText = 'font-size:10px;color:var(--rejected);font-weight:700;'; retSpan.textContent = '↩ Returned';
+            row.appendChild(retSpan);
+            var rb2 = document.createElement('button'); rb2.className = 'review-btn'; rb2.textContent = 'Mark Reviewed';
+            rb2.addEventListener('click', function(e){ e.stopPropagation(); window.markReviewed(rb2, 'badge-' + client.id); });
+            row.appendChild(rb2);
+          } else {
+            var rb = document.createElement('button'); rb.className = 'review-btn'; rb.textContent = 'Mark Reviewed';
+            rb.addEventListener('click', function(e){ e.stopPropagation(); window.markReviewed(rb, 'badge-' + client.id); });
+            var rtb = document.createElement('button'); rtb.className = 'reject-btn'; rtb.textContent = 'Return';
+            rtb.addEventListener('click', function(e){ e.stopPropagation(); window.openRejectModal(rtb, 'badge-' + client.id, doc.name, client.name); });
+            row.appendChild(rb); row.appendChild(rtb);
+          }
         } else {
           var aw = document.createElement('span'); aw.style.cssText = 'font-size:10px;color:rgba(255,255,255,0.25);font-style:italic;'; aw.textContent = 'Awaiting upload — check Drive folder';
           row.appendChild(aw);
