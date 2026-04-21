@@ -2723,7 +2723,11 @@
       var data = await _sbGet('uploads', '&client_id=eq.' + encodeURIComponent(clientId));
       return (data||[]).map(function(u){ return {
         name: u.name, icon: u.icon, date: u.date,
-        size: u.size, type: u.type, docType: u.doc_type, matchKey: u.match_key
+        size: u.size, type: u.type, docType: u.doc_type, matchKey: u.match_key,
+        status: u.status || 'pending',
+        return_note: u.return_note || '',
+        returned_by: u.returned_by || '',
+        drive_url: u.drive_url || ''
       }; });
     } catch(e) { console.warn('dbLoadUploads:', e.message); return []; }
   };
@@ -5351,11 +5355,7 @@ Kind regards,
         row.id = 'staffrow-' + client.id + '-' + doc.id;
         row.style.cursor = 'pointer';
         // Find Drive URL from uploads data
-        var driveUrl = null;
-        var matchingUpload = clientUploads.find(function(u){ 
-          return (u.match_key || u.matchKey) === doc.id; 
-        });
-        if (matchingUpload) driveUrl = matchingUpload.drive_url || matchingUpload.driveUrl || null;
+        var driveUrl = (uploadStatusMap[doc.id] || {}).driveUrl || null;
         var capturedDriveUrl = driveUrl;
         row.addEventListener('click', function(){ window.openDocPreview(doc.name, sName, doc.icon, capturedDriveUrl, client.name); });
 
