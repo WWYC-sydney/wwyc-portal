@@ -5228,6 +5228,7 @@ Kind regards,
   window._renderClientGroupsWithUploads = function _renderClientGroupsWithUploads(allUploads) {
     var container = document.getElementById('dynamicClientsList');
     if (!container) return;
+    if (window._dbg) window._dbg('Rendering ' + clients.length + ' clients with ' + allUploads.length + ' total uploads');
     container.innerHTML = '';
 
     clients.forEach(function(client) {
@@ -6929,6 +6930,7 @@ Kind regards,
     var clientId = window._currentClientId;
     if (!clientId) return;
     window.dbLoadUploads(clientId).then(function(uploads) {
+      if (window._dbg) window._dbg('Refresh: ' + (uploads||[]).length + ' uploads, statuses: ' + (uploads||[]).map(function(u){return (u.matchKey||u.match_key||'?')+':'+u.status;}).join(', '));
       if (!uploads || uploads.length === 0) return;
       var docsList = document.getElementById('docsList');
       if (!docsList) return;
