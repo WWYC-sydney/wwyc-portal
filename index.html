@@ -4597,12 +4597,18 @@ Kind regards,
     closeModal('uploadModal');
 
     filesToProcess.forEach((file, i) => {
-      const ext      = file.name.split('.').pop().toLowerCase();
-      const icon     = ext === 'pdf' ? '📄' : ['jpg','jpeg','png'].includes(ext) ? '🖼️' : '📝';
-      const savedName = savedNames[i];
-      // addUploadedCard handles both display AND saving to Supabase/localStorage
-      window.addUploadedCard(savedName, icon, displayDate, formatSize(file.size), ext.toUpperCase(), false);
-      uploadedCount++;
+      try {
+        const ext      = file.name.split('.').pop().toLowerCase();
+        const icon     = ext === 'pdf' ? '📄' : ['jpg','jpeg','png'].includes(ext) ? '🖼️' : '📝';
+        const savedName = savedNames[i];
+        if (window._dbg) window._dbg('Calling addUploadedCard: ' + savedName + ' size:' + file.size);
+        window.addUploadedCard(savedName, icon, displayDate, formatSize(file.size), ext.toUpperCase(), false);
+        if (window._dbg) window._dbg('addUploadedCard done');
+        uploadedCount++;
+      } catch(err) {
+        if (window._dbg) window._dbg('ERROR in forEach: ' + err.message, 'red');
+        console.error('forEach error:', err);
+      }
     });
 
     updateProgress();
