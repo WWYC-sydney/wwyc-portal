@@ -4203,7 +4203,18 @@ Kind regards,
 
         // Upload file to Supabase Storage so staff can download it
         if (fileObj && fileObj.size > 0) {
-          var storagePath = clientId + '/' + savedName.replace(/[^a-zA-Z0-9._-]/g, '_');
+          // Build folder name: "IC-2026-0001 - Hannah Bulow - 21 Apr 2026"
+          var clientName = (function(){ var p=new URLSearchParams(window.location.search); return p.get('name')||'Client'; })();
+          var addedDate = (function(){ 
+            var d = new Date(); 
+            return d.toLocaleDateString('en-AU', {day:'numeric',month:'short',year:'numeric'}); 
+          })();
+          // Check if folder date was already set (use stored date if available)
+          var folderKey = 'ic_folder_date_' + clientId;
+          var storedDate = localStorage.getItem(folderKey);
+          if (!storedDate) { localStorage.setItem(folderKey, addedDate); storedDate = addedDate; }
+          var folderName = (clientId + ' - ' + clientName + ' - ' + storedDate).replace(/[^a-zA-Z0-9._() -]/g, '');
+          var storagePath = folderName + '/' + savedName.replace(/[^a-zA-Z0-9._-]/g, '_');
           var reader = new FileReader();
           reader.onload = function(ev) {
             // Upload as binary to Supabase Storage
