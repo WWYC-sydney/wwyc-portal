@@ -3154,7 +3154,8 @@
     <div class="modal-sub">Fill in the details below so this document is filed correctly. The file will be renamed automatically.</div>
 
     <div class="modal-label">Document Type</div>
-    <select class="modal-doctype-select" id="docTypeSelect" onchange="window.updateSavedNamePreview(); if(pendingFiles.length) { selectedChecklistDocId=null; currentSuggestedDocId=null; const s=document.getElementById('smartDetectSection'); if(s) s.style.display='none'; setTimeout(runSmartDetection,80); }">
+    <div id="docTypeDisplay" style="background:rgba(201,168,76,0.08);border:2px solid rgba(201,168,76,0.3);border-radius:10px;padding:10px 14px;font-size:13px;font-weight:700;color:var(--gold);margin-bottom:4px;">—</div>
+    <select class="modal-doctype-select" id="docTypeSelect" style="display:none;" onchange="window.updateSavedNamePreview();">
       <option value="Payslip">Payslip</option>
       <option value="Bank Statement">Bank Statement</option>
       <option value="Income Statement">Income Statement</option>
@@ -4164,7 +4165,7 @@ Kind regards,
     setTimeout(openNextFolderUpload, 400);
   }
 
-  window.addUploadedCard = function addUploadedCard(savedName, icon, date, size, typeLabel, skipSave, fileObj, isReturned, returnNote, returnedBy, explicitMatchKey) {
+  window.addUploadedCard = function addUploadedCard(savedName, icon, date, size, typeLabel, skipSave, fileObj, isReturned, returnNote, returnedBy, explicitMatchKey, isReviewed) {
     const list = document.getElementById('docsList');
     docCounter++;
     const iconClass = typeLabel === 'PDF' ? 'pdf' : ['JPG','JPEG','PNG'].includes(typeLabel) ? 'img' : 'doc';
@@ -4172,8 +4173,10 @@ Kind regards,
     card.className = 'doc-card';
     card.dataset.id = docCounter;
     var statusPill = isReturned
-      ? '<span class="doc-status-pill pill-rejected">⚠ Returned</span>'
-      : '<span class="doc-status-pill pill-pending">Pending Review</span>';
+      ? '<span class="doc-status-pill pill-rejected">⚠ Returned — please re-upload</span>'
+      : isReviewed
+        ? '<span class="doc-status-pill pill-reviewed">✓ Reviewed</span>'
+        : '<span class="doc-status-pill pill-pending">Pending Review</span>';
     var returnNoteHtml = (isReturned && returnNote)
       ? '<div class="rejection-note" style="margin-top:10px;padding:10px 14px;background:#FEF2F2;border-radius:8px;border-left:3px solid #EF4444;font-size:12px;color:#991B1B;">' +
         '<strong>' + (returnedBy||'Adviser') + ' returned this document:</strong> ' + returnNote +
@@ -4858,13 +4861,7 @@ Kind regards,
   }
 
   // ─── DRAG & DROP ───
-  const zone = document.getElementById('uploadZone'); if (!zone) return; // upload zone removed
-  zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag-over'); });
-  zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
-  zone.addEventListener('drop', e => {
-    e.preventDefault(); zone.classList.remove('drag-over');
-    if (e.dataTransfer.files.length) { pendingFiles = Array.from(e.dataTransfer.files); showUploadModal(); }
-  });
+  // Drag/drop upload zone removed - clients upload by clicking doc cards only
 
   // ─── CLOSE ON OVERLAY CLICK ───
   document.querySelectorAll('.modal-overlay').forEach(overlay => {
@@ -6918,6 +6915,7 @@ Kind regards,
     
     // Pre-select the matching doc type in the dropdown
     var sel = document.getElementById('docTypeSelect');
+    var display = document.getElementById('docTypeDisplay');
     if (sel) {
       // Find matching option by doc name
       var matched = false;
@@ -6928,7 +6926,13 @@ Kind regards,
           break;
         }
       }
-      if (!matched) sel.selectedIndex = 0;
+      if (!matched) {
+        // Try to find Other and select it
+        for (var j = 0; j < sel.options.length; j++) {
+          if (sel.options[j].value === 'Other') { sel.selectedIndex = j; break; }
+        }
+      }
+      if (display) display.textContent = sel.options[sel.selectedIndex].value;
       // Trigger preview update
       if (window.updateSavedNamePreview) window.updateSavedNamePreview();
     }
@@ -6949,6 +6953,26 @@ Kind regards,
       var fileInput = document.getElementById('fileInput');
       if (fileInput) fileInput.click();
     }, 200);
+  };
+
+
+  window.refreshUploadStatuses = function refreshUploadStatuses() {
+    var clientId = window._currentClientId;
+    if (!clientId) return;
+    window.dbLoadUploads(clientId).then(function(uploads) {
+      if (!uploads || uploads.length === 0) return;
+      var docsList = document.getElementById('docsList');
+      if (!docsList) return;
+      // Re-apply uploads with updated statuses
+      docsList.innerHTML = '';
+      uploads.forEach(function(u) {
+        var isReturned = u.status === 'returned';
+        var returnNote = u.return_note || '';
+        var returnedBy = u.returned_by || 'Your adviser';
+        var isReviewed = u.status === 'reviewed';
+        window.addUploadedCard(u.name, u.icon||'📄', u.date, u.size, u.type, true, null, isReturned, returnNote, returnedBy, null, isReviewed);
+      });
+    }).catch(function(){});
   };
 
   window.formatSize = function formatSize(bytes) {
@@ -7157,6 +7181,9 @@ Kind regards,
       // Show client view, hide landing
       if (window._showView) { window._showView('client'); } else { document.getElementById('clientView').style.display = 'block'; }
       document.getElementById('landingView').style.display = 'none';
+
+      // Auto-refresh upload statuses every 30s so client sees reviewed/returned updates
+      setInterval(function() { if (window.refreshUploadStatuses) window.refreshUploadStatuses(); }, 30000);
 
     } else {
       // No client param — show landing page only
