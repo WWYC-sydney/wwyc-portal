@@ -6362,10 +6362,11 @@ Kind regards,
       editPicker.innerHTML = docLibrary.map(function(doc) {
         var isChecked = (client.docs || []).indexOf(doc.id) !== -1;
         var assigneeName = window.getStaffName ? window.getStaffName(staffAssignments[doc.id] || doc.assignee) : '';
-        return '<label style="display:flex;align-items:center;gap:8px;padding:7px 10px;border:1px solid rgba(255,255,255,0.07);border-radius:8px;cursor:pointer;font-size:12px;color:var(--white);background:rgba(255,255,255,0.02);">' +
-          '<input type="checkbox" value="' + doc.id + '"' + (isChecked ? ' checked' : '') + ' style="accent-color:var(--gold);width:14px;height:14px;flex-shrink:0;">' +
-          '<span style="flex:1;">' + doc.icon + ' ' + doc.name + '</span>' +
-          (assigneeName ? '<span style="font-size:10px;color:var(--white-dim);flex-shrink:0;">' + assigneeName + '</span>' : '') +
+        return '<label style="display:flex;align-items:center;gap:8px;padding:8px 12px;border:1px solid #E5E7EB;border-radius:8px;cursor:pointer;font-size:13px;color:#1C4475;background:' + (isChecked ? '#F0F6FF' : '#FAFAFA') + ';font-family:Nunito,sans-serif;font-weight:600;">' +
+          '<input type="checkbox" value="' + doc.id + '"' + (isChecked ? ' checked' : '') + ' style="accent-color:#1C4475;width:15px;height:15px;flex-shrink:0;">' +
+          '<span style="font-size:16px;">' + doc.icon + '</span>' +
+          '<span style="flex:1;color:#1C4475;">' + doc.name + '</span>' +
+          (assigneeName ? '<span style="font-size:11px;color:#6B7280;font-weight:500;flex-shrink:0;">' + assigneeName + '</span>' : '') +
           '</label>';
       }).join('');
     }
