@@ -4597,26 +4597,11 @@ Kind regards,
     closeModal('uploadModal');
 
     filesToProcess.forEach((file, i) => {
-      docCounter++;
-      const ext = file.name.split('.').pop().toLowerCase();
-      const isImg = ['jpg','jpeg','png'].includes(ext);
-      const iconClass = ext === 'pdf' ? 'pdf' : isImg ? 'img' : 'doc';
-      const icon = ext === 'pdf' ? '📄' : isImg ? '🖼️' : '📝';
+      const ext      = file.name.split('.').pop().toLowerCase();
+      const icon     = ext === 'pdf' ? '📄' : ['jpg','jpeg','png'].includes(ext) ? '🖼️' : '📝';
       const savedName = savedNames[i];
-      const card = document.createElement('div');
-      card.className = 'doc-card';
-      card.dataset.id = docCounter;
-      card.innerHTML = `
-        <div class="doc-icon-wrap ${iconClass}">${icon}</div>
-        <div class="doc-info">
-          <div class="doc-name">${savedName}</div>
-          <div class="doc-meta">Uploaded ${displayDate} · ${formatSize(file.size)} · ${ext.toUpperCase()}</div>
-        </div>
-        <div class="doc-right">
-          <span class="doc-status-pill pill-pending">Pending Review</span>
-  <!-- upload locked -->
-        </div>`;
-      document.getElementById('docsList').appendChild(card);
+      // addUploadedCard handles both display AND saving to Supabase/localStorage
+      window.addUploadedCard(savedName, icon, displayDate, formatSize(file.size), ext.toUpperCase(), false);
       uploadedCount++;
     });
 
