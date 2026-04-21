@@ -6361,9 +6361,12 @@ Kind regards,
     if (editPicker) {
       editPicker.innerHTML = docLibrary.map(function(doc) {
         var isChecked = (client.docs || []).indexOf(doc.id) !== -1;
+        var assigneeName = window.getStaffName ? window.getStaffName(staffAssignments[doc.id] || doc.assignee) : '';
         return '<label style="display:flex;align-items:center;gap:8px;padding:7px 10px;border:1px solid rgba(255,255,255,0.07);border-radius:8px;cursor:pointer;font-size:12px;color:var(--white);background:rgba(255,255,255,0.02);">' +
-          '<input type="checkbox" value="' + doc.id + '"' + (isChecked ? ' checked' : '') + ' style="accent-color:var(--gold);width:14px;height:14px;">' +
-          doc.icon + ' ' + doc.name + '</label>';
+          '<input type="checkbox" value="' + doc.id + '"' + (isChecked ? ' checked' : '') + ' style="accent-color:var(--gold);width:14px;height:14px;flex-shrink:0;">' +
+          '<span style="flex:1;">' + doc.icon + ' ' + doc.name + '</span>' +
+          (assigneeName ? '<span style="font-size:10px;color:var(--white-dim);flex-shrink:0;">' + assigneeName + '</span>' : '') +
+          '</label>';
       }).join('');
     }
     document.getElementById('editClientModal').classList.add('open');
