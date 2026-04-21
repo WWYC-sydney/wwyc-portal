@@ -3889,13 +3889,13 @@ Kind regards,
       const div = document.createElement('div');
       div.className = 'req-doc-item' + (doc.uploaded ? ' uploaded' : '');
       div.dataset.id = doc.id;
-      if (!doc.uploaded) {
-        div.style.cursor = 'pointer';
-        div.addEventListener('click', function(e) {
-          if (e.target.closest('.info-btn')) return; // don't trigger on tooltip
-          window.openUploadForDoc(doc.id, doc.name);
-        });
-      }
+      // Always clickable - clients can upload more even after uploading
+      div.style.cursor = 'pointer';
+      div.title = doc.uploaded ? 'Click to upload another version' : 'Click to upload';
+      div.addEventListener('click', function(e) {
+        if (e.target.closest('.info-btn')) return;
+        window.openUploadForDoc(doc.id, doc.name);
+      });
       div.innerHTML = `
         <div class="req-doc-icon">${doc.icon}</div>
         <div class="req-doc-body">
