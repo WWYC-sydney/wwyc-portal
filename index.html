@@ -4170,22 +4170,31 @@ Kind regards,
     setTimeout(openNextFolderUpload, 400);
   }
 
-  window.addUploadedCard = function addUploadedCard(savedName, icon, date, size, typeLabel, skipSave, fileObj) {
+  window.addUploadedCard = function addUploadedCard(savedName, icon, date, size, typeLabel, skipSave, fileObj, isReturned, returnNote, returnedBy) {
     const list = document.getElementById('docsList');
     docCounter++;
     const iconClass = typeLabel === 'PDF' ? 'pdf' : ['JPG','JPEG','PNG'].includes(typeLabel) ? 'img' : 'doc';
     const card = document.createElement('div');
     card.className = 'doc-card';
     card.dataset.id = docCounter;
+    var statusPill = isReturned
+      ? '<span class="doc-status-pill pill-rejected">⚠ Returned</span>'
+      : '<span class="doc-status-pill pill-pending">Pending Review</span>';
+    var returnNoteHtml = (isReturned && returnNote)
+      ? '<div class="rejection-note" style="margin-top:10px;padding:10px 14px;background:#FEF2F2;border-radius:8px;border-left:3px solid #EF4444;font-size:12px;color:#991B1B;">' +
+        '<strong>' + (returnedBy||'Adviser') + ' returned this document:</strong> ' + returnNote +
+        '</div>'
+      : '';
     card.innerHTML = `
-      <div class="doc-icon-wrap ${iconClass}">${icon}</div>
-      <div class="doc-info">
-        <div class="doc-name">${savedName}</div>
-        <div class="doc-meta">Uploaded ${date}${size !== '—' ? ' · ' + size : ''} · ${typeLabel}</div>
-      </div>
-      <div class="doc-right">
-        <span class="doc-status-pill pill-pending">Pending Review</span>
-<!-- upload locked -->
+      <div style="flex:1;">
+        <div style="display:flex;align-items:center;gap:12px;">
+          <div class="doc-icon-wrap ${iconClass}">${icon}</div>
+          <div class="doc-info">
+            <div class="doc-name">${savedName}</div>
+            <div class="doc-meta">Uploaded ${date}${size !== '—' ? ' · ' + size : ''} · ${typeLabel}</div>
+          </div>
+          <div class="doc-right">` + statusPill + `</div>
+        </div>` + returnNoteHtml + `
       </div>`;
     list.appendChild(card);
     const empty = document.getElementById('emptyState');
@@ -4224,8 +4233,15 @@ Kind regards,
         if (fileObj && typeof uploadFileToDrive === 'function') {
           var clientName = (function(){ var p=new URLSearchParams(window.location.search); return p.get('name')||'Client'; })();
           uploadFileToDrive(fileObj, savedName, clientId, clientName).then(function(result) {
-            if (result && window._dbg) window._dbg('✓ File uploaded to Drive: ' + savedName, '#6EE7B7');
-            else if (window._dbg) window._dbg('Drive upload skipped (not connected)', 'orange');
+            if (result && result.webViewLink) {
+              if (window._dbg) window._dbg('✓ File uploaded to Drive: ' + savedName, '#6EE7B7');
+              // Update Supabase record with Drive URL
+              fetch(SUPABASE_URL + '/rest/v1/uploads?client_id=eq.' + encodeURIComponent(clientId) + '&name=eq.' + encodeURIComponent(savedName), {
+                method: 'PATCH',
+                headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+                body: JSON.stringify({ drive_url: result.webViewLink })
+              }).catch(function(){});
+            } else if (window._dbg) window._dbg('Drive upload skipped (not connected or failed)', 'orange');
           }).catch(function(e) {
             if (window._dbg) window._dbg('Drive upload error: ' + e.message, 'orange');
           });
@@ -4244,7 +4260,7 @@ Kind regards,
           body: JSON.stringify({
             client_id: clientId, name: savedName, icon: icon,
             date: date, size: size||'', type: typeLabel||'',
-            doc_type: '', match_key: matchKey||''
+            doc_type: '', match_key: matchKey||'', drive_url: '', status: 'pending'
           })
         }).then(function(r) {
           if (r.ok) {
@@ -4725,14 +4741,29 @@ Kind regards,
     const reason = document.getElementById('rejectReason').value.trim();
     if (!reason) { document.getElementById('rejectReason').style.borderColor = 'rgba(232,93,74,0.5)'; return; }
     document.getElementById('rejectReason').style.borderColor = '';
-    const { btn, badgeId } = rejectContext;
+    const { btn, badgeId, filename, clientName } = rejectContext;
     const row = btn.closest('.staff-doc-row');
     btn.textContent = '↩ Returned'; btn.style.background = 'rgba(232,93,74,0.1)'; btn.style.borderColor = 'rgba(232,93,74,0.3)'; btn.style.color = 'var(--rejected)'; btn.classList.add('done');
     const reviewBtn = row.querySelector('.review-btn');
     if (reviewBtn) { reviewBtn.textContent = '✓ Reviewed'; reviewBtn.classList.add('done'); }
     updateGroupBadge(badgeId);
     closeModal('rejectModal');
-    showToast(`↩ Document returned to ${rejectContext.clientName} with explanation. Email sent.`, '⚠️');
+
+    // Find the client ID from the badge ID
+    var clientId = badgeId.replace('badge-', '');
+    var staffMember = staffMembers.length > 0 ? staffMembers[0].name : 'Your adviser';
+
+    // Save rejection to Supabase so client sees it
+    fetch(SUPABASE_URL + '/rest/v1/uploads?client_id=eq.' + encodeURIComponent(clientId) + '&name=eq.' + encodeURIComponent(filename), {
+      method: 'PATCH',
+      headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+      body: JSON.stringify({ status: 'returned', return_note: reason, returned_by: staffMember })
+    }).then(function(r) {
+      if (r.ok) showToast('↩ Document returned to ' + clientName + '. Client will see the note on their portal.', '⚠️');
+      else showToast('↩ Returned locally but cloud sync failed.', '⚠️');
+    }).catch(function() {
+      showToast('↩ Document returned to ' + clientName + ' with explanation. Email sent.', '⚠️');
+    });
   }
 
   // ─── ASSIGN MODAL ───
@@ -5275,7 +5306,14 @@ Kind regards,
         row.className = 'staff-doc-row';
         row.id = 'staffrow-' + client.id + '-' + doc.id;
         row.style.cursor = 'pointer';
-        row.addEventListener('click', function(){ window.openDocPreview(doc.name, sName, doc.icon, null, client.name); });
+        // Find Drive URL from uploads data
+        var driveUrl = null;
+        var matchingUpload = clientUploads.find(function(u){ 
+          return (u.match_key || u.matchKey) === doc.id; 
+        });
+        if (matchingUpload) driveUrl = matchingUpload.drive_url || matchingUpload.driveUrl || null;
+        var capturedDriveUrl = driveUrl;
+        row.addEventListener('click', function(){ window.openDocPreview(doc.name, sName, doc.icon, capturedDriveUrl, client.name); });
 
         var iEl = document.createElement('div'); iEl.className = 'staff-doc-icon'; iEl.textContent = doc.icon;
         var nEl = document.createElement('div'); nEl.className = 'staff-doc-name';
@@ -7004,11 +7042,15 @@ Kind regards,
         function applyUploads(saved) {
           docsList.innerHTML = '';
           saved.forEach(function(u) {
-            if (u.matchKey) {
-              var d = docLibrary.find(function(d) { return d.id === u.matchKey; });
+            var matchKey = u.match_key || u.matchKey;
+            if (matchKey) {
+              var d = docLibrary.find(function(d) { return d.id === matchKey; });
               if (d) d.uploaded = true;
             }
-            window.addUploadedCard(u.name, u.icon, u.date, u.size, u.type, true);
+            var isReturned = u.status === 'returned';
+            var returnNote = u.return_note || u.returnNote || '';
+            var returnedBy = u.returned_by || u.returnedBy || 'Your adviser';
+            window.addUploadedCard(u.name, u.icon || '📄', u.date, u.size, u.type, true, null, isReturned, returnNote, returnedBy);
           });
           var emptyState = document.getElementById('emptyState');
           if (emptyState) emptyState.style.display = saved.length === 0 ? 'block' : 'none';
