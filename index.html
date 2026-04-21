@@ -2799,20 +2799,9 @@
       <div class="req-individual-list" id="reqIndividualList"></div>
     </div>
 
-    <!-- Upload Zone -->
-    <div class="upload-zone" id="uploadZone" onclick="document.getElementById('fileInput').click()">
-      <div class="upload-icon-big">📤</div>
-      <div class="upload-title">Drop Files Here</div>
-      <div class="upload-sub">
-        Accepted formats: PDF, JPG, PNG · Max 20MB per file<br>
-        You can upload multiple files at once
-      </div>
-      <button class="upload-btn" onclick="event.stopPropagation(); document.getElementById('fileInput').click()">Choose Files</button>
-      <div class="or-divider">— or drag & drop —</div>
-      <div class="drag-hint">Files are encrypted and securely stored</div>
-      <input type="file" id="fileInput" multiple accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" onchange="window.handleFileSelect(event)">
-      <input type="file" id="folderFileInput" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" onchange="window.handleFolderFileSelect(event)" style="display:none;">
-    </div>
+    <!-- Hidden file inputs - triggered by clicking doc cards -->
+    <input type="file" id="fileInput" multiple accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" onchange="window.handleFileSelect(event)" style="display:none;">
+    <input type="file" id="folderFileInput" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" onchange="window.handleFolderFileSelect(event)" style="display:none;">
 
     <!-- Uploaded Documents -->
     <div class="uploaded-section">
@@ -2822,7 +2811,7 @@
 
 
       </div>
-      <div class="empty-state" id="emptyState">No documents uploaded yet. Use the area above to get started.</div>
+      <div class="empty-state" id="emptyState">No documents uploaded yet. Click on a required document above to upload it.</div>
     </div>
 
   </div>
@@ -3165,7 +3154,7 @@
     <div class="modal-sub">Fill in the details below so this document is filed correctly. The file will be renamed automatically.</div>
 
     <div class="modal-label">Document Type</div>
-    <select class="modal-doctype-select" id="docTypeSelect" onchange="window.updateSavedNamePreview(); var odr=document.getElementById('otherDescRow'); if(odr) odr.style.display=this.value==='Other'?'block':'none'; if(pendingFiles.length) { selectedChecklistDocId=null; currentSuggestedDocId=null; const s=document.getElementById('smartDetectSection'); if(s) s.style.display='none'; setTimeout(runSmartDetection,80); }">
+    <select class="modal-doctype-select" id="docTypeSelect" onchange="window.updateSavedNamePreview(); if(pendingFiles.length) { selectedChecklistDocId=null; currentSuggestedDocId=null; const s=document.getElementById('smartDetectSection'); if(s) s.style.display='none'; setTimeout(runSmartDetection,80); }">
       <option value="Payslip">Payslip</option>
       <option value="Bank Statement">Bank Statement</option>
       <option value="Income Statement">Income Statement</option>
@@ -3176,9 +3165,9 @@
       <option value="Photo ID">Photo ID</option>
       <option value="Other">Other</option>
     </select>
-    <div id="otherDescRow" style="display:none;margin-top:8px;">
-      <div class="modal-label">Brief description <span style="color:var(--white-dim);font-size:9px;text-transform:none;letter-spacing:0;">(e.g. Council rates notice)</span></div>
-      <input type="text" class="modal-doctype-select" id="otherDescInput" placeholder="Describe this document" oninput="window.updateSavedNamePreview()" style="margin-bottom:0;">
+    <div id="otherDescRow" style="margin-top:8px;">
+      <div class="modal-label">Additional description <span style="color:var(--white-dim);font-size:9px;text-transform:none;letter-spacing:0;">(optional — e.g. for Other documents)</span></div>
+      <input type="text" class="modal-doctype-select" id="otherDescInput" placeholder="e.g. Council rates notice, insurance policy..." oninput="window.updateSavedNamePreview()" style="margin-bottom:0;">
     </div>
 
     <div class="modal-label" style="margin-top:14px;">Institution / Employer <span style="color:var(--white-dim);font-size:9px;text-transform:none;letter-spacing:0;">(optional — e.g. Westpac, Sweet Treats Pty Ltd)</span></div>
@@ -4175,7 +4164,7 @@ Kind regards,
     setTimeout(openNextFolderUpload, 400);
   }
 
-  window.addUploadedCard = function addUploadedCard(savedName, icon, date, size, typeLabel, skipSave, fileObj, isReturned, returnNote, returnedBy) {
+  window.addUploadedCard = function addUploadedCard(savedName, icon, date, size, typeLabel, skipSave, fileObj, isReturned, returnNote, returnedBy, explicitMatchKey) {
     const list = document.getElementById('docsList');
     docCounter++;
     const iconClass = typeLabel === 'PDF' ? 'pdf' : ['JPG','JPEG','PNG'].includes(typeLabel) ? 'img' : 'doc';
@@ -4213,15 +4202,21 @@ Kind regards,
         clientId = p.get('client');
       }
       if (clientId) {
-        // Guess matchKey from doc name
-        var matchKey = null;
+        // Use explicit matchKey if provided (from submitUpload), otherwise guess from name
+        var matchKey = explicitMatchKey || null;
         var nameLower = savedName.toLowerCase();
+        if (matchKey) { /* use provided */ } else
         if (nameLower.indexOf('payslip') !== -1) matchKey = 'payslip';
-        else if (nameLower.indexOf('bank') !== -1 || nameLower.indexOf('statement') !== -1) matchKey = 'bank';
-        else if (nameLower.indexOf('photo') !== -1 || nameLower.indexOf('id') !== -1 || nameLower.indexOf('licence') !== -1 || nameLower.indexOf('passport') !== -1) matchKey = 'id';
         else if (nameLower.indexOf('super') !== -1) matchKey = 'super';
         else if (nameLower.indexOf('tax') !== -1) matchKey = 'tax';
         else if (nameLower.indexOf('employment') !== -1 || nameLower.indexOf('letter') !== -1) matchKey = 'employment';
+        else if (nameLower.indexOf('passport') !== -1 || nameLower.indexOf('licence') !== -1 || nameLower.indexOf('license') !== -1) matchKey = 'id';
+        else if (nameLower.indexOf('photo') !== -1 || (nameLower.indexOf(' id') !== -1 && nameLower.indexOf('photo') !== -1)) matchKey = 'id';
+        else if (nameLower.indexOf('bank') !== -1) matchKey = 'bank';
+        else if (nameLower.indexOf('statement') !== -1) matchKey = 'bank';
+        else if (nameLower.indexOf('income') !== -1) matchKey = 'bank';
+        else if (nameLower.indexOf('council') !== -1 || nameLower.indexOf('rates') !== -1) matchKey = 'rates';
+        else if (nameLower.indexOf('insurance') !== -1) matchKey = 'insurance';
 
         var uploadRecord = { name: savedName, icon: icon, date: date, size: size, type: typeLabel, matchKey: matchKey };
 
@@ -4651,7 +4646,7 @@ Kind regards,
         const icon     = ext === 'pdf' ? '📄' : ['jpg','jpeg','png'].includes(ext) ? '🖼️' : '📝';
         const savedName = savedNames[i];
         if (window._dbg) window._dbg('Calling addUploadedCard: ' + savedName + ' size:' + file.size);
-        window.addUploadedCard(savedName, icon, displayDate, formatSize(file.size), ext.toUpperCase(), false, file);
+        window.addUploadedCard(savedName, icon, displayDate, formatSize(file.size), ext.toUpperCase(), false, file, false, '', '', assignKey);
         if (window._dbg) window._dbg('addUploadedCard done');
         uploadedCount++;
       } catch(err) {
@@ -4863,7 +4858,7 @@ Kind regards,
   }
 
   // ─── DRAG & DROP ───
-  const zone = document.getElementById('uploadZone');
+  const zone = document.getElementById('uploadZone'); if (!zone) return; // upload zone removed
   zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag-over'); });
   zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
   zone.addEventListener('drop', e => {
