@@ -6932,9 +6932,20 @@ Kind regards,
       if (!uploads || uploads.length === 0) return;
       var docsList = document.getElementById('docsList');
       if (!docsList) return;
-      // Re-apply uploads with updated statuses
+      // Deduplicate: keep only latest upload per match_key, then show ungrouped ones
+      var seen = {};
+      var deduped = [];
+      // Sort by created_at descending to get latest first
+      var sorted = uploads.slice().reverse();
+      sorted.forEach(function(u) {
+        var key = u.matchKey || u.match_key || u.name;
+        if (!seen[key]) {
+          seen[key] = true;
+          deduped.push(u);
+        }
+      });
       docsList.innerHTML = '';
-      uploads.forEach(function(u) {
+      deduped.forEach(function(u) {
         var isReturned = u.status === 'returned';
         var returnNote = u.return_note || '';
         var returnedBy = u.returned_by || 'Your adviser';
@@ -7108,22 +7119,30 @@ Kind regards,
 
         function applyUploads(saved) {
           docsList.innerHTML = '';
-          saved.forEach(function(u) {
+          // Deduplicate: one card per doc type (latest wins)
+          var seen = {};
+          var deduped = [];
+          var reversed = saved.slice().reverse();
+          reversed.forEach(function(u) {
+            var key = u.match_key || u.matchKey || u.name;
+            if (!seen[key]) { seen[key] = true; deduped.push(u); }
+          });
+          deduped.forEach(function(u) {
             var matchKey = u.match_key || u.matchKey;
             var uStatus = u.status || 'pending';
             if (matchKey && uStatus !== 'returned') {
-              // Only mark as uploaded if not returned - returned docs need re-upload
               var d = docLibrary.find(function(d) { return d.id === matchKey; });
               if (d) d.uploaded = true;
             }
-            var isReturned = u.status === 'returned';
+            var isReturned = uStatus === 'returned';
+            var isReviewed = uStatus === 'reviewed';
             var returnNote = u.return_note || u.returnNote || '';
             var returnedBy = u.returned_by || u.returnedBy || 'Your adviser';
-            window.addUploadedCard(u.name, u.icon || '📄', u.date, u.size, u.type, true, null, isReturned, returnNote, returnedBy);
+            window.addUploadedCard(u.name, u.icon || '📄', u.date, u.size, u.type, true, null, isReturned, returnNote, returnedBy, null, isReviewed);
           });
           var emptyState = document.getElementById('emptyState');
-          if (emptyState) emptyState.style.display = saved.length === 0 ? 'block' : 'none';
-          if (saved.length > 0) window.renderIndividualDocs();
+          if (emptyState) emptyState.style.display = deduped.length === 0 ? 'block' : 'none';
+          if (deduped.length > 0) window.renderIndividualDocs();
         }
 
         // Try Supabase first, fall back to localStorage
@@ -7152,7 +7171,7 @@ Kind regards,
       document.getElementById('landingView').style.display = 'none';
 
       // Auto-refresh upload statuses every 30s so client sees reviewed/returned updates
-      setInterval(function() { if (window.refreshUploadStatuses) window.refreshUploadStatuses(); }, 30000);
+      setInterval(function() { if (window.refreshUploadStatuses) window.refreshUploadStatuses(); }, 10000);
 
     } else {
       // No client param — show landing page only
