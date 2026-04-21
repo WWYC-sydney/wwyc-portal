@@ -2678,6 +2678,7 @@
         id: client.id, name: client.name, email: client.email,
         phone: client.phone||'', step: client.step||'', adviser: client.adviser||'',
         docs: JSON.stringify(client.docs||[]),
+        doc_notes: JSON.stringify(client.docNotes||{}),
         drive_folder_id: client.driveFolderId||null,
         uploads: JSON.stringify(client.uploads||[])
       });
@@ -3896,11 +3897,14 @@ Kind regards,
         if (e.target.closest('.info-btn')) return;
         window.openUploadForDoc(doc.id, doc.name);
       });
+      // Get per-client note for this doc
+      var activeClient2 = window.getActiveClient ? window.getActiveClient() : null;
+      var clientDocNote = activeClient2 && activeClient2.docNotes && activeClient2.docNotes[doc.id] ? activeClient2.docNotes[doc.id] : '';
       div.innerHTML = `
         <div class="req-doc-icon">${doc.icon}</div>
         <div class="req-doc-body">
           <div class="req-doc-name">${doc.name}</div>
-          <div class="req-doc-desc">${doc.desc}</div>
+          <div class="req-doc-desc">${clientDocNote || doc.desc}</div>
           <div class="req-doc-meta">
             <div class="req-doc-assignee"><div class="req-doc-assignee-dot"></div>${getStaffName(staffAssignments[doc.id] || doc.assignee) || getStaffName(staffMembers[0]?.id) || 'Unassigned'}</div>
           </div>
@@ -5114,7 +5118,8 @@ Kind regards,
             id: c.id, name: c.name, email: c.email, phone: c.phone,
             step: c.step, adviser: c.adviser,
             docs: typeof c.docs === 'string' ? JSON.parse(c.docs||'[]') : (c.docs||[]),
-            driveFolderId: c.drive_folder_id || null,
+            docNotes: (function(){ try { return JSON.parse(c.doc_notes||'{}'); } catch(e){ return {}; } })(),
+          driveFolderId: c.drive_folder_id || null,
             uploads: typeof c.uploads === 'string' ? JSON.parse(c.uploads||'[]') : (c.uploads||[])
           };
         });
@@ -5359,6 +5364,26 @@ Kind regards,
         var dEl = document.createElement('div'); dEl.className = 'staff-doc-date'; dEl.style.cssText = 'font-size:10px;color:var(--white-dim);flex-shrink:0;'; dEl.textContent = doc.uploaded ? 'Uploaded' : '-';
         var pEl = document.createElement('div'); pEl.className = 'staff-assignee-pill'; pEl.textContent = aName;
         row.appendChild(iEl); row.appendChild(nEl); row.appendChild(dEl); row.appendChild(pEl);
+        
+        // Per-client note field
+        var docNote = (client.docNotes || {})[doc.id] || '';
+        var noteWrap = document.createElement('div');
+        noteWrap.style.cssText = 'width:100%;padding:4px 12px 8px 44px;';
+        var noteInput = document.createElement('input');
+        noteInput.type = 'text';
+        noteInput.placeholder = 'Add a personalised note for ' + client.name + ' (clients will see this)...';
+        noteInput.value = docNote;
+        noteInput.style.cssText = 'width:100%;background:rgba(255,255,255,0.05);border:1px dashed rgba(255,255,255,0.15);border-radius:6px;color:var(--white);font-size:11px;padding:5px 10px;font-family:Nunito,sans-serif;box-sizing:border-box;';
+        noteInput.addEventListener('click', function(e){ e.stopPropagation(); });
+        noteInput.addEventListener('change', function() {
+          if (!client.docNotes) client.docNotes = {};
+          client.docNotes[doc.id] = noteInput.value.trim();
+          window.dbSaveClient(client);
+          window.persistAll();
+          showToast('✅ Note saved');
+        });
+        noteWrap.appendChild(noteInput);
+        row.appendChild(noteWrap);
 
         if (doc.uploaded) {
           var docStatus = (uploadStatusMap[doc.id] || {}).status || 'pending';
