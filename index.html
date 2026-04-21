@@ -4157,7 +4157,7 @@ Kind regards,
     const ext = pendingFiles.length && !pendingFiles[0]._placeholder ? pendingFiles[0].name.split('.').pop().toLowerCase() : 'pdf';
     const savedName = buildSavedName(ext);
     const size = pendingFiles[0] && !pendingFiles[0]._placeholder ? formatSize(pendingFiles[0].size) : '—';
-    addUploadedCard(savedName, doc ? doc.icon : '📄', displayDate, size, ext.toUpperCase());
+    addUploadedCard(savedName, doc ? doc.icon : '📄', displayDate, size, ext.toUpperCase(), false, pendingFiles[0]);
     uploadedCount++;
 
     // Notify the assigned staff member
@@ -4170,7 +4170,7 @@ Kind regards,
     setTimeout(openNextFolderUpload, 400);
   }
 
-  window.addUploadedCard = function addUploadedCard(savedName, icon, date, size, typeLabel, skipSave) {
+  window.addUploadedCard = function addUploadedCard(savedName, icon, date, size, typeLabel, skipSave, fileObj) {
     const list = document.getElementById('docsList');
     docCounter++;
     const iconClass = typeLabel === 'PDF' ? 'pdf' : ['JPG','JPEG','PNG'].includes(typeLabel) ? 'img' : 'doc';
@@ -4219,6 +4219,17 @@ Kind regards,
           existing.push(uploadRecord);
           localStorage.setItem(key, JSON.stringify(existing));
         } catch(e) {}
+
+        // Upload actual file to Google Drive
+        if (fileObj && typeof uploadFileToDrive === 'function') {
+          var clientName = (function(){ var p=new URLSearchParams(window.location.search); return p.get('name')||'Client'; })();
+          uploadFileToDrive(fileObj, savedName, clientId, clientName).then(function(result) {
+            if (result && window._dbg) window._dbg('✓ File uploaded to Drive: ' + savedName, '#6EE7B7');
+            else if (window._dbg) window._dbg('Drive upload skipped (not connected)', 'orange');
+          }).catch(function(e) {
+            if (window._dbg) window._dbg('Drive upload error: ' + e.message, 'orange');
+          });
+        }
 
         // Save to Supabase
         if (window._dbg) window._dbg('Saving upload to Supabase: ' + savedName + ' for ' + clientId);
@@ -4602,7 +4613,7 @@ Kind regards,
         const icon     = ext === 'pdf' ? '📄' : ['jpg','jpeg','png'].includes(ext) ? '🖼️' : '📝';
         const savedName = savedNames[i];
         if (window._dbg) window._dbg('Calling addUploadedCard: ' + savedName + ' size:' + file.size);
-        window.addUploadedCard(savedName, icon, displayDate, formatSize(file.size), ext.toUpperCase(), false);
+        window.addUploadedCard(savedName, icon, displayDate, formatSize(file.size), ext.toUpperCase(), false, file);
         if (window._dbg) window._dbg('addUploadedCard done');
         uploadedCount++;
       } catch(err) {
