@@ -3156,8 +3156,7 @@
     <div class="modal-sub">Fill in the details below so this document is filed correctly. The file will be renamed automatically.</div>
 
     <div class="modal-label">Document Type</div>
-    <div id="docTypeDisplay" style="background:rgba(201,168,76,0.08);border:2px solid rgba(201,168,76,0.3);border-radius:10px;padding:10px 14px;font-size:13px;font-weight:700;color:var(--gold);margin-bottom:4px;">—</div>
-    <select class="modal-doctype-select" id="docTypeSelect" style="display:none;" onchange="window.updateSavedNamePreview();">
+    <select class="modal-doctype-select" id="docTypeSelect" onchange="window.updateSavedNamePreview(); var d=document.getElementById('docTypeDisplay'); if(d) d.textContent=this.options[this.selectedIndex].text;">
       <option value="Payslip">Payslip</option>
       <option value="Bank Statement">Bank Statement</option>
       <option value="Income Statement">Income Statement</option>
@@ -7011,7 +7010,7 @@ Kind regards,
           if (sel.options[j].value === 'Other') { sel.selectedIndex = j; break; }
         }
       }
-      if (display) display.textContent = sel.options[sel.selectedIndex].value;
+      // display label removed - dropdown is now visible directly
       // Trigger preview update
       if (window.updateSavedNamePreview) window.updateSavedNamePreview();
     }
