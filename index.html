@@ -5363,12 +5363,17 @@ Kind regards,
         if (doc.uploaded) {
           var docStatus = (uploadStatusMap[doc.id] || {}).status || 'pending';
           if (docStatus === 'reviewed') {
-            var doneSpan = document.createElement('span'); doneSpan.style.cssText = 'font-size:10px;color:var(--success);font-weight:700;'; doneSpan.textContent = '✓ Reviewed';
+            var doneSpan = document.createElement('span'); doneSpan.style.cssText = 'font-size:10px;color:var(--success);font-weight:700;margin-right:4px;'; doneSpan.textContent = '✓ Reviewed';
             row.appendChild(doneSpan);
+            // Allow changing to returned
+            var rtb2 = document.createElement('button'); rtb2.className = 'reject-btn'; rtb2.textContent = 'Return Instead';
+            rtb2.addEventListener('click', function(e){ e.stopPropagation(); window.openRejectModal(rtb2, 'badge-' + client.id, doc.name, client.name); });
+            row.appendChild(rtb2);
           } else if (docStatus === 'returned') {
-            var retSpan = document.createElement('span'); retSpan.style.cssText = 'font-size:10px;color:var(--rejected);font-weight:700;'; retSpan.textContent = '↩ Returned';
+            var retSpan = document.createElement('span'); retSpan.style.cssText = 'font-size:10px;color:var(--rejected);font-weight:700;margin-right:4px;'; retSpan.textContent = '↩ Returned';
             row.appendChild(retSpan);
-            var rb2 = document.createElement('button'); rb2.className = 'review-btn'; rb2.textContent = 'Mark Reviewed';
+            // Allow changing to reviewed
+            var rb2 = document.createElement('button'); rb2.className = 'review-btn'; rb2.textContent = 'Mark Reviewed Instead';
             rb2.addEventListener('click', function(e){ e.stopPropagation(); window.markReviewed(rb2, 'badge-' + client.id); });
             row.appendChild(rb2);
           } else {
