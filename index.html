@@ -4746,12 +4746,15 @@ Kind regards,
     var docId = row.id.replace('staffrow-' + clientId + '-', '');
     // Patch all uploads for this client+doc that are pending or returned
     var patchUrl = SUPABASE_URL + '/rest/v1/uploads?client_id=eq.' + encodeURIComponent(clientId) + '&match_key=eq.' + encodeURIComponent(docId);
+    if (window._dbg) window._dbg('Marking reviewed: clientId=' + clientId + ' docId=' + docId);
     fetch(patchUrl, {
       method: 'PATCH',
-      headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+      headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY, 'Content-Type': 'application/json', 'Prefer': 'return=representation' },
       body: JSON.stringify({ status: 'reviewed' })
     }).then(function(r){
-      if (window._dbg) window._dbg('Reviewed saved: ' + (r.ok ? 'OK' : 'FAILED ' + r.status), r.ok ? '#6EE7B7' : 'red');
+      return r.json().then(function(data) {
+        if (window._dbg) window._dbg('Reviewed saved: ' + (r.ok ? 'OK rows=' + (data.length||0) : 'FAILED ' + r.status + ' ' + JSON.stringify(data)), r.ok && data.length > 0 ? '#6EE7B7' : 'red');
+      });
     }).catch(function(e){
       if (window._dbg) window._dbg('Reviewed save error: ' + e.message, 'red');
     });
@@ -5277,7 +5280,10 @@ Kind regards,
           clientUploads = client.uploads;
         }
       }
-      var uploadedKeys = clientUploads.map(function(u){ return u.match_key || u.matchKey; }).filter(Boolean);
+      // Only count non-returned uploads as "uploaded"
+      var uploadedKeys = clientUploads
+        .filter(function(u){ return (u.status || 'pending') !== 'returned'; })
+        .map(function(u){ return u.match_key || u.matchKey; }).filter(Boolean);
       // Build status map: matchKey -> {status, returnNote, returnedBy, driveUrl}
       var uploadStatusMap = {};
       clientUploads.forEach(function(u) {
@@ -7116,7 +7122,9 @@ Kind regards,
           docsList.innerHTML = '';
           saved.forEach(function(u) {
             var matchKey = u.match_key || u.matchKey;
-            if (matchKey) {
+            var uStatus = u.status || 'pending';
+            if (matchKey && uStatus !== 'returned') {
+              // Only mark as uploaded if not returned - returned docs need re-upload
               var d = docLibrary.find(function(d) { return d.id === matchKey; });
               if (d) d.uploaded = true;
             }
