@@ -4229,22 +4229,39 @@ Kind regards,
           localStorage.setItem(key, JSON.stringify(existing));
         } catch(e) {}
 
-        // Upload actual file to Google Drive
-        if (fileObj && typeof uploadFileToDrive === 'function') {
-          var clientName = (function(){ var p=new URLSearchParams(window.location.search); return p.get('name')||'Client'; })();
-          uploadFileToDrive(fileObj, savedName, clientId, clientName).then(function(result) {
-            if (result && result.webViewLink) {
-              if (window._dbg) window._dbg('✓ File uploaded to Drive: ' + savedName, '#6EE7B7');
-              // Update Supabase record with Drive URL
-              fetch(SUPABASE_URL + '/rest/v1/uploads?client_id=eq.' + encodeURIComponent(clientId) + '&name=eq.' + encodeURIComponent(savedName), {
-                method: 'PATCH',
-                headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
-                body: JSON.stringify({ drive_url: result.webViewLink })
-              }).catch(function(){});
-            } else if (window._dbg) window._dbg('Drive upload skipped (not connected or failed)', 'orange');
-          }).catch(function(e) {
-            if (window._dbg) window._dbg('Drive upload error: ' + e.message, 'orange');
-          });
+        // Upload file to Supabase Storage so staff can download it
+        if (fileObj && fileObj.size > 0) {
+          var storagePath = clientId + '/' + savedName.replace(/[^a-zA-Z0-9._-]/g, '_');
+          var reader = new FileReader();
+          reader.onload = function(ev) {
+            // Upload as binary to Supabase Storage
+            fetch(SUPABASE_URL + '/storage/v1/object/uploads/' + storagePath, {
+              method: 'POST',
+              headers: {
+                'apikey': SUPABASE_KEY,
+                'Authorization': 'Bearer ' + SUPABASE_KEY,
+                'Content-Type': fileObj.type || 'application/octet-stream',
+                'x-upsert': 'true'
+              },
+              body: fileObj
+            }).then(function(r) {
+              if (r.ok) {
+                if (window._dbg) window._dbg('✓ File stored in Supabase Storage', '#6EE7B7');
+                // Save the storage URL to the upload record
+                var fileUrl = SUPABASE_URL + '/storage/v1/object/public/uploads/' + storagePath;
+                fetch(SUPABASE_URL + '/rest/v1/uploads?client_id=eq.' + encodeURIComponent(clientId) + '&name=eq.' + encodeURIComponent(savedName), {
+                  method: 'PATCH',
+                  headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+                  body: JSON.stringify({ drive_url: fileUrl })
+                }).catch(function(){});
+              } else {
+                if (window._dbg) r.text().then(function(t){ window._dbg('Storage upload failed: ' + r.status + ' ' + t, 'orange'); });
+              }
+            }).catch(function(e) {
+              if (window._dbg) window._dbg('Storage upload error: ' + e.message, 'orange');
+            });
+          };
+          reader.readAsArrayBuffer(fileObj);
         }
 
         // Save to Supabase
@@ -4722,11 +4739,17 @@ Kind regards,
     // Save reviewed status to Supabase
     var clientId = badgeId.replace('badge-', '');
     var docId = row.id.replace('staffrow-' + clientId + '-', '');
-    fetch(SUPABASE_URL + '/rest/v1/uploads?client_id=eq.' + encodeURIComponent(clientId) + '&match_key=eq.' + encodeURIComponent(docId), {
+    // Patch all uploads for this client+doc that are pending or returned
+    var patchUrl = SUPABASE_URL + '/rest/v1/uploads?client_id=eq.' + encodeURIComponent(clientId) + '&match_key=eq.' + encodeURIComponent(docId);
+    fetch(patchUrl, {
       method: 'PATCH',
       headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
       body: JSON.stringify({ status: 'reviewed' })
-    }).catch(function(){});
+    }).then(function(r){
+      if (window._dbg) window._dbg('Reviewed saved: ' + (r.ok ? 'OK' : 'FAILED ' + r.status), r.ok ? '#6EE7B7' : 'red');
+    }).catch(function(e){
+      if (window._dbg) window._dbg('Reviewed save error: ' + e.message, 'red');
+    });
   }
 
   window.updateGroupBadge = function updateGroupBadge(badgeId) {
@@ -5250,6 +5273,9 @@ Kind regards,
         var k = u.match_key || u.matchKey;
         if (k) uploadStatusMap[k] = { status: u.status||'pending', returnNote: u.return_note||'', returnedBy: u.returned_by||'', driveUrl: u.drive_url||'' };
       });
+      if (window._dbg && Object.keys(uploadStatusMap).length > 0) {
+        window._dbg('StatusMap for ' + client.name + ': ' + JSON.stringify(uploadStatusMap));
+      }
 
       var requiredDocs = client.docs.map(function(id) {
         var doc = docLibrary.find(function(d){ return d.id === id; });
