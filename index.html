@@ -2739,6 +2739,7 @@
       await _sbUpsert('clients', {
         id: client.id, name: client.name, email: client.email,
         name2: client.name2||'', email2: client.email2||'',
+        active_info_requests: JSON.stringify(client.activeInfoRequests||[]),
         phone: client.phone||'', step: client.step||'', adviser: client.adviser||'',
         docs: JSON.stringify(client.docs||[]),
         doc_notes: JSON.stringify(client.docNotes||{}),
@@ -3524,7 +3525,9 @@ document.getElementById('pwDoSubmit').addEventListener('click', function() {
     <div class="modal-label" style="margin-top:12px;">Assigned Adviser</div>
     <select class="modal-input" id="editClientAdviser" style="appearance:none;cursor:pointer;"></select>
     <div class="modal-label" style="margin-top:16px;">Required Documents <span style="color:var(--white-dim);font-size:9px;text-transform:none;letter-spacing:0;">Tick to add, untick to remove</span></div>
-    <div id="editClientDocPicker" style="display:flex;flex-direction:column;gap:6px;max-height:200px;overflow-y:auto;margin-top:6px;"></div>
+    <div id="editClientDocPicker" style="display:flex;flex-direction:column;gap:6px;max-height:180px;overflow-y:auto;margin-top:6px;"></div>
+    <div class="modal-label" style="margin-top:16px;">Information Requests <span style="color:var(--white-dim);font-size:9px;text-transform:none;letter-spacing:0;">Structured forms client fills in</span></div>
+    <div id="editClientInfoPicker" style="display:flex;flex-direction:column;gap:6px;max-height:180px;overflow-y:auto;margin-top:6px;"></div>
     <div class="modal-actions" style="margin-top:20px;">
       <button class="btn-secondary" onclick="window.closeModal('editClientModal')">Cancel</button>
       <button class="btn-primary" onclick="window.saveEditClient()">Save Changes</button>
@@ -5232,6 +5235,7 @@ Kind regards,
             docs: typeof c.docs === 'string' ? JSON.parse(c.docs||'[]') : (c.docs||[]),
             name2: c.name2 || '',
           email2: c.email2 || '',
+          activeInfoRequests: (function(){ try { return JSON.parse(c.active_info_requests||'[]'); } catch(e){ return []; } })(),
           docNotes: (function(){ try { return JSON.parse(c.doc_notes||'{}'); } catch(e){ return {}; } })(),
           driveFolderId: c.drive_folder_id || null,
             uploads: typeof c.uploads === 'string' ? JSON.parse(c.uploads||'[]') : (c.uploads||[])
@@ -6572,6 +6576,8 @@ Kind regards,
     // Update required docs from picker
     var checkedDocs = Array.from(document.querySelectorAll('#editClientDocPicker input[type=checkbox]:checked')).map(function(cb){ return cb.value; });
     if (checkedDocs.length > 0) client.docs = checkedDocs;
+    // Update info requests
+    client.activeInfoRequests = Array.from(document.querySelectorAll('#editClientInfoPicker input[type=checkbox]:checked')).map(function(cb){ return cb.value; });
     // Save to Supabase
     window.dbSaveClient(client);
     window.persistAll();
@@ -6809,7 +6815,10 @@ Kind regards,
     if (!container) return;
     container.innerHTML = '';
 
-    var allRequests = activeInfoRequests.slice();
+    // Use client-specific info requests if available
+    var ac = window.getActiveClient ? window.getActiveClient() : null;
+    var clientSpecificReqs = ac && ac.activeInfoRequests ? ac.activeInfoRequests : [];
+    var allRequests = clientSpecificReqs.length > 0 ? clientSpecificReqs : activeInfoRequests.slice();
     // Add custom requests
     customInfoRequests.forEach(function(r) { allRequests.push('custom-' + r.id); });
 
