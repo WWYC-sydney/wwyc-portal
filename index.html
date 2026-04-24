@@ -4354,11 +4354,20 @@ Kind regards,
     });
     // Save to localStorage
     try { localStorage.setItem('ic_doc_library', JSON.stringify(docLibrary)); } catch(e) {}
-    // Save to Supabase portal settings
-    fetch(SUPABASE_URL + '/rest/v1/portal_settings?key=eq.doc_library', {
-      method: 'POST',
-      headers: Object.assign({}, _headers, {'Prefer': 'resolution=merge-duplicates,return=minimal'}),
-      body: JSON.stringify({ key: 'doc_library', value: JSON.stringify(docLibrary) })
+    // Save to Supabase as a special "settings" client record
+    fetch(SUPABASE_URL + '/rest/v1/clients?id=eq.__doc_library__', {
+      method: 'PATCH',
+      headers: Object.assign({}, _headers, {'Prefer': 'return=minimal'}),
+      body: JSON.stringify({ uploads: JSON.stringify(docLibrary) })
+    }).then(function(r) {
+      if (r.status === 404 || r.headers.get('content-range') === '0-0/0') {
+        // Record doesn't exist - create it
+        fetch(SUPABASE_URL + '/rest/v1/clients', {
+          method: 'POST',
+          headers: Object.assign({}, _headers, {'Prefer': 'return=minimal'}),
+          body: JSON.stringify({ id: '__doc_library__', name: '__doc_library__', email: '', docs: '[]', uploads: JSON.stringify(docLibrary) })
+        }).catch(function(){});
+      }
     }).catch(function(){});
     closeModal('docLibraryModal');
     renderIndividualDocs();
@@ -5419,7 +5428,7 @@ Kind regards,
         var row = document.createElement('div');
         row.className = 'staff-doc-row';
         row.id = 'staffrow-' + client.id + '-' + doc.id;
-        row.style.cursor = 'pointer';
+        row.style.cssText = 'cursor:pointer;flex-wrap:wrap;align-items:center;';
         // Find Drive URL from uploads data
         var driveUrl = (uploadStatusMap[doc.id] || {}).driveUrl || null;
         var capturedDriveUrl = driveUrl;
@@ -7117,26 +7126,38 @@ Kind regards,
 
   document.addEventListener('DOMContentLoaded', () => {
     try { window.loadSettings(); } catch(e) { console.error('loadSettings:', e); }
-    // Restore doc library from localStorage if saved
+    // Restore doc library - try Supabase first, then localStorage
+    function applyDocLibrary(parsedLib) {
+      if (!Array.isArray(parsedLib) || parsedLib.length === 0) return;
+      parsedLib.forEach(function(saved) {
+        var existing = docLibrary.find(function(d){ return d.id === saved.id; });
+        if (existing) {
+          if (saved.name) existing.name = saved.name;
+          if (saved.desc) existing.desc = saved.desc;
+          if (saved.icon) existing.icon = saved.icon;
+          if (saved.note) existing.note = saved.note;
+          if (saved.assignee) existing.assignee = saved.assignee;
+        }
+      });
+    }
+    // Try localStorage first (fast)
     try {
       var savedLib = localStorage.getItem('ic_doc_library');
-      if (savedLib) {
-        var parsedLib = JSON.parse(savedLib);
-        if (Array.isArray(parsedLib) && parsedLib.length > 0) {
-          // Merge saved values into docLibrary (keep structure, update editable fields)
-          parsedLib.forEach(function(saved) {
-            var existing = docLibrary.find(function(d){ return d.id === saved.id; });
-            if (existing) {
-              existing.name = saved.name || existing.name;
-              existing.desc = saved.desc || existing.desc;
-              existing.icon = saved.icon || existing.icon;
-              existing.note = saved.note || existing.note;
-              existing.assignee = saved.assignee || existing.assignee;
-            }
-          });
-        }
-      }
+      if (savedLib) applyDocLibrary(JSON.parse(savedLib));
     } catch(e) {}
+    // Then load from Supabase (cross-device)
+    fetch(SUPABASE_URL + '/rest/v1/clients?id=eq.__doc_library__&select=uploads', {
+      headers: _headers
+    }).then(function(r){ return r.json(); }).then(function(data) {
+      if (data && data[0] && data[0].uploads) {
+        var cloudLib = JSON.parse(data[0].uploads);
+        applyDocLibrary(cloudLib);
+        // Update localStorage with cloud version
+        try { localStorage.setItem('ic_doc_library', JSON.stringify(cloudLib)); } catch(e) {}
+        // Re-render with updated library
+        if (window.renderIndividualDocs) window.renderIndividualDocs();
+      }
+    }).catch(function(){});
     try { window.loadPersistedData(); } catch(e) { console.error('loadPersistedData:', e); }
     try { window.renderIndividualDocs(); } catch(e) { console.error('renderIndividualDocs:', e); }
     try { renderStepFolders(); } catch(e) { console.error('renderStepFolders:', e); }
