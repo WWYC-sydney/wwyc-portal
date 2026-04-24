@@ -2532,7 +2532,7 @@
     background: white;
     border-radius: 4px;
     box-shadow: 0 8px 40px rgba(0,0,0,0.5);
-    min-width: 600px;
+    min-width: min(600px, 90vw);
   }
 
   .doc-preview-placeholder {
@@ -2541,7 +2541,7 @@
     align-items: center;
     justify-content: center;
     min-height: 500px;
-    min-width: 600px;
+    min-width: min(600px, 90vw);
     background: white;
     border-radius: 4px;
     gap: 16px;
@@ -2576,6 +2576,55 @@
     .page-title { font-size: 28px; }
     .staff-doc-date { display: none; }
   }
+
+  /* ── MOBILE RESPONSIVE ──────────────────────────────────────── */
+  * { box-sizing: border-box; }
+  html, body { overflow-x: hidden; max-width: 100vw; }
+
+  @media (max-width: 640px) {
+    .main { padding: 16px 12px; }
+    
+    /* Staff settings row - wrap and shrink */
+    .staff-settings-row { gap: 6px; }
+    .staff-settings-btn { padding: 7px 10px; font-size: 10px; }
+
+    /* Client files header - stack vertically */
+    .client-files-header { flex-direction: column; align-items: flex-start; gap: 10px; }
+    
+    /* Staff doc rows - allow wrapping */
+    .staff-doc-row { flex-wrap: wrap; gap: 6px; padding: 10px 12px; }
+    .staff-doc-name { min-width: 0; flex: 1 1 140px; }
+    .staff-doc-date { display: none; }
+    .staff-assignee-pill { font-size: 9px; }
+    
+    /* Modals - full width */
+    .modal { width: 95vw; max-width: 95vw; padding: 24px 16px; margin: 16px auto; }
+    
+    /* Preview - remove min-width */
+    .doc-preview-inner, .doc-preview-placeholder { min-width: unset; width: 100%; }
+    
+    /* New client buttons bar */
+    .new-client-btn { padding: 10px 16px; font-size: 12px; }
+    
+    /* Client view doc cards */
+    .req-doc-item { padding: 12px 10px; }
+    .req-doc-body { min-width: 0; }
+    
+    /* Toggle tabs */
+    .view-toggle { gap: 4px; }
+    .toggle-btn { padding: 8px 12px; font-size: 11px; }
+
+    /* Header */
+    .header-inner { padding: 0 12px; gap: 8px; }
+    
+    /* Uploaded docs list */
+    .doc-card { flex-wrap: wrap; gap: 8px; }
+    .doc-right { flex-shrink: 0; }
+
+    /* Staff doc row note input */
+    .staff-doc-row input[type="text"] { font-size: 11px; }
+  }
+
 </style>
   <script src="https://accounts.google.com/gsi/client" async defer></script>
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
@@ -2677,6 +2726,7 @@
     try {
       await _sbUpsert('clients', {
         id: client.id, name: client.name, email: client.email,
+        name2: client.name2||'', email2: client.email2||'',
         phone: client.phone||'', step: client.step||'', adviser: client.adviser||'',
         docs: JSON.stringify(client.docs||[]),
         doc_notes: JSON.stringify(client.docNotes||{}),
@@ -4290,6 +4340,14 @@ Kind regards,
       const field = el.dataset.field;
       if (!isNaN(idx) && field && docLibrary[idx]) docLibrary[idx][field] = el.value;
     });
+    // Save to localStorage
+    try { localStorage.setItem('ic_doc_library', JSON.stringify(docLibrary)); } catch(e) {}
+    // Save to Supabase portal settings
+    fetch(SUPABASE_URL + '/rest/v1/portal_settings?key=eq.doc_library', {
+      method: 'POST',
+      headers: Object.assign({}, _headers, {'Prefer': 'resolution=merge-duplicates,return=minimal'}),
+      body: JSON.stringify({ key: 'doc_library', value: JSON.stringify(docLibrary) })
+    }).catch(function(){});
     closeModal('docLibraryModal');
     renderIndividualDocs();
     renderStepFolders();
@@ -5115,7 +5173,9 @@ Kind regards,
             id: c.id, name: c.name, email: c.email, phone: c.phone,
             step: c.step, adviser: c.adviser,
             docs: typeof c.docs === 'string' ? JSON.parse(c.docs||'[]') : (c.docs||[]),
-            docNotes: (function(){ try { return JSON.parse(c.doc_notes||'{}'); } catch(e){ return {}; } })(),
+            name2: c.name2 || '',
+          email2: c.email2 || '',
+          docNotes: (function(){ try { return JSON.parse(c.doc_notes||'{}'); } catch(e){ return {}; } })(),
           driveFolderId: c.drive_folder_id || null,
             uploads: typeof c.uploads === 'string' ? JSON.parse(c.uploads||'[]') : (c.uploads||[])
           };
@@ -5430,9 +5490,10 @@ Kind regards,
     // Populate doc picker checkboxes
     const picker = document.getElementById('newClientDocPicker');
     picker.innerHTML = docLibrary.map(doc => `
-      <label style="display:flex;align-items:center;gap:8px;padding:7px 10px;border:1px solid rgba(255,255,255,0.07);border-radius:8px;cursor:pointer;font-size:12px;color:var(--white);background:rgba(255,255,255,0.02);transition:border-color 0.15s;">
-        <input type="checkbox" value="${doc.id}" checked style="accent-color:var(--gold);width:14px;height:14px;">
-        ${doc.icon} ${doc.name}
+      <label style="display:flex;align-items:center;gap:8px;padding:8px 12px;border:1px solid #E5E7EB;border-radius:8px;cursor:pointer;font-size:13px;color:#111827;background:#F9FAFB;font-family:Nunito,sans-serif;font-weight:600;">
+        <input type="checkbox" value="${doc.id}" checked style="accent-color:#1C4475;width:15px;height:15px;flex-shrink:0;">
+        <span style="font-size:16px;">${doc.icon}</span>
+        <span style="flex:1;color:#111827;">${doc.name}</span>
       </label>`).join('');
 
     // Reset portal link
@@ -5440,6 +5501,8 @@ Kind regards,
     document.getElementById('newClientName').value = '';
     document.getElementById('newClientEmail').value = '';
     document.getElementById('newClientPhone').value = '';
+    document.getElementById('newClientName2').value = '';
+    document.getElementById('newClientEmail2').value = '';
     document.getElementById('newClientStep').value = 'Step 1 — Initial Consultation';
     document.getElementById('newClientSaveBtn').textContent = 'Create Client';
 
@@ -5467,7 +5530,9 @@ Kind regards,
 
     const checkedDocs = [...document.querySelectorAll('#newClientDocPicker input[type=checkbox]:checked')].map(cb => cb.value);
 
-    const newClient = { id, name, email, phone, step, adviser, docs: checkedDocs, driveFolderId: null };
+    const name2  = document.getElementById('newClientName2').value.trim();
+    const email2 = document.getElementById('newClientEmail2').value.trim();
+    const newClient = { id, name, email, phone, step, adviser, docs: checkedDocs, driveFolderId: null, name2: name2||'', email2: email2||'' };
     clients.push(newClient);
     lastCreatedClient = newClient;
 
@@ -5561,12 +5626,17 @@ Kind regards,
       if (adv) adviserName = adv.name;
     }
 
-    var params = new URLSearchParams({
+    // Include second applicant if present
+    var client2 = clients.find(function(c){ return c.id === clientId; });
+    var urlParams = {
       client:  clientId,
       name:    clientName,
       adviser: adviserName,
       assign:  btoa(JSON.stringify(assignMap))
-    });
+    };
+    if (client2 && client2.name2) urlParams.name2  = client2.name2;
+    if (client2 && client2.email2) urlParams.email2 = client2.email2;
+    var params = new URLSearchParams(urlParams);
     return base + '?' + params.toString();
   }
 
@@ -7029,6 +7099,26 @@ Kind regards,
 
   document.addEventListener('DOMContentLoaded', () => {
     try { window.loadSettings(); } catch(e) { console.error('loadSettings:', e); }
+    // Restore doc library from localStorage if saved
+    try {
+      var savedLib = localStorage.getItem('ic_doc_library');
+      if (savedLib) {
+        var parsedLib = JSON.parse(savedLib);
+        if (Array.isArray(parsedLib) && parsedLib.length > 0) {
+          // Merge saved values into docLibrary (keep structure, update editable fields)
+          parsedLib.forEach(function(saved) {
+            var existing = docLibrary.find(function(d){ return d.id === saved.id; });
+            if (existing) {
+              existing.name = saved.name || existing.name;
+              existing.desc = saved.desc || existing.desc;
+              existing.icon = saved.icon || existing.icon;
+              existing.note = saved.note || existing.note;
+              existing.assignee = saved.assignee || existing.assignee;
+            }
+          });
+        }
+      }
+    } catch(e) {}
     try { window.loadPersistedData(); } catch(e) { console.error('loadPersistedData:', e); }
     try { window.renderIndividualDocs(); } catch(e) { console.error('renderIndividualDocs:', e); }
     try { renderStepFolders(); } catch(e) { console.error('renderStepFolders:', e); }
@@ -7119,6 +7209,8 @@ Kind regards,
     const urlClientName = params.get('name');
     const urlAdviser    = params.get('adviser');
     const urlAssign     = params.get('assign');
+    const urlName2      = params.get('name2');
+    const urlEmail2     = params.get('email2');
 
     // If URL has assignment data, apply it to docLibrary and staffMembers
     if (urlAssign) {
