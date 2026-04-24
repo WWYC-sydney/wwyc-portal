@@ -5227,7 +5227,7 @@ Kind regards,
       if (data && (data.clients.length > 0 || data.staff.length > 0)) {
         // Got cloud data — use it
         var realClients = data.clients.filter(function(c) { return demoIds.indexOf(c.id) === -1; });
-        var realClients2 = realClients.filter(function(c){ return c.id !== '__doc_library__'; });
+        var realClients2 = realClients.filter(function(c){ return c.id !== '__doc_library__' && c.id !== '__settings__'; });
         clients = realClients2.map(function(c) {
           return {
             id: c.id, name: c.name, email: c.email, phone: c.phone,
@@ -5271,7 +5271,7 @@ Kind regards,
       if (sc) {
         var parsed = JSON.parse(sc);
         if (Array.isArray(parsed)) {
-          var real = parsed.filter(function(c) { return demoIds.indexOf(c.id) === -1 && c.id !== '__doc_library__'; });
+          var real = parsed.filter(function(c) { return demoIds.indexOf(c.id) === -1 && c.id !== '__doc_library__' && c.id !== '__settings__'; });
           if (real.length !== parsed.length) localStorage.setItem(IC_CLIENTS_KEY, JSON.stringify(real));
           clients = real;
           if (clients.length > 0) activeClientId = clients[0].id;
@@ -6178,6 +6178,22 @@ Kind regards,
       return false;
     }
     try { localStorage.setItem(PW_KEY, newPw); } catch(e) {}
+    // Save to Supabase for cross-device consistency
+    fetch(SUPABASE_URL + '/rest/v1/clients?id=eq.__settings__', {
+      method: 'PATCH',
+      headers: Object.assign({}, _headers, {'Prefer': 'return=minimal'}),
+      body: JSON.stringify({ uploads: JSON.stringify({ staff_pw: newPw }) })
+    }).then(function(r) {
+      if (!r.ok) {
+        // Create settings record if not exists
+        fetch(SUPABASE_URL + '/rest/v1/clients', {
+          method: 'POST',
+          headers: Object.assign({}, _headers, {'Prefer': 'return=minimal'}),
+          body: JSON.stringify({ id: '__settings__', name: '__settings__', email: '', docs: '[]', uploads: JSON.stringify({ staff_pw: newPw }) })
+        }).catch(function(){});
+      }
+    }).catch(function(){});
+    showToast('✅ Password updated successfully.');
     return true;
   }
 
@@ -7191,6 +7207,17 @@ Kind regards,
 
   document.addEventListener('DOMContentLoaded', () => {
     try { window.loadSettings(); } catch(e) { console.error('loadSettings:', e); }
+    // Load password from Supabase for cross-device sync
+    fetch(SUPABASE_URL + '/rest/v1/clients?id=eq.__settings__&select=uploads', {
+      headers: _headers
+    }).then(function(r){ return r.json(); }).then(function(data) {
+      if (data && data[0] && data[0].uploads) {
+        var settings = JSON.parse(data[0].uploads);
+        if (settings.staff_pw) {
+          try { localStorage.setItem('ic_staff_pw', settings.staff_pw); } catch(e) {}
+        }
+      }
+    }).catch(function(){});
     // Restore doc library - try Supabase first, then localStorage
     function applyDocLibrary(parsedLib) {
       if (!Array.isArray(parsedLib) || parsedLib.length === 0) return;
