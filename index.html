@@ -2577,6 +2577,10 @@
     .staff-doc-date { display: none; }
   }
 
+  /* Note input in staff dark view */
+  .staff-doc-row input[type="text"] { color: #ffffff !important; }
+  .staff-doc-row input[type="text"]::placeholder { color: rgba(255,255,255,0.4) !important; }
+
   /* ── MOBILE RESPONSIVE ──────────────────────────────────────── */
   * { box-sizing: border-box; }
   html, body { overflow-x: hidden; max-width: 100vw; }
@@ -5430,7 +5434,7 @@ Kind regards,
         noteInput.type = 'text';
         noteInput.placeholder = 'Add a personalised note for ' + client.name + ' (clients will see this)...';
         noteInput.value = docNote;
-        noteInput.style.cssText = 'width:100%;background:rgba(255,255,255,0.05);border:1px dashed rgba(255,255,255,0.15);border-radius:6px;color:var(--white);font-size:11px;padding:5px 10px;font-family:Nunito,sans-serif;box-sizing:border-box;';
+        noteInput.style.cssText = 'width:100%;background:rgba(255,255,255,0.12);border:1px dashed rgba(255,255,255,0.3);border-radius:6px;color:#ffffff;font-size:11px;padding:5px 10px;font-family:Nunito,sans-serif;box-sizing:border-box;caret-color:#ffffff;';
         noteInput.addEventListener('click', function(e){ e.stopPropagation(); });
         noteInput.addEventListener('change', function() {
           if (!client.docNotes) client.docNotes = {};
@@ -5477,9 +5481,13 @@ Kind regards,
 
 
   window.openNewClientModal = function openNewClientModal() {
+    try {
     // Populate adviser dropdown
     const advSel = document.getElementById('newClientAdviser');
-    advSel.innerHTML = staffMembers.map(s => `<option value="${s.id}">${s.name} — ${s.email}</option>`).join('');
+    if (!advSel) { console.error('newClientAdviser not found'); return; }
+    advSel.innerHTML = staffMembers.length > 0
+      ? staffMembers.map(s => '<option value="' + s.id + '">' + s.name + ' — ' + s.email + '</option>').join('')
+      : '<option value="">No staff added yet</option>';
 
     // Auto-suggest next ID
     const ids = clients.map(c => parseInt((c.id.match(/\d+$/) || ['0'])[0]));
@@ -5489,12 +5497,13 @@ Kind regards,
 
     // Populate doc picker checkboxes
     const picker = document.getElementById('newClientDocPicker');
-    picker.innerHTML = docLibrary.map(doc => `
-      <label style="display:flex;align-items:center;gap:8px;padding:8px 12px;border:1px solid #E5E7EB;border-radius:8px;cursor:pointer;font-size:13px;color:#111827;background:#F9FAFB;font-family:Nunito,sans-serif;font-weight:600;">
-        <input type="checkbox" value="${doc.id}" checked style="accent-color:#1C4475;width:15px;height:15px;flex-shrink:0;">
-        <span style="font-size:16px;">${doc.icon}</span>
-        <span style="flex:1;color:#111827;">${doc.name}</span>
-      </label>`).join('');
+    picker.innerHTML = docLibrary.map(function(doc) {
+      return '<label style="display:flex;align-items:center;gap:8px;padding:8px 12px;border:1px solid #E5E7EB;border-radius:8px;cursor:pointer;font-size:13px;color:#111827;background:#F9FAFB;font-family:Nunito,sans-serif;font-weight:600;">' +
+        '<input type="checkbox" value="' + doc.id + '" checked style="accent-color:#1C4475;width:15px;height:15px;flex-shrink:0;">' +
+        '<span style="font-size:16px;">' + doc.icon + '</span>' +
+        '<span style="flex:1;color:#111827;">' + doc.name + '</span>' +
+        '</label>';
+    }).join('');
 
     // Reset portal link
     document.getElementById('newClientPortalLink').style.display = 'none';
@@ -5507,6 +5516,7 @@ Kind regards,
     document.getElementById('newClientSaveBtn').textContent = 'Create Client';
 
     document.getElementById('newClientModal').classList.add('open');
+    } catch(err) { console.error('openNewClientModal error:', err); showToast('Error opening modal: ' + err.message, '⚠️'); }
   }
 
   let lastCreatedClient = null;
