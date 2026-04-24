@@ -2578,8 +2578,15 @@
   }
 
   /* Note input in staff dark view */
-  .staff-doc-row input[type="text"] { color: #ffffff !important; }
-  .staff-doc-row input[type="text"]::placeholder { color: rgba(255,255,255,0.4) !important; }
+  .staff-doc-row input[type="text"] { 
+    color: #ffffff !important; 
+    background: rgba(255,255,255,0.08) !important;
+    border: 1px dashed rgba(255,255,255,0.25) !important;
+    border-radius: 6px !important;
+    padding: 5px 10px !important;
+    font-size: 11px !important;
+  }
+  .staff-doc-row input[type="text"]::placeholder { color: rgba(255,255,255,0.35) !important; }
 
   /* ── MOBILE RESPONSIVE ──────────────────────────────────────── */
   * { box-sizing: border-box; }
@@ -5446,12 +5453,12 @@ Kind regards,
         // Per-client note field
         var docNote = (client.docNotes || {})[doc.id] || '';
         var noteWrap = document.createElement('div');
-        noteWrap.style.cssText = 'width:100%;padding:4px 12px 8px 44px;';
+        noteWrap.style.cssText = 'width:100%;padding:3px 8px 6px 8px;';
         var noteInput = document.createElement('input');
         noteInput.type = 'text';
         noteInput.placeholder = 'Add a personalised note for ' + client.name + ' (clients will see this)...';
         noteInput.value = docNote;
-        noteInput.style.cssText = 'width:100%;background:rgba(255,255,255,0.12);border:1px dashed rgba(255,255,255,0.3);border-radius:6px;color:#ffffff;font-size:11px;padding:5px 10px;font-family:Nunito,sans-serif;box-sizing:border-box;caret-color:#ffffff;';
+        noteInput.style.cssText = 'width:100%;background:rgba(255,255,255,0.08) !important;border:1px dashed rgba(255,255,255,0.25) !important;border-radius:6px;color:#ffffff !important;font-size:11px;padding:5px 10px;font-family:Nunito,sans-serif;box-sizing:border-box;caret-color:#ffffff;outline:none;';
         noteInput.addEventListener('click', function(e){ e.stopPropagation(); });
         noteInput.addEventListener('change', function() {
           if (!client.docNotes) client.docNotes = {};
