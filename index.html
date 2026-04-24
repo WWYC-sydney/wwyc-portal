@@ -3377,6 +3377,14 @@
     <div class="modal-label" style="margin-top:12px;">Phone (optional)</div>
     <input class="modal-input" id="newClientPhone" placeholder="e.g. 0412 345 678" type="text">
 
+    <div style="border-top:1px solid rgba(28,68,117,0.1);margin:16px 0 12px;"></div>
+    <div class="modal-label" style="color:var(--teal);font-size:10px;letter-spacing:1px;">JOINT APPLICANT (optional)</div>
+    <div class="modal-label" style="margin-top:8px;">Second Applicant Name</div>
+    <input class="modal-input" id="newClientName2" placeholder="e.g. John Jones" type="text">
+    <div class="modal-label" style="margin-top:12px;">Second Applicant Email</div>
+    <input class="modal-input" id="newClientEmail2" placeholder="e.g. john.jones@email.com" type="email">
+    <div style="border-top:1px solid rgba(28,68,117,0.1);margin:16px 0 12px;"></div>
+
     <div class="modal-label" style="margin-top:12px;">Current Step</div>
     <input class="modal-input" id="newClientStep" placeholder="e.g. Step 1 — Initial Consultation" type="text">
 
@@ -5510,8 +5518,8 @@ Kind regards,
     document.getElementById('newClientName').value = '';
     document.getElementById('newClientEmail').value = '';
     document.getElementById('newClientPhone').value = '';
-    document.getElementById('newClientName2').value = '';
-    document.getElementById('newClientEmail2').value = '';
+    var n2 = document.getElementById('newClientName2'); if(n2) n2.value = '';
+    var e2 = document.getElementById('newClientEmail2'); if(e2) e2.value = '';
     document.getElementById('newClientStep').value = 'Step 1 — Initial Consultation';
     document.getElementById('newClientSaveBtn').textContent = 'Create Client';
 
