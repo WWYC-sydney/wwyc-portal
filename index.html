@@ -763,8 +763,9 @@
   .staff-doc-row {
     padding: 14px 22px;
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
-    gap: 14px;
+    gap: 8px 14px;
     border-bottom: 1px solid var(--border);
     transition: all 0.15s;
     position: relative;
@@ -4344,8 +4345,12 @@ Kind regards,
   }
 
   window.addDocToLibrary = function addDocToLibrary() {
-    docLibrary.push({ id:'doc_'+Date.now(), icon:'📄', name:'New Document', desc:'Description', assignee:'Emily Chen', note:'Please upload the required document.', uploaded:false });
+    // Use first staff member's name as default assignee
+    var defaultStaff = staffMembers.length > 0 ? staffMembers[0].name : 'Unassigned';
+    docLibrary.push({ id:'doc_'+Date.now(), icon:'📄', name:'New Document', desc:'Description', assignee:defaultStaff, note:'Please upload the required document.', uploaded:false });
     renderDocLibraryEditor();
+    // Auto-save so it persists
+    try { localStorage.setItem('ic_doc_library', JSON.stringify(docLibrary)); } catch(e) {}
   }
 
   window.removeDocFromLibrary = function removeDocFromLibrary(idx) {
@@ -5196,7 +5201,8 @@ Kind regards,
       if (data && (data.clients.length > 0 || data.staff.length > 0)) {
         // Got cloud data — use it
         var realClients = data.clients.filter(function(c) { return demoIds.indexOf(c.id) === -1; });
-        clients = realClients.map(function(c) {
+        var realClients2 = realClients.filter(function(c){ return c.id !== '__doc_library__'; });
+        clients = realClients2.map(function(c) {
           return {
             id: c.id, name: c.name, email: c.email, phone: c.phone,
             step: c.step, adviser: c.adviser,
@@ -5238,7 +5244,7 @@ Kind regards,
       if (sc) {
         var parsed = JSON.parse(sc);
         if (Array.isArray(parsed)) {
-          var real = parsed.filter(function(c) { return demoIds.indexOf(c.id) === -1; });
+          var real = parsed.filter(function(c) { return demoIds.indexOf(c.id) === -1 && c.id !== '__doc_library__'; });
           if (real.length !== parsed.length) localStorage.setItem(IC_CLIENTS_KEY, JSON.stringify(real));
           clients = real;
           if (clients.length > 0) activeClientId = clients[0].id;
