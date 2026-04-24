@@ -2578,16 +2578,16 @@
     .staff-doc-date { display: none; }
   }
 
-  /* Note input in staff dark view */
+  /* Note input in staff doc rows */
   .staff-doc-row input[type="text"] { 
-    color: #ffffff !important; 
-    background: rgba(255,255,255,0.08) !important;
-    border: 1px dashed rgba(255,255,255,0.25) !important;
+    color: #1C4475 !important; 
+    background: #ffffff !important;
+    border: 1px solid #CBD5E1 !important;
     border-radius: 6px !important;
-    padding: 5px 10px !important;
+    padding: 6px 10px !important;
     font-size: 11px !important;
   }
-  .staff-doc-row input[type="text"]::placeholder { color: rgba(255,255,255,0.35) !important; }
+  .staff-doc-row input[type="text"]::placeholder { color: #94A3B8 !important; }
 
   /* ── MOBILE RESPONSIVE ──────────────────────────────────────── */
   * { box-sizing: border-box; }
@@ -3241,6 +3241,7 @@
 
     <div class="modal-actions">
       <button class="btn-secondary" onclick="window.closeModal('uploadModal')">Cancel</button>
+      <button class="btn-secondary" onclick="document.getElementById('fileInput').value=''; document.getElementById('fileInput').click();" style="background:rgba(28,68,117,0.06);">📎 Change File</button>
       <button class="btn-primary" data-action="submitUpload">Upload Files</button>
     </div>
   </div>
@@ -4551,9 +4552,31 @@ Kind regards,
   window.handleFileSelect = function handleFileSelect(e) {
     pendingFiles = Array.from(e.target.files);
     if (!pendingFiles.length) return;
-    // Reset modal to normal mode
-    document.querySelector('#uploadModal .modal-title').textContent = 'Confirm Upload';
-    document.querySelector('#uploadModal .modal-sub').textContent   = 'Fill in the details below so this document is filed correctly. The file will be renamed automatically.';
+
+    // Restore the doc type that was set when the card was clicked
+    if (window._pendingDocId) {
+      selectedChecklistDocId = window._pendingDocId;
+      var sel = document.getElementById('docTypeSelect');
+      if (sel && window._pendingDocName) {
+        // Find matching option
+        var matched = false;
+        for (var i = 0; i < sel.options.length; i++) {
+          if (sel.options[i].value.toLowerCase().indexOf(window._pendingDocName.split(' ')[0].toLowerCase()) !== -1) {
+            sel.selectedIndex = i; matched = true; break;
+          }
+        }
+        if (!matched) sel.selectedIndex = 0;
+        if (window.updateSavedNamePreview) window.updateSavedNamePreview();
+      }
+    }
+
+    // Open the modal
+    var modal = document.getElementById('uploadModal');
+    if (modal) {
+      var titleEl = modal.querySelector('.modal-title');
+      if (titleEl) titleEl.textContent = 'Upload: ' + (window._pendingDocName || 'Document');
+      modal.classList.add('open');
+    }
     showUploadModal();
   }
 
@@ -5431,6 +5454,28 @@ Kind regards,
       right.appendChild(badge);
 
       hdr.appendChild(left); hdr.appendChild(right);
+      
+      // Collapsible - click header to collapse/expand
+      var collapseKey = 'ic_collapsed_' + client.id;
+      var isCollapsed = localStorage.getItem(collapseKey) === '1';
+      var docsContainer = document.createElement('div');
+      docsContainer.style.display = isCollapsed ? 'none' : 'block';
+      
+      // Add collapse indicator
+      var collapseIcon = document.createElement('span');
+      collapseIcon.style.cssText = 'font-size:12px;color:rgba(255,255,255,0.4);margin-left:8px;transition:transform 0.2s;display:inline-block;transform:' + (isCollapsed ? 'rotate(-90deg)' : 'rotate(0deg)') + ';';
+      collapseIcon.textContent = '▾';
+      nameDiv.appendChild(collapseIcon);
+      
+      hdr.style.cursor = 'pointer';
+      hdr.addEventListener('click', function(e) {
+        if (e.target.closest('button') || e.target.closest('a')) return;
+        var collapsed = docsContainer.style.display === 'none';
+        docsContainer.style.display = collapsed ? 'block' : 'none';
+        collapseIcon.style.transform = collapsed ? 'rotate(0deg)' : 'rotate(-90deg)';
+        localStorage.setItem(collapseKey, collapsed ? '0' : '1');
+      });
+      
       group.appendChild(hdr);
 
       // Doc rows
@@ -5464,7 +5509,7 @@ Kind regards,
         noteInput.type = 'text';
         noteInput.placeholder = 'Add a personalised note for ' + client.name + ' (clients will see this)...';
         noteInput.value = docNote;
-        noteInput.style.cssText = 'width:100%;background:rgba(255,255,255,0.08) !important;border:1px dashed rgba(255,255,255,0.25) !important;border-radius:6px;color:#ffffff !important;font-size:11px;padding:5px 10px;font-family:Nunito,sans-serif;box-sizing:border-box;caret-color:#ffffff;outline:none;';
+        noteInput.style.cssText = 'width:100%;background:#ffffff;border:1px solid #CBD5E1;border-radius:6px;color:#1C4475;font-size:11px;padding:6px 10px;font-family:Nunito,sans-serif;box-sizing:border-box;caret-color:#1C4475;outline:none;';
         noteInput.addEventListener('click', function(e){ e.stopPropagation(); });
         noteInput.addEventListener('change', function() {
           if (!client.docNotes) client.docNotes = {};
@@ -5503,8 +5548,9 @@ Kind regards,
           var aw = document.createElement('span'); aw.style.cssText = 'font-size:10px;color:rgba(255,255,255,0.25);font-style:italic;'; aw.textContent = 'Awaiting upload — check Drive folder';
           row.appendChild(aw);
         }
-        group.appendChild(row);
+        docsContainer.appendChild(row);
       });
+      group.appendChild(docsContainer);
       container.appendChild(group);
     });
   }
@@ -7080,22 +7126,19 @@ Kind regards,
       if (window.updateSavedNamePreview) window.updateSavedNamePreview();
     }
 
-    // Clear pending files and open modal
+    // Store the intended doc so handleFileSelect can restore it
+    window._pendingDocId   = docId;
+    window._pendingDocName = docName;
+    
+    // Clear pending files
     pendingFiles = [];
-    var modal = document.getElementById('uploadModal');
-    if (!modal) return;
     
-    // Update modal title to show which doc we're uploading
-    var titleEl = modal.querySelector('.modal-title');
-    if (titleEl) titleEl.textContent = 'Upload: ' + docName;
-    
-    modal.classList.add('open');
-    
-    // Trigger file picker immediately
-    setTimeout(function() {
-      var fileInput = document.getElementById('fileInput');
-      if (fileInput) fileInput.click();
-    }, 200);
+    // Trigger file picker - modal opens after file is selected
+    var fileInput = document.getElementById('fileInput');
+    if (fileInput) {
+      fileInput.value = '';  // clear previous selection
+      fileInput.click();
+    }
   };
 
 
