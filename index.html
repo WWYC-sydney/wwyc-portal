@@ -7355,42 +7355,6 @@ Kind regards,
 
 <!-- debug bar removed -->
 
-<script>
-// Debug overlay - shows Supabase status visibly on page
-(function() {
-  function showDebug(msg, color) {
-    var el = document.getElementById('_dbg');
-    if (!el) {
-      el = document.createElement('div');
-      el.id = '_dbg';
-      el.style.cssText = 'position:fixed;bottom:0;left:0;right:0;background:rgba(28,68,117,0.95);color:white;font-size:10px;font-family:monospace;padding:3px 8px;z-index:99999;max-height:80px;overflow:auto;';
-      document.body.appendChild(el);
-    }
-    var line = document.createElement('div');
-    line.style.color = color || 'white';
-    line.textContent = new Date().toLocaleTimeString() + ' ' + msg;
-    el.appendChild(line);
-    el.scrollTop = el.scrollHeight;
-  }
-  window._dbg = showDebug;
-
-  // Test Supabase connection - retry until ready
-  document.addEventListener('DOMContentLoaded', function() {
-    setTimeout(function() {
-      showDebug('Testing Supabase REST API...');
-      fetch(SUPABASE_URL + '/rest/v1/clients?select=count', {
-        headers: {
-          'apikey': SUPABASE_KEY,
-          'Authorization': 'Bearer ' + SUPABASE_KEY
-        }
-      }).then(function(r) {
-        if (r.ok) { showDebug('DB OK - REST API working', '#6EE7B7'); }
-        else { r.text().then(function(t){ showDebug('DB ERROR: ' + r.status + ' ' + t, 'red'); }); }
-      }).catch(function(e){ showDebug('FETCH ERROR: ' + e.message, 'red'); });
-    }, 1000);
-  });
-})();
-</script>
 
 </body>
 </html>
