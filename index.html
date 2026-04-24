@@ -7188,11 +7188,23 @@ Kind regards,
       parsedLib.forEach(function(saved) {
         var existing = docLibrary.find(function(d){ return d.id === saved.id; });
         if (existing) {
+          // Update existing entry
           if (saved.name) existing.name = saved.name;
           if (saved.desc) existing.desc = saved.desc;
           if (saved.icon) existing.icon = saved.icon;
           if (saved.note) existing.note = saved.note;
           if (saved.assignee) existing.assignee = saved.assignee;
+        } else if (saved.id && saved.id.indexOf('doc_') === 0) {
+          // Add new custom entry that was added via the library editor
+          docLibrary.push({
+            id: saved.id,
+            icon: saved.icon || '📄',
+            name: saved.name || 'Document',
+            desc: saved.desc || '',
+            assignee: saved.assignee || '',
+            note: saved.note || '',
+            uploaded: false
+          });
         }
       });
     }
